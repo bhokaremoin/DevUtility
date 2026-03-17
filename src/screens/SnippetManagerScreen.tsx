@@ -1,6 +1,7 @@
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   FlatList,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,7 +19,56 @@ import {
   MIN_TAP_TARGET,
 } from '../theme';
 
-function SnippetCard({
+function SnippetRow({
+  snippet,
+  isSelected,
+  isCopied,
+  onSelect,
+  onCopy,
+}: {
+  snippet: Snippet;
+  isSelected: boolean;
+  isCopied: boolean;
+  onSelect: (id: string) => void;
+  onCopy: (s: Snippet) => void;
+}) {
+  return (
+    <TouchableOpacity
+      style={[styles.row, isSelected && styles.rowSelected]}
+      onPress={() => onSelect(snippet.id)}
+      activeOpacity={0.7}
+      accessibilityRole="button"
+      accessibilityState={{selected: isSelected}}
+      accessibilityLabel={`Snippet: ${snippet.title}`}>
+      <View style={styles.rowContent}>
+        <Text style={styles.rowTitle} numberOfLines={1}>
+          {snippet.title}
+        </Text>
+        <Text style={styles.rowPreview} numberOfLines={1}>
+          {snippet.content}
+        </Text>
+      </View>
+      <TouchableOpacity
+        style={[styles.rowCopyBtn, isCopied && styles.rowCopyBtnCopied]}
+        onPress={() => onCopy(snippet)}
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel={
+          isCopied ? 'Copied to clipboard' : `Copy snippet ${snippet.title}`
+        }>
+        <Text
+          style={[
+            styles.rowCopyText,
+            isCopied && styles.rowCopyTextCopied,
+          ]}>
+          {isCopied ? '✓' : 'Copy'}
+        </Text>
+      </TouchableOpacity>
+    </TouchableOpacity>
+  );
+}
+
+function SnippetDetailView({
   snippet,
   isCopied,
   onCopy,
@@ -31,31 +81,45 @@ function SnippetCard({
 }) {
   const [confirming, setConfirming] = useState(false);
 
+  useEffect(() => {
+    setConfirming(false);
+  }, [snippet.id]);
+
   return (
-    <View style={styles.card}>
-      <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle} numberOfLines={1}>
-          {snippet.title}
-        </Text>
-        <View style={styles.cardActions}>
-          <TouchableOpacity
-            style={[styles.actionButton, isCopied && styles.actionButtonCopied]}
-            onPress={() => onCopy(snippet)}
-            activeOpacity={0.7}
-            accessibilityRole="button"
-            accessibilityLabel={
-              isCopied ? 'Copied to clipboard' : `Copy snippet ${snippet.title}`
-            }>
-            <Text
-              style={[
-                styles.actionButtonText,
-                isCopied && styles.actionButtonTextCopied,
-              ]}>
-              {isCopied ? 'Copied!' : 'Copy'}
-            </Text>
-          </TouchableOpacity>
-          {confirming ? (
-            <View style={styles.confirmRow}>
+    <View style={styles.detail}>
+      <ScrollView
+        style={styles.detailScroll}
+        contentContainerStyle={styles.detailScrollContent}
+        showsVerticalScrollIndicator
+      >
+        <Text style={styles.detailTitle}>{snippet.title}</Text>
+
+        {snippet.description.length > 0 && (
+          <Text style={styles.detailDesc}>{snippet.description}</Text>
+        )}
+
+        {snippet.tags.length > 0 && (
+          <View style={styles.tagRow}>
+            {snippet.tags.map(tag => (
+              <View key={tag} style={styles.tag}>
+                <Text style={styles.tagText}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        <View style={styles.detailCodeBlock}>
+          <Text style={styles.detailCode} selectable>
+            {snippet.content}
+          </Text>
+        </View>
+      </ScrollView>
+
+      <View style={styles.detailFooter}>
+        {confirming ? (
+          <View style={styles.confirmContainer}>
+            <Text style={styles.confirmLabel}>Delete this snippet?</Text>
+            <View style={styles.confirmActions}>
               <TouchableOpacity
                 style={styles.confirmYes}
                 onPress={() => {
@@ -65,7 +129,7 @@ function SnippetCard({
                 activeOpacity={0.7}
                 accessibilityRole="button"
                 accessibilityLabel="Confirm delete">
-                <Text style={styles.confirmYesText}>Yes</Text>
+                <Text style={styles.confirmYesText}>Delete</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.confirmNo}
@@ -73,47 +137,52 @@ function SnippetCard({
                 activeOpacity={0.7}
                 accessibilityRole="button"
                 accessibilityLabel="Cancel delete">
-                <Text style={styles.confirmNoText}>No</Text>
+                <Text style={styles.confirmNoText}>Cancel</Text>
               </TouchableOpacity>
             </View>
-          ) : (
+          </View>
+        ) : (
+          <View style={styles.footerActions}>
             <TouchableOpacity
-              style={styles.deleteButton}
+              style={[
+                styles.detailCopyBtn,
+                isCopied && styles.detailCopyBtnCopied,
+              ]}
+              onPress={() => onCopy(snippet)}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={
+                isCopied ? 'Copied to clipboard' : 'Copy snippet'
+              }>
+              <Text
+                style={[
+                  styles.detailCopyText,
+                  isCopied && styles.detailCopyTextCopied,
+                ]}>
+                {isCopied ? 'Copied!' : 'Copy to Clipboard'}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.detailDeleteBtn}
               onPress={() => setConfirming(true)}
               activeOpacity={0.7}
               accessibilityRole="button"
               accessibilityLabel={`Delete snippet ${snippet.title}`}>
-              <Text style={styles.deleteButtonText}>Delete</Text>
+              <Text style={styles.detailDeleteText}>Delete</Text>
             </TouchableOpacity>
-          )}
-        </View>
+          </View>
+        )}
       </View>
+    </View>
+  );
+}
 
-      {confirming && (
-        <Text style={styles.confirmLabel}>Delete this snippet?</Text>
-      )}
-
-      {snippet.description.length > 0 && (
-        <Text style={styles.cardDesc} numberOfLines={2}>
-          {snippet.description}
-        </Text>
-      )}
-
-      <View style={styles.codePreview}>
-        <Text style={styles.codeText} numberOfLines={4}>
-          {snippet.content}
-        </Text>
-      </View>
-
-      {snippet.tags.length > 0 && (
-        <View style={styles.tagRow}>
-          {snippet.tags.map(tag => (
-            <View key={tag} style={styles.tag}>
-              <Text style={styles.tagText}>{tag}</Text>
-            </View>
-          ))}
-        </View>
-      )}
+function DetailPlaceholder() {
+  return (
+    <View style={styles.detailPlaceholder}>
+      <Text style={styles.detailPlaceholderText}>
+        Select a snippet to view its contents
+      </Text>
     </View>
   );
 }
@@ -129,17 +198,35 @@ export function SnippetManagerScreen() {
     copySnippet,
   } = useSnippets();
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (snippets.length === 0) {
+      setSelectedId(null);
+      return;
+    }
+    const stillExists = snippets.some(s => s.id === selectedId);
+    if (!selectedId || !stillExists) {
+      setSelectedId(snippets[0].id);
+    }
+  }, [snippets, selectedId]);
+
+  const selectedSnippet = useMemo(
+    () => snippets.find(s => s.id === selectedId) ?? null,
+    [snippets, selectedId],
+  );
 
   const renderItem = useCallback(
     ({item}: {item: Snippet}) => (
-      <SnippetCard
+      <SnippetRow
         snippet={item}
+        isSelected={selectedId === item.id}
         isCopied={copiedId === item.id}
+        onSelect={setSelectedId}
         onCopy={copySnippet}
-        onDelete={removeSnippet}
       />
     ),
-    [copiedId, copySnippet, removeSnippet],
+    [selectedId, copiedId, copySnippet],
   );
 
   const keyExtractor = useCallback((item: Snippet) => item.id, []);
@@ -185,13 +272,30 @@ export function SnippetManagerScreen() {
           </Text>
         </View>
       ) : (
-        <FlatList
-          data={snippets}
-          renderItem={renderItem}
-          keyExtractor={keyExtractor}
-          contentContainerStyle={styles.list}
-          showsVerticalScrollIndicator={false}
-        />
+        <View style={styles.splitPane}>
+          <View style={styles.masterPane}>
+            <FlatList
+              data={snippets}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              contentContainerStyle={styles.masterList}
+              ItemSeparatorComponent={Separator}
+              showsVerticalScrollIndicator={false}
+            />
+          </View>
+          <View style={styles.detailPane}>
+            {selectedSnippet ? (
+              <SnippetDetailView
+                snippet={selectedSnippet}
+                isCopied={copiedId === selectedSnippet.id}
+                onCopy={copySnippet}
+                onDelete={removeSnippet}
+              />
+            ) : (
+              <DetailPlaceholder />
+            )}
+          </View>
+        </View>
       )}
 
       {modalVisible && (
@@ -203,6 +307,10 @@ export function SnippetManagerScreen() {
       )}
     </View>
   );
+}
+
+function Separator() {
+  return <View style={styles.separator} />;
 }
 
 const styles = StyleSheet.create({
@@ -239,6 +347,8 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.sm + spacing.xxs,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border.subtle,
   },
   searchInput: {
     backgroundColor: colors.bg.surface,
@@ -250,131 +360,100 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.text.secondary,
   },
-  list: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xl,
-  },
-  card: {
-    backgroundColor: colors.bg.elevated,
-    borderRadius: radii.lg,
-    borderWidth: 1,
-    borderColor: colors.border.subtle,
-    padding: spacing.lg,
-    marginTop: spacing.sm + spacing.xxs,
-  },
-  cardHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: spacing.md,
-  },
-  cardTitle: {
+
+  // Split pane layout
+  splitPane: {
     flex: 1,
-    ...typography.heading,
+    flexDirection: 'row',
+  },
+  masterPane: {
+    flex: 0.35,
+    borderRightWidth: 1,
+    borderRightColor: colors.border.subtle,
+  },
+  detailPane: {
+    flex: 0.65,
+  },
+
+  // Master list
+  masterList: {
+    paddingVertical: spacing.sm,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: spacing.sm + spacing.xxs,
+    paddingHorizontal: spacing.lg,
+    gap: spacing.sm,
+    borderLeftWidth: 3,
+    borderLeftColor: 'transparent',
+  },
+  rowSelected: {
+    backgroundColor: colors.accent.muted,
+    borderLeftColor: colors.accent.primary,
+  },
+  rowContent: {
+    flex: 1,
+    gap: spacing.xxs,
+  },
+  rowTitle: {
+    ...typography.bodyBold,
     color: colors.text.primary,
   },
-  cardActions: {
-    flexDirection: 'row',
-    gap: spacing.sm,
+  rowPreview: {
+    ...typography.code,
+    color: colors.text.placeholder,
   },
-  actionButton: {
-    paddingHorizontal: spacing.lg,
-    minHeight: MIN_TAP_TARGET,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: radii.md,
+  rowCopyBtn: {
+    paddingHorizontal: spacing.sm + spacing.xxs,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.sm,
     backgroundColor: colors.bg.surface,
     borderWidth: 1,
     borderColor: colors.border.default,
-    minWidth: 72,
   },
-  actionButtonCopied: {
+  rowCopyBtnCopied: {
     backgroundColor: colors.semantic.successBg,
     borderColor: colors.semantic.success,
   },
-  actionButtonText: {
-    ...typography.caption,
-    fontWeight: '600',
+  rowCopyText: {
+    ...typography.small,
     color: colors.accent.primary,
   },
-  actionButtonTextCopied: {
+  rowCopyTextCopied: {
     color: colors.semantic.success,
   },
-  deleteButton: {
-    paddingHorizontal: spacing.md,
-    minHeight: MIN_TAP_TARGET,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: radii.md,
-    backgroundColor: colors.bg.surface,
-    borderWidth: 1,
-    borderColor: colors.border.default,
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: colors.border.subtle,
+    marginHorizontal: spacing.lg,
   },
-  deleteButtonText: {
-    ...typography.caption,
-    fontWeight: '600',
-    color: colors.semantic.danger,
+
+  // Detail view
+  detail: {
+    flex: 1,
   },
-  confirmRow: {
-    flexDirection: 'row',
-    gap: spacing.xs + spacing.xxs,
+  detailScroll: {
+    flex: 1,
   },
-  confirmYes: {
-    paddingHorizontal: spacing.md,
-    minHeight: MIN_TAP_TARGET,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: radii.md,
-    backgroundColor: colors.semantic.dangerBg,
-    borderWidth: 1,
-    borderColor: colors.semantic.danger,
+  detailScrollContent: {
+    padding: spacing.xl,
   },
-  confirmYesText: {
-    ...typography.caption,
-    fontWeight: '600',
-    color: colors.semantic.danger,
+  detailTitle: {
+    ...typography.title,
+    color: colors.text.primary,
+    marginBottom: spacing.sm,
   },
-  confirmNo: {
-    paddingHorizontal: spacing.md,
-    minHeight: MIN_TAP_TARGET,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: radii.md,
-    backgroundColor: colors.bg.surface,
-    borderWidth: 1,
-    borderColor: colors.border.default,
-  },
-  confirmNoText: {
-    ...typography.caption,
-    fontWeight: '600',
+  detailDesc: {
+    ...typography.body,
     color: colors.text.tertiary,
-  },
-  confirmLabel: {
-    ...typography.caption,
-    color: colors.semantic.danger,
-    marginTop: spacing.xs + spacing.xxs,
-  },
-  cardDesc: {
-    ...typography.caption,
-    color: colors.text.tertiary,
-    marginTop: spacing.xs + spacing.xxs,
-    lineHeight: 17,
-  },
-  codePreview: {
-    backgroundColor: colors.bg.surface,
-    borderRadius: radii.md,
-    padding: spacing.sm + spacing.xxs,
-    marginTop: spacing.sm + spacing.xxs,
-  },
-  codeText: {
-    ...typography.code,
-    color: colors.text.secondary,
+    marginBottom: spacing.md,
   },
   tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.xs + spacing.xxs,
-    marginTop: spacing.sm + spacing.xxs,
+    marginBottom: spacing.md,
   },
   tag: {
     backgroundColor: colors.bg.surface,
@@ -386,6 +465,108 @@ const styles = StyleSheet.create({
     ...typography.small,
     color: colors.accent.primary,
   },
+  detailCodeBlock: {
+    backgroundColor: colors.bg.surface,
+    borderRadius: radii.md,
+    padding: spacing.lg,
+    marginTop: spacing.xs,
+  },
+  detailCode: {
+    ...typography.code,
+    color: colors.text.secondary,
+  },
+  detailFooter: {
+    padding: spacing.lg,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: colors.border.subtle,
+  },
+  footerActions: {
+    flexDirection: 'row',
+    gap: spacing.sm + spacing.xxs,
+  },
+  detailCopyBtn: {
+    flex: 1,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.accent.primary,
+  },
+  detailCopyBtnCopied: {
+    backgroundColor: colors.semantic.successBg,
+  },
+  detailCopyText: {
+    ...typography.bodyBold,
+    color: colors.text.primary,
+  },
+  detailCopyTextCopied: {
+    color: colors.semantic.success,
+  },
+  detailDeleteBtn: {
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
+  detailDeleteText: {
+    ...typography.bodyBold,
+    color: colors.semantic.danger,
+  },
+  confirmContainer: {
+    gap: spacing.sm,
+  },
+  confirmLabel: {
+    ...typography.caption,
+    color: colors.semantic.danger,
+    textAlign: 'center',
+  },
+  confirmActions: {
+    flexDirection: 'row',
+    gap: spacing.sm + spacing.xxs,
+  },
+  confirmYes: {
+    flex: 1,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.semantic.dangerBg,
+    borderWidth: 1,
+    borderColor: colors.semantic.danger,
+  },
+  confirmYesText: {
+    ...typography.bodyBold,
+    color: colors.semantic.danger,
+  },
+  confirmNo: {
+    flex: 1,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
+  confirmNoText: {
+    ...typography.bodyBold,
+    color: colors.text.tertiary,
+  },
+  detailPlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  detailPlaceholderText: {
+    ...typography.caption,
+    color: colors.text.placeholder,
+  },
+
+  // Empty state
   emptyState: {
     flex: 1,
     justifyContent: 'center',
