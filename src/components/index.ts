@@ -1,1 +1,1 @@
-export {};
+export {AddSnippetModal} from './AddSnippetModal';
