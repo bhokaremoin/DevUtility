@@ -42,3 +42,13 @@ export async function deleteSnippet(id: string): Promise<Snippet[]> {
   await saveSnippets(updated);
   return updated;
 }
+
+export async function updateSnippet(
+  id: string,
+  content: string,
+): Promise<Snippet[]> {
+  const existing = await loadSnippets();
+  const updated = existing.map(s => (s.id === id ? {...s, content} : s));
+  await saveSnippets(updated);
+  return updated;
+}

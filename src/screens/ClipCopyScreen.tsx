@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -21,7 +22,8 @@ const MAX_DISPLAY_LENGTH = 120;
 interface ClipCopyScreenProps {
   history: ClipboardItem[];
   copiedId: string | null;
-  copyToClipboard: (item: ClipboardItem) => void;
+  copyToClipboard: (item: ClipboardItem, textOverride?: string) => void;
+  updateItemText: (id: string, text: string) => void;
   clearHistory: () => void;
 }
 
@@ -78,11 +80,21 @@ function DetailView({
   item,
   isCopied,
   onCopy,
+  onUpdate,
 }: {
   item: ClipboardItem;
   isCopied: boolean;
-  onCopy: (item: ClipboardItem) => void;
+  onCopy: (item: ClipboardItem, textOverride?: string) => void;
+  onUpdate: (id: string, text: string) => void;
 }) {
+  const [draftContent, setDraftContent] = useState(item.text);
+
+  useEffect(() => {
+    setDraftContent(item.text);
+  }, [item.id, item.text]);
+
+  const hasEdits = draftContent !== item.text;
+
   const formattedTime = useMemo(
     () => new Date(item.timestamp).toLocaleString(),
     [item.timestamp],
@@ -93,32 +105,50 @@ function DetailView({
       <ScrollView
         style={styles.detailScroll}
         contentContainerStyle={styles.detailScrollContent}
-        showsVerticalScrollIndicator
-      >
+        showsVerticalScrollIndicator>
         <Text style={styles.detailTimestamp}>{formattedTime}</Text>
-        <View style={styles.detailCodeBlock}>
-          <Text style={styles.detailCode} selectable>
-            {item.text}
-          </Text>
-        </View>
+        <TextInput
+          style={styles.detailCodeInput}
+          value={draftContent}
+          onChangeText={setDraftContent}
+          multiline
+          textAlignVertical="top"
+          scrollEnabled={false}
+          placeholderTextColor={colors.text.placeholder}
+        />
       </ScrollView>
       <View style={styles.detailFooter}>
-        <TouchableOpacity
-          style={[styles.detailCopyBtn, isCopied && styles.detailCopyBtnCopied]}
-          onPress={() => onCopy(item)}
-          activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel={
-            isCopied ? 'Copied to clipboard' : 'Copy to clipboard'
-          }>
-          <Text
+        <View style={styles.footerActions}>
+          <TouchableOpacity
             style={[
-              styles.detailCopyText,
-              isCopied && styles.detailCopyTextCopied,
-            ]}>
-            {isCopied ? 'Copied!' : 'Copy to Clipboard'}
-          </Text>
-        </TouchableOpacity>
+              styles.detailCopyBtn,
+              isCopied && styles.detailCopyBtnCopied,
+            ]}
+            onPress={() => onCopy(item, draftContent)}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isCopied ? 'Copied to clipboard' : 'Copy to clipboard'
+            }>
+            <Text
+              style={[
+                styles.detailCopyText,
+                isCopied && styles.detailCopyTextCopied,
+              ]}>
+              {isCopied ? 'Copied!' : 'Copy to Clipboard'}
+            </Text>
+          </TouchableOpacity>
+          {hasEdits && (
+            <TouchableOpacity
+              style={styles.detailSaveBtn}
+              onPress={() => onUpdate(item.id, draftContent)}
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel="Save edits">
+              <Text style={styles.detailSaveText}>Save Edits</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </View>
   );
@@ -138,6 +168,7 @@ export function ClipCopyScreen({
   history,
   copiedId,
   copyToClipboard,
+  updateItemText,
   clearHistory,
 }: ClipCopyScreenProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -217,6 +248,7 @@ export function ClipCopyScreen({
                 item={selectedItem}
                 isCopied={copiedId === selectedItem.id}
                 onCopy={copyToClipboard}
+                onUpdate={updateItemText}
               />
             ) : (
               <DetailPlaceholder />
@@ -337,21 +369,25 @@ const styles = StyleSheet.create({
     color: colors.text.placeholder,
     marginBottom: spacing.md,
   },
-  detailCodeBlock: {
+  detailCodeInput: {
+    ...typography.code,
+    color: colors.text.secondary,
     backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
     padding: spacing.lg,
-  },
-  detailCode: {
-    ...typography.code,
-    color: colors.text.secondary,
+    minHeight: 200,
   },
   detailFooter: {
     padding: spacing.lg,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border.subtle,
   },
+  footerActions: {
+    flexDirection: 'row',
+    gap: spacing.sm + spacing.xxs,
+  },
   detailCopyBtn: {
+    flex: 1,
     minHeight: MIN_TAP_TARGET,
     justifyContent: 'center',
     alignItems: 'center',
@@ -366,6 +402,20 @@ const styles = StyleSheet.create({
     color: colors.text.primary,
   },
   detailCopyTextCopied: {
+    color: colors.semantic.success,
+  },
+  detailSaveBtn: {
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.semantic.success,
+  },
+  detailSaveText: {
+    ...typography.bodyBold,
     color: colors.semantic.success,
   },
   detailPlaceholder: {

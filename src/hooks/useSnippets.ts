@@ -5,6 +5,7 @@ import {
   loadSnippets,
   addSnippet as addSnippetToStorage,
   deleteSnippet as deleteSnippetFromStorage,
+  updateSnippet as updateSnippetInStorage,
 } from '../services/snippetStorage';
 import {COPY_FEEDBACK_DURATION_MS} from '../constants';
 
@@ -55,16 +56,27 @@ export function useSnippets() {
     setSnippets(updated);
   }, []);
 
-  const copySnippet = useCallback((snippet: Snippet) => {
-    ClipboardModule?.setString?.(snippet.content);
-    setCopiedId(snippet.id);
-    if (feedbackTimerRef.current) {
-      clearTimeout(feedbackTimerRef.current);
-    }
-    feedbackTimerRef.current = setTimeout(() => {
-      setCopiedId(null);
-    }, COPY_FEEDBACK_DURATION_MS);
-  }, []);
+  const copySnippet = useCallback(
+    (snippet: Snippet, contentOverride?: string) => {
+      ClipboardModule?.setString?.(contentOverride ?? snippet.content);
+      setCopiedId(snippet.id);
+      if (feedbackTimerRef.current) {
+        clearTimeout(feedbackTimerRef.current);
+      }
+      feedbackTimerRef.current = setTimeout(() => {
+        setCopiedId(null);
+      }, COPY_FEEDBACK_DURATION_MS);
+    },
+    [],
+  );
+
+  const updateSnippetContent = useCallback(
+    async (id: string, content: string) => {
+      const updated = await updateSnippetInStorage(id, content);
+      setSnippets(updated);
+    },
+    [],
+  );
 
   return {
     snippets: filteredSnippets,
@@ -74,5 +86,6 @@ export function useSnippets() {
     addSnippet,
     removeSnippet,
     copySnippet,
+    updateSnippetContent,
   };
 }

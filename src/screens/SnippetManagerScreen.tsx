@@ -73,25 +73,30 @@ function SnippetDetailView({
   isCopied,
   onCopy,
   onDelete,
+  onUpdate,
 }: {
   snippet: Snippet;
   isCopied: boolean;
-  onCopy: (s: Snippet) => void;
+  onCopy: (s: Snippet, contentOverride?: string) => void;
   onDelete: (id: string) => void;
+  onUpdate: (id: string, content: string) => void;
 }) {
+  const [draftContent, setDraftContent] = useState(snippet.content);
   const [confirming, setConfirming] = useState(false);
 
   useEffect(() => {
+    setDraftContent(snippet.content);
     setConfirming(false);
-  }, [snippet.id]);
+  }, [snippet.id, snippet.content]);
+
+  const hasEdits = draftContent !== snippet.content;
 
   return (
     <View style={styles.detail}>
       <ScrollView
         style={styles.detailScroll}
         contentContainerStyle={styles.detailScrollContent}
-        showsVerticalScrollIndicator
-      >
+        showsVerticalScrollIndicator>
         <Text style={styles.detailTitle}>{snippet.title}</Text>
 
         {snippet.description.length > 0 && (
@@ -108,11 +113,15 @@ function SnippetDetailView({
           </View>
         )}
 
-        <View style={styles.detailCodeBlock}>
-          <Text style={styles.detailCode} selectable>
-            {snippet.content}
-          </Text>
-        </View>
+        <TextInput
+          style={styles.detailCodeInput}
+          value={draftContent}
+          onChangeText={setDraftContent}
+          multiline
+          textAlignVertical="top"
+          scrollEnabled={false}
+          placeholderTextColor={colors.text.placeholder}
+        />
       </ScrollView>
 
       <View style={styles.detailFooter}>
@@ -148,7 +157,7 @@ function SnippetDetailView({
                 styles.detailCopyBtn,
                 isCopied && styles.detailCopyBtnCopied,
               ]}
-              onPress={() => onCopy(snippet)}
+              onPress={() => onCopy(snippet, draftContent)}
               activeOpacity={0.7}
               accessibilityRole="button"
               accessibilityLabel={
@@ -162,6 +171,16 @@ function SnippetDetailView({
                 {isCopied ? 'Copied!' : 'Copy to Clipboard'}
               </Text>
             </TouchableOpacity>
+            {hasEdits && (
+              <TouchableOpacity
+                style={styles.detailSaveBtn}
+                onPress={() => onUpdate(snippet.id, draftContent)}
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel="Save edits">
+                <Text style={styles.detailSaveText}>Save Edits</Text>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={styles.detailDeleteBtn}
               onPress={() => setConfirming(true)}
@@ -196,6 +215,7 @@ export function SnippetManagerScreen() {
     addSnippet,
     removeSnippet,
     copySnippet,
+    updateSnippetContent,
   } = useSnippets();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -290,6 +310,7 @@ export function SnippetManagerScreen() {
                 isCopied={copiedId === selectedSnippet.id}
                 onCopy={copySnippet}
                 onDelete={removeSnippet}
+                onUpdate={updateSnippetContent}
               />
             ) : (
               <DetailPlaceholder />
@@ -465,15 +486,14 @@ const styles = StyleSheet.create({
     ...typography.small,
     color: colors.accent.primary,
   },
-  detailCodeBlock: {
+  detailCodeInput: {
+    ...typography.code,
+    color: colors.text.secondary,
     backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
     padding: spacing.lg,
     marginTop: spacing.xs,
-  },
-  detailCode: {
-    ...typography.code,
-    color: colors.text.secondary,
+    minHeight: 200,
   },
   detailFooter: {
     padding: spacing.lg,
@@ -515,6 +535,20 @@ const styles = StyleSheet.create({
   detailDeleteText: {
     ...typography.bodyBold,
     color: colors.semantic.danger,
+  },
+  detailSaveBtn: {
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.semantic.success,
+  },
+  detailSaveText: {
+    ...typography.bodyBold,
+    color: colors.semantic.success,
   },
   confirmContainer: {
     gap: spacing.sm,

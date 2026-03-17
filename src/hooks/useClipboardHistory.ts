@@ -81,22 +81,30 @@ export function useClipboardHistory() {
     };
   }, []);
 
-  const copyToClipboard = useCallback((item: ClipboardItem) => {
-    setClipboardString(item.text);
-    lastClipRef.current = item.text;
+  const copyToClipboard = useCallback(
+    (item: ClipboardItem, textOverride?: string) => {
+      const textToCopy = textOverride ?? item.text;
+      setClipboardString(textToCopy);
+      lastClipRef.current = textToCopy;
 
-    setCopiedId(item.id);
-    if (feedbackTimerRef.current) {
-      clearTimeout(feedbackTimerRef.current);
-    }
-    feedbackTimerRef.current = setTimeout(() => {
-      setCopiedId(null);
-    }, COPY_FEEDBACK_DURATION_MS);
+      setCopiedId(item.id);
+      if (feedbackTimerRef.current) {
+        clearTimeout(feedbackTimerRef.current);
+      }
+      feedbackTimerRef.current = setTimeout(() => {
+        setCopiedId(null);
+      }, COPY_FEEDBACK_DURATION_MS);
+    },
+    [],
+  );
+
+  const updateItemText = useCallback((id: string, text: string) => {
+    setHistory(prev => prev.map(h => (h.id === id ? {...h, text} : h)));
   }, []);
 
   const clearHistory = useCallback(() => {
     setHistory([]);
   }, []);
 
-  return {history, copiedId, copyToClipboard, clearHistory};
+  return {history, copiedId, copyToClipboard, updateItemText, clearHistory};
 }
