@@ -1,1 +1,1 @@
-export {};
+export {ClipCopyScreen} from './ClipCopyScreen';

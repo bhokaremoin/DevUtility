@@ -1512,6 +1512,8 @@ PODS:
     - React-logger
     - React-perflogger
     - React-utils (= 0.76.12)
+  - RNCClipboard (1.16.3):
+    - React-Core
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
 
@@ -1579,6 +1581,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native-macos/ReactCommon/react/utils`)
   - ReactCodegen (from `build/generated/ios`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native-macos/ReactCommon`)
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - SocketRocket (from `../node_modules/react-native-macos/third-party-podspecs/SocketRocket.podspec`)
   - Yoga (from `../node_modules/react-native-macos/ReactCommon/yoga`)
 
@@ -1705,6 +1708,8 @@ EXTERNAL SOURCES:
     :path: build/generated/ios
   ReactCommon:
     :path: "../node_modules/react-native-macos/ReactCommon"
+  RNCClipboard:
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   SocketRocket:
     :podspec: "../node_modules/react-native-macos/third-party-podspecs/SocketRocket.podspec"
   Yoga:
@@ -1772,6 +1777,7 @@ SPEC CHECKSUMS:
   React-utils: 4251312e4d327003692a4decdf78461e532936da
   ReactCodegen: 26d4a38094482fd7d868bb6e719a54581d216109
   ReactCommon: 86e5c46fa7390636cdd50b73007606bf9ab4a00f
+  RNCClipboard: f6679d470d0da2bce2a37b0af7b9e0bf369ecda5
   SocketRocket: 03f7111df1a343b162bf5b06ead333be808e1e0a
   Yoga: 5d2a8be9184b7fdf93665d4ee606dc4946343e2e
 

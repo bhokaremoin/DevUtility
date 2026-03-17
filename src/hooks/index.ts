@@ -1,1 +1,1 @@
-export {};
+export {useClipboardHistory} from './useClipboardHistory';
