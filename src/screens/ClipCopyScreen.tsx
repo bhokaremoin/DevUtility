@@ -6,10 +6,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useClipboardHistory} from '../hooks';
 import {ClipboardItem} from '../types';
+import {
+  colors,
+  spacing,
+  typography,
+  radii,
+  MIN_TAP_TARGET,
+} from '../theme';
 
 const MAX_DISPLAY_LENGTH = 120;
+
+interface ClipCopyScreenProps {
+  history: ClipboardItem[];
+  copiedId: string | null;
+  copyToClipboard: (item: ClipboardItem) => void;
+  clearHistory: () => void;
+}
 
 function ClipCopyItem({
   item,
@@ -33,7 +46,9 @@ function ClipCopyItem({
       <TouchableOpacity
         style={[styles.copyButton, isCopied && styles.copyButtonCopied]}
         onPress={() => onCopy(item)}
-        activeOpacity={0.7}>
+        activeOpacity={0.7}
+        accessibilityRole="button"
+        accessibilityLabel={isCopied ? 'Copied to clipboard' : 'Copy to clipboard'}>
         <Text
           style={[
             styles.copyButtonText,
@@ -46,9 +61,12 @@ function ClipCopyItem({
   );
 }
 
-export function ClipCopyScreen() {
-  const {history, copiedId, copyToClipboard, clearHistory} =
-    useClipboardHistory();
+export function ClipCopyScreen({
+  history,
+  copiedId,
+  copyToClipboard,
+  clearHistory,
+}: ClipCopyScreenProps) {
 
   const renderItem = useCallback(
     ({item}: {item: ClipboardItem}) => (
@@ -66,9 +84,16 @@ export function ClipCopyScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Clip Copy</Text>
+        <Text style={styles.title} accessibilityRole="header">
+          Clipboard
+        </Text>
         {history.length > 0 && (
-          <TouchableOpacity onPress={clearHistory} activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={clearHistory}
+            activeOpacity={0.7}
+            style={styles.clearButton}
+            accessibilityRole="button"
+            accessibilityLabel="Clear all clipboard history">
             <Text style={styles.clearText}>Clear All</Text>
           </TouchableOpacity>
         )}
@@ -103,90 +128,91 @@ function Separator() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.bg.secondary,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#2a2a4a',
+    borderBottomColor: colors.border.subtle,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#e0e0f0',
-    letterSpacing: 0.3,
+    ...typography.title,
+    color: colors.text.primary,
+  },
+  clearButton: {
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    paddingHorizontal: spacing.sm,
   },
   clearText: {
-    fontSize: 13,
-    color: '#ff6b6b',
-    fontWeight: '500',
+    ...typography.caption,
+    color: colors.semantic.danger,
   },
   list: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    gap: 12,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.xl,
+    gap: spacing.md,
   },
   itemText: {
     flex: 1,
-    fontSize: 13,
-    color: '#c8c8e0',
-    lineHeight: 18,
+    ...typography.body,
+    color: colors.text.secondary,
   },
   copyButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: '#2a2a4a',
-    borderWidth: 1,
-    borderColor: '#3a3a5a',
-    minWidth: 72,
+    paddingHorizontal: spacing.lg,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    minWidth: 72,
   },
   copyButtonCopied: {
-    backgroundColor: '#1a3a2a',
-    borderColor: '#2ecc71',
+    backgroundColor: colors.semantic.successBg,
+    borderColor: colors.semantic.success,
   },
   copyButtonText: {
-    fontSize: 12,
+    ...typography.caption,
     fontWeight: '600',
-    color: '#8a8aff',
+    color: colors.accent.primary,
   },
   copyButtonTextCopied: {
-    color: '#2ecc71',
+    color: colors.semantic.success,
   },
   separator: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: '#2a2a4a',
-    marginHorizontal: 20,
+    backgroundColor: colors.border.subtle,
+    marginHorizontal: spacing.xl,
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 60,
+    paddingBottom: spacing.huge,
   },
   emptyIcon: {
-    fontSize: 48,
-    marginBottom: 16,
+    fontSize: spacing.huge,
+    marginBottom: spacing.lg,
   },
   emptyTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#8a8aaa',
-    marginBottom: 6,
+    ...typography.heading,
+    color: colors.text.tertiary,
+    marginBottom: spacing.xs + spacing.xxs,
   },
   emptySubtitle: {
-    fontSize: 13,
-    color: '#5a5a7a',
+    ...typography.caption,
+    color: colors.text.placeholder,
   },
 });

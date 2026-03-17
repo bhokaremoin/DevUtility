@@ -6,6 +6,10 @@ import {
   COPY_FEEDBACK_DURATION_MS,
 } from '../constants';
 import {ClipboardItem} from '../types';
+import {
+  loadClipboardHistory,
+  saveClipboardHistory,
+} from '../services/clipboardStorage';
 
 const ClipboardModule =
   NativeModules.RNCClipboard ?? NativeModules.Clipboard ?? null;
@@ -26,6 +30,24 @@ export function useClipboardHistory() {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const lastClipRef = useRef<string>('');
   const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initializedRef = useRef(false);
+
+  useEffect(() => {
+    loadClipboardHistory().then(persisted => {
+      if (persisted.length > 0) {
+        setHistory(persisted);
+        lastClipRef.current = persisted[0].text;
+      }
+      initializedRef.current = true;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!initializedRef.current) {
+      return;
+    }
+    saveClipboardHistory(history);
+  }, [history]);
 
   useEffect(() => {
     const interval = setInterval(async () => {

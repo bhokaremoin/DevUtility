@@ -10,6 +10,13 @@ import {
 import {useSnippets} from '../hooks';
 import {Snippet} from '../types';
 import {AddSnippetModal} from '../components';
+import {
+  colors,
+  spacing,
+  typography,
+  radii,
+  MIN_TAP_TARGET,
+} from '../theme';
 
 function SnippetCard({
   snippet,
@@ -32,13 +39,17 @@ function SnippetCard({
         </Text>
         <View style={styles.cardActions}>
           <TouchableOpacity
-            style={[styles.copyButton, isCopied && styles.copyButtonCopied]}
+            style={[styles.actionButton, isCopied && styles.actionButtonCopied]}
             onPress={() => onCopy(snippet)}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel={
+              isCopied ? 'Copied to clipboard' : `Copy snippet ${snippet.title}`
+            }>
             <Text
               style={[
-                styles.copyButtonText,
-                isCopied && styles.copyButtonTextCopied,
+                styles.actionButtonText,
+                isCopied && styles.actionButtonTextCopied,
               ]}>
               {isCopied ? 'Copied!' : 'Copy'}
             </Text>
@@ -51,13 +62,17 @@ function SnippetCard({
                   setConfirming(false);
                   onDelete(snippet.id);
                 }}
-                activeOpacity={0.7}>
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel="Confirm delete">
                 <Text style={styles.confirmYesText}>Yes</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.confirmNo}
                 onPress={() => setConfirming(false)}
-                activeOpacity={0.7}>
+                activeOpacity={0.7}
+                accessibilityRole="button"
+                accessibilityLabel="Cancel delete">
                 <Text style={styles.confirmNoText}>No</Text>
               </TouchableOpacity>
             </View>
@@ -65,7 +80,9 @@ function SnippetCard({
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => setConfirming(true)}
-              activeOpacity={0.7}>
+              activeOpacity={0.7}
+              accessibilityRole="button"
+              accessibilityLabel={`Delete snippet ${snippet.title}`}>
               <Text style={styles.deleteButtonText}>Delete</Text>
             </TouchableOpacity>
           )}
@@ -130,11 +147,15 @@ export function SnippetManagerScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Snippets</Text>
+        <Text style={styles.title} accessibilityRole="header">
+          Snippets
+        </Text>
         <TouchableOpacity
           style={styles.addButton}
           onPress={() => setModalVisible(true)}
-          activeOpacity={0.7}>
+          activeOpacity={0.7}
+          accessibilityRole="button"
+          accessibilityLabel="Create new snippet">
           <Text style={styles.addButtonText}>+ New</Text>
         </TouchableOpacity>
       </View>
@@ -145,7 +166,9 @@ export function SnippetManagerScreen() {
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="Search by title, description, or tag…"
-          placeholderTextColor="#5a5a7a"
+          placeholderTextColor={colors.text.placeholder}
+          accessibilityRole="search"
+          accessibilityLabel="Search snippets"
         />
       </View>
 
@@ -185,206 +208,203 @@ export function SnippetManagerScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.bg.secondary,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 16,
-    paddingBottom: 12,
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.lg,
+    paddingBottom: spacing.md,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#2a2a4a',
+    borderBottomColor: colors.border.subtle,
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#e0e0f0',
-    letterSpacing: 0.3,
+    ...typography.title,
+    color: colors.text.primary,
   },
   addButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 6,
-    backgroundColor: '#4a4aff',
+    paddingHorizontal: spacing.lg,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.accent.primary,
   },
   addButtonText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#ffffff',
+    ...typography.bodyBold,
+    color: colors.text.primary,
   },
   searchContainer: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.sm + spacing.xxs,
   },
   searchInput: {
-    backgroundColor: '#14142a',
-    borderRadius: 8,
+    backgroundColor: colors.bg.surface,
+    borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: '#2a2a4a',
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    fontSize: 13,
-    color: '#e0e0f0',
+    borderColor: colors.border.default,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm + spacing.xxs,
+    ...typography.body,
+    color: colors.text.secondary,
   },
   list: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
   },
   card: {
-    backgroundColor: '#1e1e3a',
-    borderRadius: 10,
+    backgroundColor: colors.bg.elevated,
+    borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: '#2a2a4a',
-    padding: 16,
-    marginTop: 10,
+    borderColor: colors.border.subtle,
+    padding: spacing.lg,
+    marginTop: spacing.sm + spacing.xxs,
   },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md,
   },
   cardTitle: {
     flex: 1,
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#e0e0f0',
+    ...typography.heading,
+    color: colors.text.primary,
   },
   cardActions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
-  copyButton: {
-    paddingHorizontal: 14,
-    paddingVertical: 5,
-    borderRadius: 6,
-    backgroundColor: '#2a2a4a',
-    borderWidth: 1,
-    borderColor: '#3a3a5a',
-    minWidth: 72,
+  actionButton: {
+    paddingHorizontal: spacing.lg,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    minWidth: 72,
   },
-  copyButtonCopied: {
-    backgroundColor: '#1a3a2a',
-    borderColor: '#2ecc71',
+  actionButtonCopied: {
+    backgroundColor: colors.semantic.successBg,
+    borderColor: colors.semantic.success,
   },
-  copyButtonText: {
-    fontSize: 12,
+  actionButtonText: {
+    ...typography.caption,
     fontWeight: '600',
-    color: '#8a8aff',
+    color: colors.accent.primary,
   },
-  copyButtonTextCopied: {
-    color: '#2ecc71',
+  actionButtonTextCopied: {
+    color: colors.semantic.success,
   },
   deleteButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 6,
-    backgroundColor: '#2a2a4a',
-    borderWidth: 1,
-    borderColor: '#3a3a5a',
+    paddingHorizontal: spacing.md,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   deleteButtonText: {
-    fontSize: 12,
+    ...typography.caption,
     fontWeight: '600',
-    color: '#ff6b6b',
+    color: colors.semantic.danger,
   },
   confirmRow: {
     flexDirection: 'row',
-    gap: 6,
+    gap: spacing.xs + spacing.xxs,
   },
   confirmYes: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 6,
-    backgroundColor: '#3a1a1a',
-    borderWidth: 1,
-    borderColor: '#ff6b6b',
+    paddingHorizontal: spacing.md,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.semantic.dangerBg,
+    borderWidth: 1,
+    borderColor: colors.semantic.danger,
   },
   confirmYesText: {
-    fontSize: 12,
+    ...typography.caption,
     fontWeight: '600',
-    color: '#ff6b6b',
+    color: colors.semantic.danger,
   },
   confirmNo: {
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 6,
-    backgroundColor: '#2a2a4a',
-    borderWidth: 1,
-    borderColor: '#3a3a5a',
+    paddingHorizontal: spacing.md,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   confirmNoText: {
-    fontSize: 12,
+    ...typography.caption,
     fontWeight: '600',
-    color: '#8a8aaa',
+    color: colors.text.tertiary,
   },
   confirmLabel: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: '#ff6b6b',
-    marginTop: 6,
+    ...typography.caption,
+    color: colors.semantic.danger,
+    marginTop: spacing.xs + spacing.xxs,
   },
   cardDesc: {
-    fontSize: 12,
-    color: '#8a8aaa',
-    marginTop: 6,
+    ...typography.caption,
+    color: colors.text.tertiary,
+    marginTop: spacing.xs + spacing.xxs,
     lineHeight: 17,
   },
   codePreview: {
-    backgroundColor: '#14142a',
-    borderRadius: 6,
-    padding: 10,
-    marginTop: 10,
+    backgroundColor: colors.bg.surface,
+    borderRadius: radii.md,
+    padding: spacing.sm + spacing.xxs,
+    marginTop: spacing.sm + spacing.xxs,
   },
   codeText: {
-    fontSize: 11,
-    fontFamily: 'Menlo',
-    color: '#a0a0d0',
-    lineHeight: 16,
+    ...typography.code,
+    color: colors.text.secondary,
   },
   tagRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
-    marginTop: 10,
+    gap: spacing.xs + spacing.xxs,
+    marginTop: spacing.sm + spacing.xxs,
   },
   tag: {
-    backgroundColor: '#2a2a4a',
-    borderRadius: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    backgroundColor: colors.bg.surface,
+    borderRadius: radii.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs + 1,
   },
   tagText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#8a8aff',
+    ...typography.small,
+    color: colors.accent.primary,
   },
   emptyState: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 60,
+    paddingBottom: spacing.huge,
   },
   emptyIcon: {
     fontSize: 40,
-    marginBottom: 16,
-    color: '#5a5a7a',
+    marginBottom: spacing.lg,
+    color: colors.text.placeholder,
     fontWeight: '700',
   },
   emptyTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#8a8aaa',
-    marginBottom: 6,
+    ...typography.heading,
+    color: colors.text.tertiary,
+    marginBottom: spacing.xs + spacing.xxs,
   },
   emptySubtitle: {
-    fontSize: 13,
-    color: '#5a5a7a',
+    ...typography.caption,
+    color: colors.text.placeholder,
   },
 });

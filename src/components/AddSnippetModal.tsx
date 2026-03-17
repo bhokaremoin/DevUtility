@@ -8,6 +8,13 @@ import {
   View,
 } from 'react-native';
 import {Snippet} from '../types';
+import {
+  colors,
+  spacing,
+  typography,
+  radii,
+  MIN_TAP_TARGET,
+} from '../theme';
 
 interface Props {
   visible: boolean;
@@ -54,7 +61,9 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
   return (
     <View style={styles.backdrop}>
       <View style={styles.card}>
-        <Text style={styles.heading}>New Snippet</Text>
+        <Text style={styles.heading} accessibilityRole="header">
+          New Snippet
+        </Text>
 
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
           <Text style={styles.label}>Title *</Text>
@@ -63,7 +72,8 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
             value={title}
             onChangeText={setTitle}
             placeholder="e.g. Nginx reverse proxy"
-            placeholderTextColor="#5a5a7a"
+            placeholderTextColor={colors.text.placeholder}
+            accessibilityLabel="Snippet title"
           />
 
           <Text style={styles.label}>Description</Text>
@@ -72,7 +82,8 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
             value={description}
             onChangeText={setDescription}
             placeholder="Short description of the snippet"
-            placeholderTextColor="#5a5a7a"
+            placeholderTextColor={colors.text.placeholder}
+            accessibilityLabel="Snippet description"
           />
 
           <Text style={styles.label}>Tags (comma separated)</Text>
@@ -81,7 +92,8 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
             value={tags}
             onChangeText={setTags}
             placeholder="e.g. nginx, docker, devops"
-            placeholderTextColor="#5a5a7a"
+            placeholderTextColor={colors.text.placeholder}
+            accessibilityLabel="Snippet tags"
           />
 
           <Text style={styles.label}>Content *</Text>
@@ -90,9 +102,10 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
             value={content}
             onChangeText={setContent}
             placeholder="Paste your code, query, or script here…"
-            placeholderTextColor="#5a5a7a"
+            placeholderTextColor={colors.text.placeholder}
             multiline
             textAlignVertical="top"
+            accessibilityLabel="Snippet content"
           />
         </ScrollView>
 
@@ -100,14 +113,19 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
           <TouchableOpacity
             style={styles.cancelButton}
             onPress={resetAndClose}
-            activeOpacity={0.7}>
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Cancel creating snippet">
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.saveButton, !canSave && styles.saveButtonDisabled]}
             onPress={handleSave}
             activeOpacity={canSave ? 0.7 : 1}
-            disabled={!canSave}>
+            disabled={!canSave}
+            accessibilityRole="button"
+            accessibilityLabel="Save snippet"
+            accessibilityState={{disabled: !canSave}}>
             <Text
               style={[styles.saveText, !canSave && styles.saveTextDisabled]}>
               Save Snippet
@@ -122,88 +140,84 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
 const styles = StyleSheet.create({
   backdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: spacing.xxl,
     zIndex: 100,
   },
   card: {
     width: '100%',
     maxWidth: 540,
     maxHeight: '85%',
-    backgroundColor: '#1e1e3a',
-    borderRadius: 12,
+    backgroundColor: colors.bg.elevated,
+    borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: '#2a2a4a',
-    padding: 24,
+    borderColor: colors.border.subtle,
+    padding: spacing.xxl,
   },
   heading: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#e0e0f0',
-    marginBottom: 16,
+    ...typography.title,
+    color: colors.text.primary,
+    marginBottom: spacing.lg,
   },
   scroll: {
     flexGrow: 0,
   },
   label: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#8a8aaa',
-    marginBottom: 6,
-    marginTop: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    ...typography.label,
+    color: colors.text.tertiary,
+    marginBottom: spacing.xs + spacing.xxs,
+    marginTop: spacing.md,
   },
   input: {
-    backgroundColor: '#14142a',
-    borderRadius: 8,
+    backgroundColor: colors.bg.surface,
+    borderRadius: radii.md,
     borderWidth: 1,
-    borderColor: '#2a2a4a',
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 13,
-    color: '#e0e0f0',
+    borderColor: colors.border.default,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm + spacing.xxs,
+    ...typography.body,
+    color: colors.text.secondary,
   },
   contentInput: {
     minHeight: 160,
-    fontFamily: 'Menlo',
-    fontSize: 12,
-    lineHeight: 18,
+    ...typography.code,
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: 10,
-    marginTop: 20,
+    gap: spacing.sm + spacing.xxs,
+    marginTop: spacing.xl,
   },
   cancelButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#2a2a4a',
+    paddingHorizontal: spacing.lg,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.bg.surface,
   },
   cancelText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#8a8aaa',
+    ...typography.bodyBold,
+    color: colors.text.tertiary,
   },
   saveButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-    backgroundColor: '#4a4aff',
+    paddingHorizontal: spacing.xl,
+    minHeight: MIN_TAP_TARGET,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: radii.md,
+    backgroundColor: colors.accent.primary,
   },
   saveButtonDisabled: {
-    backgroundColor: '#2a2a4a',
+    backgroundColor: colors.bg.surface,
   },
   saveText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#ffffff',
+    ...typography.bodyBold,
+    color: colors.text.primary,
   },
   saveTextDisabled: {
-    color: '#5a5a7a',
+    color: colors.text.placeholder,
   },
 });
