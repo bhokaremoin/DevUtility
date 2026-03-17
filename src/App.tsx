@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {SafeAreaView, StyleSheet, View} from 'react-native';
-import {ClipCopyScreen, SnippetManagerScreen} from './screens';
+import {ClipCopyScreen, SnippetManagerScreen, SettingsScreen} from './screens';
 import {Sidebar, Tab} from './components';
 import {useClipboardHistory} from './hooks';
 import {colors} from './theme';
@@ -9,17 +9,22 @@ function App(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('clipboard');
   const clipboardState = useClipboardHistory();
 
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'clipboard':
+        return <ClipCopyScreen {...clipboardState} />;
+      case 'snippets':
+        return <SnippetManagerScreen />;
+      case 'settings':
+        return <SettingsScreen />;
+    }
+  };
+
   return (
     <SafeAreaView style={styles.root}>
       <View style={styles.layout}>
         <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
-        <View style={styles.content}>
-          {activeTab === 'clipboard' ? (
-            <ClipCopyScreen {...clipboardState} />
-          ) : (
-            <SnippetManagerScreen />
-          )}
-        </View>
+        <View style={styles.content}>{renderContent()}</View>
       </View>
     </SafeAreaView>
   );

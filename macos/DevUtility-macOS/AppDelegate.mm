@@ -1,17 +1,50 @@
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
+#import "DevUtility-Swift.h"
 
 @implementation AppDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
   self.moduleName = @"DevUtility";
-  // You can add your custom initial props in the dictionary below.
-  // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 
-  return [super applicationDidFinishLaunching:notification];
+  [super applicationDidFinishLaunching:notification];
+
+  NSWindow *defaultWindow = nil;
+  for (NSWindow *w in [NSApp windows]) {
+    if (![w isKindOfClass:[NSPanel class]] && w.contentView != nil) {
+      defaultWindow = w;
+      break;
+    }
+  }
+
+  if (defaultWindow) {
+    NSView *rootView = defaultWindow.contentView;
+    defaultWindow.contentView = [[NSView alloc] initWithFrame:NSZeroRect];
+    [defaultWindow setDelegate:nil];
+    [defaultWindow orderOut:nil];
+    [defaultWindow close];
+
+    [[PanelManager shared] setupWith:rootView];
+    [[PanelManager shared] show];
+  } else {
+    NSLog(@"[DevUtility] ERROR: No default window found after super init");
+  }
+}
+
+- (BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication *)sender
+{
+  return NO;
+}
+
+- (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag
+{
+  if (!flag) {
+    [[PanelManager shared] show];
+  }
+  return YES;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
@@ -28,11 +61,6 @@
 #endif
 }
 
-/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
-///
-/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
-/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
-/// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
 - (BOOL)concurrentRootEnabled
 {
 #ifdef RN_FABRIC_ENABLED

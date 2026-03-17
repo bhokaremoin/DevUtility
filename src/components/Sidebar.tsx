@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors, spacing, typography, radii, MIN_TAP_TARGET} from '../theme';
 
-export type Tab = 'clipboard' | 'snippets';
+export type Tab = 'clipboard' | 'snippets' | 'settings';
 
 interface Props {
   activeTab: Tab;
@@ -12,6 +12,7 @@ interface Props {
 const NAV_ITEMS: {key: Tab; label: string}[] = [
   {key: 'clipboard', label: 'Clipboard'},
   {key: 'snippets', label: 'Snippets'},
+  {key: 'settings', label: 'Settings'},
 ];
 
 export function Sidebar({activeTab, onTabChange}: Props) {
