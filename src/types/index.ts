@@ -12,3 +12,10 @@ export interface Snippet {
   tags: string[];
   createdAt: number;
 }
+
+export interface ScreenHandle {
+  copySelected?: () => void;
+  handleEscape?: () => boolean;
+  focusSearch?: () => void;
+  openAddModal?: () => void;
+}

@@ -1,14 +1,20 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useState,
+} from 'react';
 import {
   FlatList,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
-import {ClipboardItem} from '../types';
+import {ClipboardItem, ScreenHandle} from '../types';
 import {
   colors,
   spacing,
@@ -102,22 +108,23 @@ function DetailView({
 
   return (
     <View style={styles.detail}>
-      <ScrollView
-        style={styles.detailScroll}
-        contentContainerStyle={styles.detailScrollContent}
-        showsVerticalScrollIndicator>
+      <View style={styles.detailHeader}>
         <Text style={styles.detailTimestamp}>{formattedTime}</Text>
-        <TextInput
-          style={styles.detailCodeInput}
-          value={draftContent}
-          onChangeText={setDraftContent}
-          multiline
-          textAlignVertical="top"
-          scrollEnabled={false}
-          placeholderTextColor={colors.text.placeholder}
-        />
-      </ScrollView>
+      </View>
+      <TextInput
+        style={styles.detailCodeInput}
+        value={draftContent}
+        onChangeText={setDraftContent}
+        multiline
+        textAlignVertical="top"
+        scrollEnabled
+        placeholderTextColor={colors.text.placeholder}
+      />
       <View style={styles.detailFooter}>
+        <Text style={styles.contentStats}>
+          {draftContent.length.toLocaleString()} chars /{' '}
+          {draftContent.split('\n').length.toLocaleString()} lines
+        </Text>
         <View style={styles.footerActions}>
           <TouchableOpacity
             style={[
@@ -164,13 +171,11 @@ function DetailPlaceholder() {
   );
 }
 
-export function ClipCopyScreen({
-  history,
-  copiedId,
-  copyToClipboard,
-  updateItemText,
-  clearHistory,
-}: ClipCopyScreenProps) {
+export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
+  function ClipCopyScreen(
+    {history, copiedId, copyToClipboard, updateItemText},
+    ref,
+  ) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -189,6 +194,21 @@ export function ClipCopyScreen({
     [history, selectedId],
   );
 
+  useImperativeHandle(ref, () => ({
+    copySelected: () => {
+      if (selectedItem) {
+        copyToClipboard(selectedItem);
+      }
+    },
+    handleEscape: () => {
+      if (selectedId) {
+        setSelectedId(null);
+        return true;
+      }
+      return false;
+    },
+  }), [selectedItem, selectedId, copyToClipboard]);
+
   const renderItem = useCallback(
     ({item}: {item: ClipboardItem}) => (
       <MasterRow
@@ -206,22 +226,6 @@ export function ClipCopyScreen({
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title} accessibilityRole="header">
-          Clipboard
-        </Text>
-        {history.length > 0 && (
-          <TouchableOpacity
-            onPress={clearHistory}
-            activeOpacity={0.7}
-            style={styles.clearButton}
-            accessibilityRole="button"
-            accessibilityLabel="Clear all clipboard history">
-            <Text style={styles.clearText}>Clear All</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
       {history.length === 0 ? (
         <View style={styles.emptyState}>
           <Text style={styles.emptyIcon}>📋</Text>
@@ -258,7 +262,7 @@ export function ClipCopyScreen({
       )}
     </View>
   );
-}
+});
 
 function Separator() {
   return <View style={styles.separator} />;
@@ -269,30 +273,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bg.secondary,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border.subtle,
-  },
-  title: {
-    ...typography.title,
-    color: colors.text.primary,
-  },
-  clearButton: {
-    minHeight: MIN_TAP_TARGET,
-    justifyContent: 'center',
-    paddingHorizontal: spacing.sm,
-  },
-  clearText: {
-    ...typography.caption,
-    color: colors.semantic.danger,
-  },
-
   // Split pane layout
   splitPane: {
     flex: 1,
@@ -322,7 +302,7 @@ const styles = StyleSheet.create({
   },
   rowSelected: {
     backgroundColor: colors.accent.muted,
-    borderLeftColor: colors.accent.primary,
+    borderLeftColor: colors.text.primary,
   },
   rowText: {
     flex: 1,
@@ -343,7 +323,7 @@ const styles = StyleSheet.create({
   },
   rowCopyText: {
     ...typography.small,
-    color: colors.accent.primary,
+    color: colors.text.secondary,
   },
   rowCopyTextCopied: {
     color: colors.semantic.success,
@@ -358,29 +338,35 @@ const styles = StyleSheet.create({
   detail: {
     flex: 1,
   },
-  detailScroll: {
-    flex: 1,
-  },
-  detailScrollContent: {
-    padding: spacing.xl,
+  detailHeader: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.sm,
   },
   detailTimestamp: {
     ...typography.caption,
     color: colors.text.placeholder,
-    marginBottom: spacing.md,
   },
   detailCodeInput: {
+    flex: 1,
     ...typography.code,
     color: colors.text.secondary,
     backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
     padding: spacing.lg,
-    minHeight: 200,
+    marginHorizontal: spacing.xl,
+    marginBottom: spacing.sm,
+    minHeight: 120,
   },
   detailFooter: {
     padding: spacing.lg,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border.subtle,
+  },
+  contentStats: {
+    ...typography.caption,
+    color: colors.text.placeholder,
+    marginBottom: spacing.sm,
   },
   footerActions: {
     flexDirection: 'row',
@@ -392,7 +378,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: radii.md,
-    backgroundColor: colors.accent.primary,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.strong,
   },
   detailCopyBtnCopied: {
     backgroundColor: colors.semantic.successBg,

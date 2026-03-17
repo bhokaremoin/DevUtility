@@ -208,7 +208,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: radii.md,
-    backgroundColor: colors.accent.primary,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.strong,
   },
   saveButtonDisabled: {
     backgroundColor: colors.bg.surface,

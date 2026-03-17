@@ -21,8 +21,8 @@ export const colors = {
   },
 
   accent: {
-    primary: '#0A84FF',
-    muted: '#0A84FF33',
+    primary: '#E5E5E7',
+    muted: '#E5E5E71A',
   },
 
   semantic: {

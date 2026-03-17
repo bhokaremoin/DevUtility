@@ -1,7 +1,14 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   FlatList,
-  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -9,7 +16,7 @@ import {
   View,
 } from 'react-native';
 import {useSnippets} from '../hooks';
-import {Snippet} from '../types';
+import {Snippet, ScreenHandle} from '../types';
 import {AddSnippetModal} from '../components';
 import {
   colors,
@@ -93,10 +100,7 @@ function SnippetDetailView({
 
   return (
     <View style={styles.detail}>
-      <ScrollView
-        style={styles.detailScroll}
-        contentContainerStyle={styles.detailScrollContent}
-        showsVerticalScrollIndicator>
+      <View style={styles.detailHeader}>
         <Text style={styles.detailTitle}>{snippet.title}</Text>
 
         {snippet.description.length > 0 && (
@@ -112,19 +116,23 @@ function SnippetDetailView({
             ))}
           </View>
         )}
+      </View>
 
-        <TextInput
-          style={styles.detailCodeInput}
-          value={draftContent}
-          onChangeText={setDraftContent}
-          multiline
-          textAlignVertical="top"
-          scrollEnabled={false}
-          placeholderTextColor={colors.text.placeholder}
-        />
-      </ScrollView>
+      <TextInput
+        style={styles.detailCodeInput}
+        value={draftContent}
+        onChangeText={setDraftContent}
+        multiline
+        textAlignVertical="top"
+        scrollEnabled
+        placeholderTextColor={colors.text.placeholder}
+      />
 
       <View style={styles.detailFooter}>
+        <Text style={styles.contentStats}>
+          {draftContent.length.toLocaleString()} chars /{' '}
+          {draftContent.split('\n').length.toLocaleString()} lines
+        </Text>
         {confirming ? (
           <View style={styles.confirmContainer}>
             <Text style={styles.confirmLabel}>Delete this snippet?</Text>
@@ -206,7 +214,8 @@ function DetailPlaceholder() {
   );
 }
 
-export function SnippetManagerScreen() {
+export const SnippetManagerScreen = forwardRef<ScreenHandle>(
+  function SnippetManagerScreen(_props, ref) {
   const {
     snippets,
     searchQuery,
@@ -219,6 +228,7 @@ export function SnippetManagerScreen() {
   } = useSnippets();
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const searchInputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     if (snippets.length === 0) {
@@ -235,6 +245,34 @@ export function SnippetManagerScreen() {
     () => snippets.find(s => s.id === selectedId) ?? null,
     [snippets, selectedId],
   );
+
+  useImperativeHandle(ref, () => ({
+    copySelected: () => {
+      if (selectedSnippet) {
+        copySnippet(selectedSnippet);
+      }
+    },
+    handleEscape: () => {
+      if (searchQuery.trim()) {
+        setSearchQuery('');
+        return true;
+      }
+      if (selectedId) {
+        setSelectedId(null);
+        return true;
+      }
+      return false;
+    },
+    focusSearch: () => {
+      searchInputRef.current?.focus();
+    },
+    openAddModal: () => setModalVisible(true),
+  }), [selectedSnippet, searchQuery, selectedId, copySnippet, setSearchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
+    return () => clearTimeout(timer);
+  }, []);
 
   const renderItem = useCallback(
     ({item}: {item: Snippet}) => (
@@ -253,22 +291,9 @@ export function SnippetManagerScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title} accessibilityRole="header">
-          Snippets
-        </Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => setModalVisible(true)}
-          activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel="Create new snippet">
-          <Text style={styles.addButtonText}>+ New</Text>
-        </TouchableOpacity>
-      </View>
-
       <View style={styles.searchContainer}>
         <TextInput
+          ref={searchInputRef}
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={setSearchQuery}
@@ -328,7 +353,7 @@ export function SnippetManagerScreen() {
       )}
     </View>
   );
-}
+});
 
 function Separator() {
   return <View style={styles.separator} />;
@@ -339,35 +364,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bg.secondary,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border.subtle,
-  },
-  title: {
-    ...typography.title,
-    color: colors.text.primary,
-  },
-  addButton: {
-    paddingHorizontal: spacing.lg,
-    minHeight: MIN_TAP_TARGET,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: radii.md,
-    backgroundColor: colors.accent.primary,
-  },
-  addButtonText: {
-    ...typography.bodyBold,
-    color: colors.text.primary,
-  },
   searchContainer: {
     paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.sm + spacing.xxs,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm + spacing.xxs,
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: colors.border.subtle,
   },
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   },
   rowSelected: {
     backgroundColor: colors.accent.muted,
-    borderLeftColor: colors.accent.primary,
+    borderLeftColor: colors.text.primary,
   },
   rowContent: {
     flex: 1,
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   },
   rowCopyText: {
     ...typography.small,
-    color: colors.accent.primary,
+    color: colors.text.secondary,
   },
   rowCopyTextCopied: {
     color: colors.semantic.success,
@@ -454,11 +454,10 @@ const styles = StyleSheet.create({
   detail: {
     flex: 1,
   },
-  detailScroll: {
-    flex: 1,
-  },
-  detailScrollContent: {
-    padding: spacing.xl,
+  detailHeader: {
+    paddingHorizontal: spacing.xl,
+    paddingTop: spacing.xl,
+    paddingBottom: spacing.sm,
   },
   detailTitle: {
     ...typography.title,
@@ -484,21 +483,28 @@ const styles = StyleSheet.create({
   },
   tagText: {
     ...typography.small,
-    color: colors.accent.primary,
+    color: colors.text.secondary,
   },
   detailCodeInput: {
+    flex: 1,
     ...typography.code,
     color: colors.text.secondary,
     backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
     padding: spacing.lg,
-    marginTop: spacing.xs,
-    minHeight: 200,
+    marginHorizontal: spacing.xl,
+    marginBottom: spacing.sm,
+    minHeight: 120,
   },
   detailFooter: {
     padding: spacing.lg,
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.border.subtle,
+  },
+  contentStats: {
+    ...typography.caption,
+    color: colors.text.placeholder,
+    marginBottom: spacing.sm,
   },
   footerActions: {
     flexDirection: 'row',
@@ -510,7 +516,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: radii.md,
-    backgroundColor: colors.accent.primary,
+    backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.strong,
   },
   detailCopyBtnCopied: {
     backgroundColor: colors.semantic.successBg,

@@ -5,15 +5,11 @@ class UtilityPanel: NSPanel {
   override var canBecomeMain: Bool { true }
 
   override func keyDown(with event: NSEvent) {
-    if event.keyCode == 53 {
-      PanelManager.shared.hide()
-    } else {
-      super.keyDown(with: event)
-    }
+    super.keyDown(with: event)
   }
 
   override func cancelOperation(_ sender: Any?) {
-    PanelManager.shared.hide()
+    // Esc is handled by KeyEventModule for cascading behavior
   }
 }
 
@@ -54,6 +50,9 @@ class UtilityPanel: NSPanel {
     rootView.frame = NSRect(origin: .zero, size: panelSize)
     rootView.autoresizingMask = [.width, .height]
     panel.contentViewController = viewController
+
+    panel.standardWindowButton(.closeButton)?.isHidden = true
+    panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
 
     setupStatusItem()
   }

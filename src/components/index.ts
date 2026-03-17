@@ -1,3 +1,3 @@
 export {AddSnippetModal} from './AddSnippetModal';
-export {Sidebar} from './Sidebar';
-export type {Tab} from './Sidebar';
+export {TopHeader} from './TopHeader';
+export type {Tab} from './TopHeader';

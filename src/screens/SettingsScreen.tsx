@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   currentValue: {
     ...typography.caption,
-    color: colors.accent.primary,
+    color: colors.text.primary,
   },
   resetButton: {
     alignSelf: 'flex-start',
