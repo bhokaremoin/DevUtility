@@ -28,7 +28,7 @@ class UtilityPanel: NSPanel {
   @objc func setup(with rootView: NSView) {
     panel = UtilityPanel(
       contentRect: NSRect(origin: .zero, size: panelSize),
-      styleMask: [.titled, .closable, .resizable, .fullSizeContentView, .nonactivatingPanel],
+      styleMask: [.titled, .fullSizeContentView, .nonactivatingPanel],
       backing: .buffered,
       defer: false
     )
@@ -50,9 +50,6 @@ class UtilityPanel: NSPanel {
     rootView.frame = NSRect(origin: .zero, size: panelSize)
     rootView.autoresizingMask = [.width, .height]
     panel.contentViewController = viewController
-
-    panel.standardWindowButton(.closeButton)?.isHidden = true
-    panel.standardWindowButton(.miniaturizeButton)?.isHidden = true
 
     setupStatusItem()
   }
