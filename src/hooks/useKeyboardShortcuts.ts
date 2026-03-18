@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {NativeModules, NativeEventEmitter} from 'react-native';
 import {Tab} from '../components/TopHeader';
 
@@ -15,6 +15,11 @@ interface Handlers {
 }
 
 export function useKeyboardShortcuts(handlers: Handlers) {
+  // Keep a ref so the subscriptions (created once) always call the latest handlers
+  // without needing to be torn down and re-created on every tab switch.
+  const handlersRef = useRef(handlers);
+  handlersRef.current = handlers;
+
   useEffect(() => {
     if (!emitter) {
       return;
@@ -22,21 +27,21 @@ export function useKeyboardShortcuts(handlers: Handlers) {
 
     const subs = [
       emitter.addListener('onNavigate', (body: {tab: Tab}) => {
-        handlers.onNavigate(body.tab);
+        handlersRef.current.onNavigate(body.tab);
       }),
       emitter.addListener('onCopyAction', () => {
-        handlers.onCopyAction();
+        handlersRef.current.onCopyAction();
       }),
       emitter.addListener('onEscape', () => {
-        handlers.onEscape();
+        handlersRef.current.onEscape();
       }),
       emitter.addListener('onSearch', () => {
-        handlers.onSearch();
+        handlersRef.current.onSearch();
       }),
     ];
 
     return () => {
       subs.forEach(s => s.remove());
     };
-  }, [handlers]);
+  }, []); // Subscribe once — handlersRef always holds the latest handlers
 }

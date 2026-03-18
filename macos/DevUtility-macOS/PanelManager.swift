@@ -28,7 +28,7 @@ class UtilityPanel: NSPanel {
   @objc func setup(with rootView: NSView) {
     panel = UtilityPanel(
       contentRect: NSRect(origin: .zero, size: panelSize),
-      styleMask: [.titled, .fullSizeContentView, .nonactivatingPanel],
+      styleMask: [.titled, .fullSizeContentView],
       backing: .buffered,
       defer: false
     )
@@ -97,7 +97,11 @@ class UtilityPanel: NSPanel {
     let y = visibleFrame.midY - panel.frame.height / 2
     panel.setFrameOrigin(NSPoint(x: x, y: y))
 
-    NSApp.activate(ignoringOtherApps: true)
+    if #available(macOS 14.0, *) {
+      NSRunningApplication.current.activate(options: [])
+    } else {
+      NSRunningApplication.current.activate(options: .activateIgnoringOtherApps)
+    }
     panel.makeKeyAndOrderFront(nil)
 
     installClickOutsideMonitor()
@@ -132,7 +136,11 @@ class UtilityPanel: NSPanel {
     if event.type == .rightMouseUp {
       showContextMenu()
     } else {
-      toggle()
+      // Defer to next run loop so the status bar mouse-up event is fully
+      // processed before we take focus.
+      DispatchQueue.main.async { [weak self] in
+        self?.toggle()
+      }
     }
   }
 

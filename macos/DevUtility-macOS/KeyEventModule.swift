@@ -12,19 +12,38 @@ class KeyEventModule: RCTEventEmitter {
   }
 
   override func startObserving() {
-    hasListeners = true
-    DispatchQueue.main.async { self.installMonitor() }
+    // Set hasListeners and install the monitor together on the main thread
+    // to avoid a race where hasListeners=true but the monitor closure already
+    // ran and saw hasListeners=false (or vice-versa).
+    if Thread.isMainThread {
+      hasListeners = true
+      installMonitor()
+    } else {
+      DispatchQueue.main.async {
+        self.hasListeners = true
+        self.installMonitor()
+      }
+    }
   }
 
   override func stopObserving() {
-    hasListeners = false
-    DispatchQueue.main.async { self.removeMonitor() }
+    if Thread.isMainThread {
+      hasListeners = false
+      removeMonitor()
+    } else {
+      DispatchQueue.main.async {
+        self.hasListeners = false
+        self.removeMonitor()
+      }
+    }
   }
 
   private func installMonitor() {
     removeMonitor()
     localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-      guard let self = self, self.hasListeners else { return event }
+      guard let self = self, self.hasListeners else {
+        return event
+      }
       return self.handleKeyEvent(event)
     }
   }

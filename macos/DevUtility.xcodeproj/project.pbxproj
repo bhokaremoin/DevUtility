@@ -18,6 +18,8 @@
 		BB0001000000000000000004 /* GlobalShortcutModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000004 /* GlobalShortcutModuleBridge.m */; };
 		BB0001000000000000000005 /* ShortcutRecorderViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000005 /* ShortcutRecorderViewManager.swift */; };
 		BB0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m */; };
+		BB0001000000000000000008 /* KeyEventModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000008 /* KeyEventModule.swift */; };
+		BB0001000000000000000009 /* KeyEventModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000009 /* KeyEventModuleBridge.m */; };
 		BB0001000000000000000007 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = CC0001000000000000000002 /* KeyboardShortcuts */; };
 		D0E437E821728A0649128AD1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
@@ -42,6 +44,8 @@
 		AA0001000000000000000004 /* GlobalShortcutModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GlobalShortcutModuleBridge.m; sourceTree = "<group>"; };
 		AA0001000000000000000005 /* ShortcutRecorderViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderViewManager.swift; sourceTree = "<group>"; };
 		AA0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShortcutRecorderViewManagerBridge.m; sourceTree = "<group>"; };
+		AA0001000000000000000008 /* KeyEventModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEventModule.swift; sourceTree = "<group>"; };
+		AA0001000000000000000009 /* KeyEventModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyEventModuleBridge.m; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -95,6 +99,8 @@
 				AA0001000000000000000004 /* GlobalShortcutModuleBridge.m */,
 				AA0001000000000000000005 /* ShortcutRecorderViewManager.swift */,
 				AA0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m */,
+				AA0001000000000000000008 /* KeyEventModule.swift */,
+				AA0001000000000000000009 /* KeyEventModuleBridge.m */,
 				514201512437B4B40078DB4F /* Assets.xcassets */,
 				514201532437B4B40078DB4F /* Main.storyboard */,
 				514201562437B4B40078DB4F /* Info.plist */,
@@ -332,6 +338,8 @@
 				BB0001000000000000000004 /* GlobalShortcutModuleBridge.m in Sources */,
 				BB0001000000000000000005 /* ShortcutRecorderViewManager.swift in Sources */,
 				BB0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m in Sources */,
+				BB0001000000000000000008 /* KeyEventModule.swift in Sources */,
+				BB0001000000000000000009 /* KeyEventModuleBridge.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
