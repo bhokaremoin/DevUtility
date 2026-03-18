@@ -65,6 +65,7 @@ class UtilityPanel: NSPanel {
       button.title = "DU"
     }
 
+    button.sendAction(on: [.leftMouseUp, .rightMouseUp])
     button.action = #selector(statusBarButtonClicked)
     button.target = self
   }
@@ -127,6 +128,26 @@ class UtilityPanel: NSPanel {
   }
 
   @objc private func statusBarButtonClicked() {
-    toggle()
+    guard let event = NSApp.currentEvent else { return }
+    if event.type == .rightMouseUp {
+      showContextMenu()
+    } else {
+      toggle()
+    }
+  }
+
+  private func showContextMenu() {
+    let menu = NSMenu()
+    menu.addItem(NSMenuItem(title: "Open DevUtility", action: #selector(show), keyEquivalent: ""))
+    menu.addItem(NSMenuItem.separator())
+    menu.addItem(NSMenuItem(title: "Quit DevUtility", action: #selector(quitApp), keyEquivalent: "q"))
+    for item in menu.items { item.target = self }
+    statusItem.menu = menu
+    statusItem.button?.performClick(nil)
+    statusItem.menu = nil
+  }
+
+  @objc private func quitApp() {
+    NSApplication.shared.terminate(nil)
   }
 }
