@@ -18,4 +18,6 @@ export interface ScreenHandle {
   handleEscape?: () => boolean;
   focusSearch?: () => void;
   openAddModal?: () => void;
+  navigateUp?: () => void;
+  navigateDown?: () => void;
 }

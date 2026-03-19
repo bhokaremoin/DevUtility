@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useImperativeHandle,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import {
@@ -87,11 +88,13 @@ function DetailView({
   isCopied,
   onCopy,
   onUpdate,
+  onEditorFocusChange,
 }: {
   item: ClipboardItem;
   isCopied: boolean;
   onCopy: (item: ClipboardItem, textOverride?: string) => void;
   onUpdate: (id: string, text: string) => void;
+  onEditorFocusChange: (focused: boolean) => void;
 }) {
   const [draftContent, setDraftContent] = useState(item.text);
 
@@ -119,6 +122,8 @@ function DetailView({
         textAlignVertical="top"
         scrollEnabled
         placeholderTextColor={colors.text.placeholder}
+        onFocus={() => onEditorFocusChange(true)}
+        onBlur={() => onEditorFocusChange(false)}
       />
       <View style={styles.detailFooter}>
         <Text style={styles.contentStats}>
@@ -177,6 +182,30 @@ export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
     ref,
   ) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const flatListRef = useRef<FlatList>(null);
+  const isDetailFocused = useRef(false);
+  const visibleItemIds = useRef<Set<string>>(new Set());
+
+  const onViewableItemsChanged = useRef(({viewableItems}: any) => {
+    visibleItemIds.current = new Set(viewableItems.map((vi: any) => vi.key));
+  }).current;
+
+  const viewabilityConfig = useRef({itemVisiblePercentThreshold: 90}).current;
+
+  const navigate = useCallback((delta: 1 | -1) => {
+    if (history.length === 0 || isDetailFocused.current) return;
+    const idx = selectedId ? history.findIndex(h => h.id === selectedId) : -1;
+    const newIdx = Math.max(0, Math.min(history.length - 1, (idx === -1 ? 0 : idx) + delta));
+    const newId = history[newIdx].id;
+    setSelectedId(newId);
+    if (!visibleItemIds.current.has(newId)) {
+      flatListRef.current?.scrollToIndex({
+        index: newIdx,
+        animated: false,
+        viewPosition: delta === 1 ? 1 : 0,
+      });
+    }
+  }, [history, selectedId]);
 
   useEffect(() => {
     if (history.length === 0) {
@@ -207,7 +236,9 @@ export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
       }
       return false;
     },
-  }), [selectedItem, selectedId, copyToClipboard]);
+    navigateUp: () => navigate(-1),
+    navigateDown: () => navigate(1),
+  }), [selectedItem, selectedId, copyToClipboard, navigate]);
 
   const renderItem = useCallback(
     ({item}: {item: ClipboardItem}) => (
@@ -238,12 +269,21 @@ export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
         <View style={styles.splitPane}>
           <View style={styles.masterPane}>
             <FlatList
+              ref={flatListRef}
               data={history}
               renderItem={renderItem}
               keyExtractor={keyExtractor}
               contentContainerStyle={styles.masterList}
               ItemSeparatorComponent={Separator}
               showsVerticalScrollIndicator={false}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              onScrollToIndexFailed={({index}) => {
+                flatListRef.current?.scrollToOffset({
+                  offset: index * 56,
+                  animated: false,
+                });
+              }}
             />
           </View>
           <View style={styles.detailPane}>
@@ -253,6 +293,7 @@ export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
                 isCopied={copiedId === selectedItem.id}
                 onCopy={copyToClipboard}
                 onUpdate={updateItemText}
+                onEditorFocusChange={focused => { isDetailFocused.current = focused; }}
               />
             ) : (
               <DetailPlaceholder />

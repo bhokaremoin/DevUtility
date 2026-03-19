@@ -8,7 +8,7 @@ class KeyEventModule: RCTEventEmitter {
   override static func requiresMainQueueSetup() -> Bool { true }
 
   override func supportedEvents() -> [String] {
-    ["onNavigate", "onCopyAction", "onEscape", "onSearch"]
+    ["onNavigate", "onCopyAction", "onEscape", "onSearch", "onArrowNavigation"]
   }
 
   override func startObserving() {
@@ -86,6 +86,21 @@ class KeyEventModule: RCTEventEmitter {
 
     if event.keyCode == 53 {
       sendEvent(withName: "onEscape", body: nil)
+      return nil
+    }
+
+    if event.keyCode == 125 || event.keyCode == 126 {
+      let direction = event.keyCode == 125 ? "down" : "up"
+      // If a multiline text editor is focused (detail pane editor), pass the event
+      // through so cursor movement still works, but also notify JS so it can decide
+      // whether to navigate (it will bail if the detail editor is focused).
+      if let textView = NSApp.keyWindow?.firstResponder as? NSTextView,
+         (textView.textContainer?.maximumNumberOfLines ?? 0) == 0 {
+        sendEvent(withName: "onArrowNavigation", body: ["direction": direction])
+        return event // don't consume — let cursor move in the editor
+      }
+      // Otherwise (no text input focused, or single-line search input): navigate.
+      sendEvent(withName: "onArrowNavigation", body: ["direction": direction])
       return nil
     }
 

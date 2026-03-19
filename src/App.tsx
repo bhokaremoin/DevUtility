@@ -36,6 +36,11 @@ function App(): React.JSX.Element {
         }
         setTimeout(() => snippetRef.current?.focusSearch?.(), 50);
       },
+      onArrowNavigation: (direction: 'up' | 'down') => {
+        const ref = getActiveRef();
+        if (direction === 'down') ref?.current?.navigateDown?.();
+        else ref?.current?.navigateUp?.();
+      },
     }),
     [activeTab, getActiveRef],
   );

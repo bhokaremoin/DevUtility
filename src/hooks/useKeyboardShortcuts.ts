@@ -12,6 +12,7 @@ interface Handlers {
   onCopyAction: () => void;
   onEscape: () => void;
   onSearch: () => void;
+  onArrowNavigation: (direction: 'up' | 'down') => void;
 }
 
 export function useKeyboardShortcuts(handlers: Handlers) {
@@ -37,6 +38,9 @@ export function useKeyboardShortcuts(handlers: Handlers) {
       }),
       emitter.addListener('onSearch', () => {
         handlersRef.current.onSearch();
+      }),
+      emitter.addListener('onArrowNavigation', (body: {direction: 'up' | 'down'}) => {
+        handlersRef.current.onArrowNavigation(body.direction);
       }),
     ];
 

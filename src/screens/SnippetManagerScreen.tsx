@@ -81,12 +81,14 @@ function SnippetDetailView({
   onCopy,
   onDelete,
   onUpdate,
+  onEditorFocusChange,
 }: {
   snippet: Snippet;
   isCopied: boolean;
   onCopy: (s: Snippet, contentOverride?: string) => void;
   onDelete: (id: string) => void;
   onUpdate: (id: string, content: string) => void;
+  onEditorFocusChange: (focused: boolean) => void;
 }) {
   const [draftContent, setDraftContent] = useState(snippet.content);
   const [confirming, setConfirming] = useState(false);
@@ -126,6 +128,8 @@ function SnippetDetailView({
         textAlignVertical="top"
         scrollEnabled
         placeholderTextColor={colors.text.placeholder}
+        onFocus={() => onEditorFocusChange(true)}
+        onBlur={() => onEditorFocusChange(false)}
       />
 
       <View style={styles.detailFooter}>
@@ -229,6 +233,30 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const searchInputRef = useRef<TextInput>(null);
+  const flatListRef = useRef<FlatList>(null);
+  const isDetailFocused = useRef(false);
+  const visibleItemIds = useRef<Set<string>>(new Set());
+
+  const onViewableItemsChanged = useRef(({viewableItems}: any) => {
+    visibleItemIds.current = new Set(viewableItems.map((vi: any) => vi.key));
+  }).current;
+
+  const viewabilityConfig = useRef({itemVisiblePercentThreshold: 90}).current;
+
+  const navigate = useCallback((delta: 1 | -1) => {
+    if (snippets.length === 0 || isDetailFocused.current) return;
+    const idx = selectedId ? snippets.findIndex(s => s.id === selectedId) : -1;
+    const newIdx = Math.max(0, Math.min(snippets.length - 1, (idx === -1 ? 0 : idx) + delta));
+    const newId = snippets[newIdx].id;
+    setSelectedId(newId);
+    if (!visibleItemIds.current.has(newId)) {
+      flatListRef.current?.scrollToIndex({
+        index: newIdx,
+        animated: false,
+        viewPosition: delta === 1 ? 1 : 0,
+      });
+    }
+  }, [snippets, selectedId]);
 
   useEffect(() => {
     if (snippets.length === 0) {
@@ -267,7 +295,9 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
       searchInputRef.current?.focus();
     },
     openAddModal: () => setModalVisible(true),
-  }), [selectedSnippet, searchQuery, selectedId, copySnippet, setSearchQuery]);
+    navigateUp: () => navigate(-1),
+    navigateDown: () => navigate(1),
+  }), [selectedSnippet, searchQuery, selectedId, copySnippet, setSearchQuery, navigate]);
 
   useEffect(() => {
     const timer = setTimeout(() => searchInputRef.current?.focus(), 100);
@@ -301,6 +331,11 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
           placeholderTextColor={colors.text.placeholder}
           accessibilityRole="search"
           accessibilityLabel="Search snippets"
+          keyDownEvents={[{key: 'ArrowDown'}, {key: 'ArrowUp'}]}
+          onKeyDown={({nativeEvent}: any) => {
+            if (nativeEvent.key === 'ArrowDown') navigate(1);
+            else if (nativeEvent.key === 'ArrowUp') navigate(-1);
+          }}
         />
       </View>
 
@@ -320,12 +355,21 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
         <View style={styles.splitPane}>
           <View style={styles.masterPane}>
             <FlatList
+              ref={flatListRef}
               data={snippets}
               renderItem={renderItem}
               keyExtractor={keyExtractor}
               contentContainerStyle={styles.masterList}
               ItemSeparatorComponent={Separator}
               showsVerticalScrollIndicator={false}
+              onViewableItemsChanged={onViewableItemsChanged}
+              viewabilityConfig={viewabilityConfig}
+              onScrollToIndexFailed={({index}) => {
+                flatListRef.current?.scrollToOffset({
+                  offset: index * 60,
+                  animated: false,
+                });
+              }}
             />
           </View>
           <View style={styles.detailPane}>
@@ -336,6 +380,7 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
                 onCopy={copySnippet}
                 onDelete={removeSnippet}
                 onUpdate={updateSnippetContent}
+                onEditorFocusChange={focused => { isDetailFocused.current = focused; }}
               />
             ) : (
               <DetailPlaceholder />
