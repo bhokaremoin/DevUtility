@@ -58,11 +58,11 @@ class UtilityPanel: NSPanel {
     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     guard let button = statusItem.button else { return }
 
-    if let image = NSImage(systemSymbolName: "wrench.and.screwdriver", accessibilityDescription: "DevUtility") {
+    if let image = NSImage(named: "MenuBarIcon") {
       image.isTemplate = true
       button.image = image
     } else {
-      button.title = "DU"
+      button.title = "</>"
     }
 
     button.sendAction(on: [.leftMouseUp, .rightMouseUp])
