@@ -1,7 +1,7 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Alert, NativeModules, StyleSheet, View} from 'react-native';
+import {Alert, Keyboard, NativeModules, StyleSheet, View} from 'react-native';
 import {ClipCopyScreen, SnippetManagerScreen, SettingsScreen} from './screens';
-import {TopHeader, Tab} from './components';
+import {TopHeader, ShortcutsModal, Tab} from './components';
 import {useClipboardHistory, useKeyboardShortcuts} from './hooks';
 import {ScreenHandle} from './types';
 import {colors} from './theme';
@@ -10,6 +10,7 @@ const {KeyEventModule} = NativeModules;
 
 function App(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<Tab>('clipboard');
+  const [showShortcuts, setShowShortcuts] = useState(false);
   const clipboardState = useClipboardHistory();
   const clipboardRef = useRef<ScreenHandle>(null);
   const snippetRef = useRef<ScreenHandle>(null);
@@ -67,6 +68,15 @@ function App(): React.JSX.Element {
           onClearAll={handleClearAll}
           showClearAll={activeTab === 'clipboard' && clipboardState.history.length > 0}
           onAddSnippet={() => snippetRef.current?.openAddModal?.()}
+          onHelpPress={() => {
+            Keyboard.dismiss();
+            snippetRef.current?.blurAll?.();
+            setShowShortcuts(true);
+          }}
+        />
+        <ShortcutsModal
+          visible={showShortcuts}
+          onClose={() => setShowShortcuts(false)}
         />
         <View style={styles.content}>
           {activeTab === 'clipboard' && (

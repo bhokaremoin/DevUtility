@@ -10,6 +10,7 @@ interface Props {
   onClearAll?: () => void;
   showClearAll?: boolean;
   onAddSnippet?: () => void;
+  onHelpPress?: () => void;
 }
 
 const MAIN_TABS: {key: Tab; label: string}[] = [
@@ -23,6 +24,7 @@ export function TopHeader({
   onClearAll,
   showClearAll,
   onAddSnippet,
+  onHelpPress,
 }: Props) {
   return (
     <View style={styles.container}>
@@ -69,6 +71,16 @@ export function TopHeader({
             accessibilityRole="button"
             accessibilityLabel="Create new snippet">
             <Text style={styles.addButtonText}>+ New</Text>
+          </TouchableOpacity>
+        )}
+        {onHelpPress && (
+          <TouchableOpacity
+            style={styles.helpBtn}
+            onPress={onHelpPress}
+            activeOpacity={0.7}
+            accessibilityRole="button"
+            accessibilityLabel="Keyboard shortcuts">
+            <Text style={styles.helpIcon}>?</Text>
           </TouchableOpacity>
         )}
         <TouchableOpacity
@@ -158,6 +170,18 @@ const styles = StyleSheet.create({
   addButtonText: {
     ...typography.bodyBold,
     color: colors.text.primary,
+  },
+  helpBtn: {
+    width: MIN_TAP_TARGET - spacing.sm,
+    height: MIN_TAP_TARGET - spacing.sm,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: radii.md,
+  },
+  helpIcon: {
+    fontSize: 16,
+    color: colors.text.tertiary,
+    fontWeight: '600',
   },
   settingsBtn: {
     width: MIN_TAP_TARGET - spacing.sm,

@@ -17,6 +17,7 @@ export interface ScreenHandle {
   copySelected?: () => void;
   handleEscape?: () => boolean;
   focusSearch?: () => void;
+  blurAll?: () => void;
   openAddModal?: () => void;
   navigateUp?: () => void;
   navigateDown?: () => void;
