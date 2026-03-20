@@ -8,43 +8,56 @@
  */
 
 // ---------------------------------------------------------------------------
-// Colors — dark palette inspired by macOS system materials
+// Colors
+// ---------------------------------------------------------------------------
+// Background surfaces use pure neutral grays — no color cast. Each level
+// steps ~8 points lighter to create clear, legible elevation without shadows.
+// Borders are alpha-white so they adapt to any surface automatically.
+// Accent: Dracula-theme Cyan — distinctive, avoids generic Apple Blue, and
+// reads cleanly against neutral dark surfaces (VS Code Dracula palette).
 // ---------------------------------------------------------------------------
 export const colors = {
   bg: {
-    primary: '#0D0D0D',
-    secondary: '#141414',
-    elevated: '#1C1C1E',
-    surface: '#2C2C2E',
-    hover: '#3A3A3C',
+    primary:   '#0C0C0C',   // near-black — no hue cast
+    secondary: '#141414',   // +8
+    elevated:  '#1C1C1C',   // panels, cards — matches macOS window bg
+    surface:   '#252525',   // inputs, code editors
+    hover:     '#2F2F2F',   // hover / pressed state
   },
 
   border: {
-    subtle: '#2C2C2E',
-    default: '#3A3A3C',
-    strong: '#48484A',
+    subtle:    '#FFFFFF0A',  //  4% white — hairline dividers
+    default:   '#FFFFFF16',  //  9% white — default strokes
+    strong:    '#FFFFFF28',  // 16% white — emphasized edges
+    highlight: '#FFFFFF3C',  // 24% white — modal card edges
   },
 
   text: {
-    primary: '#FFFFFF',
-    secondary: '#E5E5E7',
-    tertiary: '#8E8E93',
-    placeholder: '#636366',
+    primary:     '#FFFFFF',
+    secondary:   '#E8E8E8',
+    tertiary:    '#9A9A9A',
+    placeholder: '#5C5C5C',
   },
 
+  // Dracula-theme Cyan accent — the iconic #8BE9FD used across VS Code's
+  // most popular dark theme. primary/muted/border use the bright cyan for
+  // labels and tints; deep uses Cyan-600 (#0891B2) as the solid CTA fill
+  // so white button text hits the 4.5:1 contrast minimum.
   accent: {
-    primary: '#E5E5E7',
-    muted: '#E5E5E71A',
+    primary: '#8BE9FD',    // Dracula Cyan — labels, icons, selected text
+    deep:    '#0891B2',    // Cyan-600 — solid CTA button background
+    muted:   '#8BE9FD12', // 7% — row selection background
+    border:  '#8BE9FD44', // 27% — selection / focus border
   },
 
   semantic: {
-    success: '#30D158',
-    successBg: '#30D15826',
-    danger: '#FF453A',
-    dangerBg: '#FF453A26',
+    success:   '#34D399',   // Tailwind Emerald-400
+    successBg: '#34D39918', // 9%
+    danger:    '#F87171',   // Tailwind Red-400
+    dangerBg:  '#F8717118', // 9%
   },
 
-  overlay: 'rgba(0, 0, 0, 0.65)',
+  overlay: 'rgba(0, 0, 0, 0.78)',
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -66,17 +79,17 @@ export const spacing = {
 // Typography — predefined text styles
 // ---------------------------------------------------------------------------
 export const typography = {
-  title: {fontSize: 20, fontWeight: '700' as const, letterSpacing: 0.3},
-  heading: {fontSize: 17, fontWeight: '600' as const},
-  body: {fontSize: 14, fontWeight: '400' as const, lineHeight: 20},
+  title:   {fontSize: 22, fontWeight: '700' as const, letterSpacing: 0.2},
+  heading: {fontSize: 17, fontWeight: '600' as const, letterSpacing: -0.1},
+  body:    {fontSize: 14, fontWeight: '400' as const, lineHeight: 21},
   bodyBold: {fontSize: 14, fontWeight: '600' as const},
-  caption: {fontSize: 12, fontWeight: '500' as const},
-  code: {fontSize: 12, fontFamily: 'Menlo', lineHeight: 18},
-  small: {fontSize: 11, fontWeight: '600' as const},
+  caption: {fontSize: 12, fontWeight: '500' as const, letterSpacing: 0.1},
+  code:    {fontSize: 12, fontFamily: 'Menlo', lineHeight: 19},
+  small:   {fontSize: 11, fontWeight: '600' as const, letterSpacing: 0.2},
   label: {
-    fontSize: 12,
-    fontWeight: '600' as const,
-    letterSpacing: 0.5,
+    fontSize: 11,
+    fontWeight: '700' as const,
+    letterSpacing: 0.8,
     textTransform: 'uppercase' as const,
   },
 } as const;
@@ -85,10 +98,14 @@ export const typography = {
 // Border radii
 // ---------------------------------------------------------------------------
 export const radii = {
-  sm: 4,
-  md: 8,
-  lg: 12,
+  sm:   6,
+  md:   10,
+  lg:   16,
+  pill: 999,
 } as const;
+
+/** Header height — macOS toolbar standard. */
+export const HEADER_HEIGHT = 52;
 
 /** Minimum touch target dimension (44 pt) per Apple HIG. */
 export const MIN_TAP_TARGET = 44;

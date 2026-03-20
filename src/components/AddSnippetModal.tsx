@@ -165,8 +165,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg.elevated,
     borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: colors.border.subtle,
+    borderColor: colors.border.highlight,
     padding: spacing.xxl,
+    shadowColor: '#000000',
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.4,
+    shadowRadius: 24,
   },
   heading: {
     ...typography.title,
@@ -209,6 +213,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: radii.md,
     backgroundColor: colors.bg.surface,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   cancelText: {
     ...typography.bodyBold,
@@ -220,18 +226,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: radii.md,
-    backgroundColor: colors.bg.surface,
-    borderWidth: 1,
-    borderColor: colors.border.strong,
+    backgroundColor: colors.accent.deep,
+    borderWidth: 0,
   },
   saveButtonDisabled: {
-    backgroundColor: colors.bg.surface,
+    opacity: 0.5,
   },
   saveText: {
     ...typography.bodyBold,
-    color: colors.text.primary,
+    color: '#FFFFFF',
   },
   saveTextDisabled: {
-    color: colors.text.placeholder,
+    color: '#FFFFFF',
   },
 });

@@ -43,54 +43,57 @@ export function SettingsScreen() {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>GLOBAL SHORTCUT</Text>
-        <Text style={styles.description}>
-          Click the recorder below and press your preferred key combination to
-          toggle DevUtility from anywhere. The shortcut works even when the app
-          is not in focus.
-        </Text>
-
-        <View style={styles.recorderRow}>
-          <Text style={styles.label}>Toggle Shortcut</Text>
-          <ShortcutRecorder style={styles.recorder} />
-        </View>
-
-        <View style={styles.currentShortcutRow}>
-          <Text style={styles.currentLabel}>Current:</Text>
-          <Text style={styles.currentValue}>
-            {currentShortcut ?? DEFAULT_SHORTCUT_LABEL}
+        <View style={styles.sectionCard}>
+          <Text style={styles.description}>
+            Click the recorder below and press your preferred key combination to
+            toggle DevUtility from anywhere. The shortcut works even when the app
+            is not in focus.
           </Text>
-        </View>
 
-        <TouchableOpacity
-          style={styles.resetButton}
-          onPress={handleReset}
-          activeOpacity={0.7}>
-          <Text style={styles.resetButtonText}>
-            Reset to Default ({DEFAULT_SHORTCUT_LABEL})
-          </Text>
-        </TouchableOpacity>
+          <View style={styles.recorderRow}>
+            <Text style={styles.label}>Toggle Shortcut</Text>
+            <ShortcutRecorder style={styles.recorder} />
+          </View>
+
+          <View style={styles.currentShortcutRow}>
+            <Text style={styles.currentLabel}>Current:</Text>
+            <Text style={styles.currentValue}>
+              {currentShortcut ?? DEFAULT_SHORTCUT_LABEL}
+            </Text>
+          </View>
+
+          <TouchableOpacity
+            style={styles.resetButton}
+            onPress={handleReset}
+            activeOpacity={0.7}>
+            <Text style={styles.resetButtonText}>
+              Reset to Default ({DEFAULT_SHORTCUT_LABEL})
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>BEHAVIOR</Text>
+        <View style={styles.sectionCard}>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Menu Bar Icon</Text>
+            <Text style={styles.infoValue}>Click to toggle visibility</Text>
+          </View>
 
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Menu Bar Icon</Text>
-          <Text style={styles.infoValue}>Click to toggle visibility</Text>
-        </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Dismiss</Text>
+            <Text style={styles.infoValue}>
+              Press Esc or click outside the window
+            </Text>
+          </View>
 
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Dismiss</Text>
-          <Text style={styles.infoValue}>
-            Press Esc or click outside the window
-          </Text>
-        </View>
-
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Positioning</Text>
-          <Text style={styles.infoValue}>
-            Appears centered on the active screen; drag to reposition
-          </Text>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Positioning</Text>
+            <Text style={styles.infoValue}>
+              Appears centered on the active screen; drag to reposition
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -112,8 +115,16 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...typography.label,
-    color: colors.text.tertiary,
+    color: colors.accent.primary,
     marginBottom: spacing.md,
+  },
+  sectionCard: {
+    backgroundColor: colors.bg.elevated,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
+    padding: spacing.lg,
+    marginTop: spacing.md,
   },
   description: {
     ...typography.body,
@@ -124,7 +135,7 @@ const styles = StyleSheet.create({
   recorderRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.bg.elevated,
+    backgroundColor: colors.bg.surface,
     padding: spacing.md,
     borderRadius: radii.md,
     marginBottom: spacing.md,
@@ -159,10 +170,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   resetButtonText: {
     ...typography.caption,
-    color: colors.text.secondary,
+    color: colors.text.primary,
   },
   infoRow: {
     flexDirection: 'row',
@@ -170,7 +183,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
-    backgroundColor: colors.bg.elevated,
+    backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
     marginBottom: spacing.xs,
   },

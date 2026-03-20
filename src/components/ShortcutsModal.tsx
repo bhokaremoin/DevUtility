@@ -121,8 +121,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.bg.elevated,
     borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: colors.border.default,
+    borderColor: colors.border.highlight,
     overflow: 'hidden',
+    shadowColor: '#000000',
+    shadowOffset: {width: 0, height: 8},
+    shadowOpacity: 0.4,
+    shadowRadius: 24,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -131,7 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xxl,
     paddingVertical: spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.subtle,
+    borderBottomColor: colors.border.default,
   },
   cardTitle: {
     ...typography.heading,
@@ -142,7 +146,8 @@ const styles = StyleSheet.create({
     height: 28,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: radii.sm,
+    borderRadius: radii.pill,
+    backgroundColor: colors.bg.surface,
   },
   closeText: {
     fontSize: 16,
@@ -172,7 +177,7 @@ const styles = StyleSheet.create({
   },
   rowDivider: {
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.subtle,
+    borderBottomColor: colors.border.default,
   },
   actionText: {
     ...typography.body,
@@ -191,16 +196,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 1,
   },
   kbd: {
-    backgroundColor: colors.bg.surface,
+    backgroundColor: colors.bg.hover,
     borderWidth: 1,
     borderColor: colors.border.strong,
     borderRadius: radii.sm,
-    paddingHorizontal: 7,
-    paddingVertical: 3,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
   },
   kbdText: {
     fontFamily: 'Menlo',
-    fontSize: 12,
+    fontSize: 11,
+    fontWeight: '600',
     color: colors.text.primary,
   },
 });

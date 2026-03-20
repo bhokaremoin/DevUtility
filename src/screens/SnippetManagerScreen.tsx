@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     paddingTop: spacing.sm,
     paddingBottom: spacing.sm + spacing.xxs,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: colors.border.subtle,
+    borderBottomColor: colors.border.default,
   },
   searchInput: {
     backgroundColor: colors.bg.surface,
@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
   masterPane: {
     flex: 0.35,
     borderRightWidth: 1,
-    borderRightColor: colors.border.subtle,
+    borderRightColor: colors.border.default,
   },
   detailPane: {
     flex: 0.65,

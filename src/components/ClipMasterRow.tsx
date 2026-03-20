@@ -46,7 +46,7 @@ export function ClipMasterRow({
       accessibilityRole="button"
       accessibilityState={{selected: isSelected}}
       accessibilityLabel={`Clipboard item: ${displayText}`}>
-      <Text style={styles.rowText} numberOfLines={2}>
+      <Text style={[styles.rowText, isSelected && styles.rowTextSelected]} numberOfLines={2}>
         {displayText}
       </Text>
       <TouchableOpacity
@@ -78,12 +78,15 @@ const styles = StyleSheet.create({
   },
   rowSelected: {
     backgroundColor: colors.accent.muted,
-    borderLeftColor: colors.text.primary,
+    borderLeftColor: colors.accent.primary,
   },
   rowText: {
     flex: 1,
     ...typography.body,
     color: colors.text.secondary,
+  },
+  rowTextSelected: {
+    color: colors.text.primary,
   },
   rowCopyBtn: {
     paddingHorizontal: spacing.sm + spacing.xxs,

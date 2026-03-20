@@ -43,7 +43,7 @@ export function SnippetRow({
       accessibilityState={{selected: isSelected}}
       accessibilityLabel={`Snippet: ${snippet.title}`}>
       <View style={styles.rowContent}>
-        <Text style={styles.rowTitle} numberOfLines={1}>
+        <Text style={[styles.rowTitle, isSelected && styles.rowTitleSelected]} numberOfLines={1}>
           {snippet.title}
         </Text>
         <Text style={styles.rowPreview} numberOfLines={1}>
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
   },
   rowSelected: {
     backgroundColor: colors.accent.muted,
-    borderLeftColor: colors.text.primary,
+    borderLeftColor: colors.accent.primary,
   },
   rowContent: {
     flex: 1,
@@ -88,6 +88,9 @@ const styles = StyleSheet.create({
   rowTitle: {
     ...typography.bodyBold,
     color: colors.text.primary,
+  },
+  rowTitleSelected: {
+    color: colors.accent.primary,
   },
   rowPreview: {
     ...typography.code,

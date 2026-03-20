@@ -10,7 +10,7 @@
 
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {colors, spacing, typography, radii, MIN_TAP_TARGET} from '../theme';
+import {colors, spacing, typography, radii, MIN_TAP_TARGET, HEADER_HEIGHT} from '../theme';
 
 /** The three top-level navigation tabs available in the app. */
 export type Tab = 'clipboard' | 'snippets' | 'settings';
@@ -115,8 +115,6 @@ export function TopHeader({
   );
 }
 
-const HEADER_HEIGHT = 40;
-
 const styles = StyleSheet.create({
   container: {
     height: HEADER_HEIGHT,
@@ -128,44 +126,52 @@ const styles = StyleSheet.create({
     borderBottomColor: colors.border.subtle,
   },
   appTitle: {
-    ...typography.bodyBold,
-    color: colors.text.tertiary,
+    fontSize: 15,
+    fontWeight: '700',
+    color: colors.text.secondary,
     marginRight: spacing.xl,
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
   },
   tabGroup: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.xxs,
-    backgroundColor: colors.bg.secondary,
-    borderRadius: radii.md,
+    backgroundColor: colors.bg.elevated,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.border.subtle,
     padding: spacing.xxs,
     alignSelf: 'center',
   },
   tab: {
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.xs + spacing.xxs,
-    borderRadius: radii.md - spacing.xxs,
+    borderRadius: radii.lg - spacing.xxs,
     minHeight: MIN_TAP_TARGET - spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
   },
   tabActive: {
-    backgroundColor: colors.bg.hover,
+    backgroundColor: colors.accent.muted,
+    borderWidth: 1,
+    borderColor: colors.accent.border,
   },
   tabLabel: {
     ...typography.bodyBold,
     color: colors.text.tertiary,
   },
   tabLabelActive: {
-    color: colors.text.primary,
+    color: colors.accent.primary,
   },
   actions: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: spacing.sm,
   },
+  // Text-only button — no background or border intentionally. macOS toolbar
+  // convention for destructive actions: color alone signals the danger level
+  // without a filled box competing with the rest of the header.
   clearButton: {
     minHeight: MIN_TAP_TARGET - spacing.md,
     justifyContent: 'center',
@@ -175,19 +181,18 @@ const styles = StyleSheet.create({
     ...typography.caption,
     color: colors.semantic.danger,
   },
+  // Text-only button — matches the same pattern as clearButton above.
+  // The accent color is enough affordance for a non-destructive action;
+  // a filled CTA here would over-emphasise a routine "create" action.
   addButton: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.sm,
     minHeight: MIN_TAP_TARGET - spacing.md,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: radii.md,
-    backgroundColor: colors.bg.secondary,
-    borderWidth: 1,
-    borderColor: colors.border.strong,
   },
   addButtonText: {
     ...typography.bodyBold,
-    color: colors.text.primary,
+    color: colors.accent.primary,
   },
   helpBtn: {
     width: MIN_TAP_TARGET - spacing.sm,
@@ -209,7 +214,9 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
   },
   settingsBtnActive: {
-    backgroundColor: colors.bg.hover,
+    backgroundColor: colors.accent.muted,
+    borderWidth: 1,
+    borderColor: colors.accent.border,
   },
   settingsIcon: {
     fontSize: 16,

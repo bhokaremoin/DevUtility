@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
   masterPane: {
     flex: 0.35,
     borderRightWidth: 1,
-    borderRightColor: colors.border.subtle,
+    borderRightColor: colors.border.default,
   },
   detailPane: {
     flex: 0.65,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: spacing.huge,
+    paddingBottom: spacing.xxxl,
   },
   emptyIcon: {
     fontSize: spacing.huge,

@@ -60,7 +60,9 @@ export function ClipDetailView({
   return (
     <View style={styles.detail}>
       <View style={styles.detailHeader}>
-        <Text style={styles.detailTimestamp}>{formattedTime}</Text>
+        <View style={styles.timestampChip}>
+          <Text style={styles.detailTimestamp}>{formattedTime}</Text>
+        </View>
       </View>
       <TextInput
         style={styles.detailCodeInput}
@@ -121,6 +123,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.xl,
     paddingTop: spacing.xl,
     paddingBottom: spacing.sm,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.border.subtle,
+  },
+  timestampChip: {
+    backgroundColor: colors.bg.surface,
+    borderRadius: radii.sm,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xxs,
+    alignSelf: 'flex-start',
   },
   detailTimestamp: {
     ...typography.caption,
@@ -132,8 +143,11 @@ const styles = StyleSheet.create({
     color: colors.text.secondary,
     backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
     padding: spacing.lg,
     marginHorizontal: spacing.xl,
+    marginTop: spacing.sm,
     marginBottom: spacing.sm,
     minHeight: 120,
   },
@@ -157,19 +171,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: radii.md,
-    backgroundColor: colors.bg.surface,
-    borderWidth: 1,
-    borderColor: colors.border.strong,
+    backgroundColor: colors.accent.deep,
+    borderWidth: 0,
   },
   detailCopyBtnCopied: {
-    backgroundColor: colors.semantic.successBg,
+    backgroundColor: colors.semantic.success,
   },
   detailCopyText: {
     ...typography.bodyBold,
-    color: colors.text.primary,
+    color: '#FFFFFF',
   },
   detailCopyTextCopied: {
-    color: colors.semantic.success,
+    color: '#FFFFFF',
   },
   detailSaveBtn: {
     minHeight: MIN_TAP_TARGET,
@@ -177,7 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: spacing.lg,
     borderRadius: radii.md,
-    backgroundColor: colors.bg.surface,
+    backgroundColor: colors.semantic.successBg,
     borderWidth: 1,
     borderColor: colors.semantic.success,
   },
