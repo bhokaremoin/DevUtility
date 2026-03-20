@@ -6,7 +6,7 @@ WORKSPACE="$PROJECT_ROOT/macos/DevUtility.xcworkspace"
 SCHEME="DevUtility-macOS"
 ARCHIVE_PATH="$PROJECT_ROOT/build/DevUtility.xcarchive"
 EXPORT_PATH="$PROJECT_ROOT/build/export"
-VERSION="1.0.0"
+VERSION="${VERSION:-1.0.0}"
 NODE_BINARY="$(which node)"
 
 echo "==> Cleaning previous build artifacts..."
