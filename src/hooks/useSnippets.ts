@@ -1,5 +1,4 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
-import {NativeModules} from 'react-native';
+import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Snippet} from '../types';
 import {
   loadSnippets,
@@ -7,27 +6,16 @@ import {
   deleteSnippet as deleteSnippetFromStorage,
   updateSnippet as updateSnippetInStorage,
 } from '../services/snippetStorage';
-import {COPY_FEEDBACK_DURATION_MS} from '../constants';
-
-const ClipboardModule =
-  NativeModules.RNCClipboard ?? NativeModules.Clipboard ?? null;
+import {setClipboardString} from '../services/clipboardNative';
+import {useCopyFeedback} from './useCopyFeedback';
 
 export function useSnippets() {
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const {copiedId, markCopied} = useCopyFeedback();
 
   useEffect(() => {
     loadSnippets().then(setSnippets);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      if (feedbackTimerRef.current) {
-        clearTimeout(feedbackTimerRef.current);
-      }
-    };
   }, []);
 
   const filteredSnippets = useMemo(() => {
@@ -58,16 +46,10 @@ export function useSnippets() {
 
   const copySnippet = useCallback(
     (snippet: Snippet, contentOverride?: string) => {
-      ClipboardModule?.setString?.(contentOverride ?? snippet.content);
-      setCopiedId(snippet.id);
-      if (feedbackTimerRef.current) {
-        clearTimeout(feedbackTimerRef.current);
-      }
-      feedbackTimerRef.current = setTimeout(() => {
-        setCopiedId(null);
-      }, COPY_FEEDBACK_DURATION_MS);
+      setClipboardString(contentOverride ?? snippet.content);
+      markCopied(snippet.id);
     },
-    [],
+    [markCopied],
   );
 
   const updateSnippetContent = useCallback(

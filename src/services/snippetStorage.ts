@@ -1,10 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SNIPPETS_STORAGE_KEY} from '../constants';
 import {Snippet} from '../types';
-
-function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
-}
+import {generateId} from '../utils';
 
 export async function loadSnippets(): Promise<Snippet[]> {
   try {

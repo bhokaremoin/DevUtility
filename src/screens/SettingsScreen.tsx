@@ -3,8 +3,7 @@ import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ShortcutRecorder} from '../native/ShortcutRecorder';
 import {GlobalShortcut} from '../native/GlobalShortcut';
 import {colors, spacing, typography, radii} from '../theme';
-
-const DEFAULT_SHORTCUT_LABEL = '\u2303\u2325D';
+import {DEFAULT_SHORTCUT_LABEL} from '../constants';
 
 export function SettingsScreen() {
   const [currentShortcut, setCurrentShortcut] = useState<string | null>(null);

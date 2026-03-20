@@ -1,37 +1,22 @@
 import {useCallback, useEffect, useRef, useState} from 'react';
-import {NativeModules} from 'react-native';
-import {
-  MAX_HISTORY_ITEMS,
-  CLIPBOARD_POLL_INTERVAL_MS,
-  COPY_FEEDBACK_DURATION_MS,
-} from '../constants';
+import {MAX_HISTORY_ITEMS} from '../constants';
 import {ClipboardItem} from '../types';
 import {
   loadClipboardHistory,
   saveClipboardHistory,
 } from '../services/clipboardStorage';
-
-const ClipboardModule =
-  NativeModules.RNCClipboard ?? NativeModules.Clipboard ?? null;
-
-async function getClipboardString(): Promise<string> {
-  if (!ClipboardModule?.getString) {
-    return '';
-  }
-  return ClipboardModule.getString();
-}
-
-function setClipboardString(content: string): void {
-  ClipboardModule?.setString?.(content);
-}
+import {setClipboardString} from '../services/clipboardNative';
+import {generateId} from '../utils';
+import {useCopyFeedback} from './useCopyFeedback';
+import {useClipboardPoller} from './useClipboardPoller';
 
 export function useClipboardHistory() {
   const [history, setHistory] = useState<ClipboardItem[]>([]);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
   const lastClipRef = useRef<string>('');
-  const feedbackTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initializedRef = useRef(false);
+  const {copiedId, markCopied} = useCopyFeedback();
 
+  // Load persisted history on mount
   useEffect(() => {
     loadClipboardHistory().then(persisted => {
       if (persisted.length > 0) {
@@ -42,6 +27,7 @@ export function useClipboardHistory() {
     });
   }, []);
 
+  // Persist history whenever it changes (skip before initial load completes)
   useEffect(() => {
     if (!initializedRef.current) {
       return;
@@ -49,53 +35,27 @@ export function useClipboardHistory() {
     saveClipboardHistory(history);
   }, [history]);
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const content = await getClipboardString();
-        if (content && content !== lastClipRef.current) {
-          lastClipRef.current = content;
-          setHistory(prev => {
-            const newItem: ClipboardItem = {
-              id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-              text: content,
-              timestamp: Date.now(),
-            };
-            const updated = [newItem, ...prev];
-            return updated.slice(0, MAX_HISTORY_ITEMS);
-          });
-        }
-      } catch {
-        // Clipboard access can fail silently — nothing to surface here.
-      }
-    }, CLIPBOARD_POLL_INTERVAL_MS);
-
-    return () => clearInterval(interval);
+  // Poll the system clipboard for new content
+  const handleNewClip = useCallback((text: string) => {
+    setHistory(prev => {
+      const newItem: ClipboardItem = {
+        id: generateId(),
+        text,
+        timestamp: Date.now(),
+      };
+      return [newItem, ...prev].slice(0, MAX_HISTORY_ITEMS);
+    });
   }, []);
-
-  useEffect(() => {
-    return () => {
-      if (feedbackTimerRef.current) {
-        clearTimeout(feedbackTimerRef.current);
-      }
-    };
-  }, []);
+  useClipboardPoller(lastClipRef, handleNewClip);
 
   const copyToClipboard = useCallback(
     (item: ClipboardItem, textOverride?: string) => {
       const textToCopy = textOverride ?? item.text;
       setClipboardString(textToCopy);
       lastClipRef.current = textToCopy;
-
-      setCopiedId(item.id);
-      if (feedbackTimerRef.current) {
-        clearTimeout(feedbackTimerRef.current);
-      }
-      feedbackTimerRef.current = setTimeout(() => {
-        setCopiedId(null);
-      }, COPY_FEEDBACK_DURATION_MS);
+      markCopied(item.id);
     },
-    [],
+    [markCopied],
   );
 
   const updateItemText = useCallback((id: string, text: string) => {

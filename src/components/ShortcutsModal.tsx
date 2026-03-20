@@ -8,48 +8,12 @@ import {
   View,
 } from 'react-native';
 import {colors, radii, spacing, typography} from '../theme';
+import {SHORTCUT_SECTIONS, ShortcutRow} from '../data/shortcuts';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
 }
-
-interface ShortcutRow {
-  action: string;
-  keys: string[];
-}
-
-interface Section {
-  title: string;
-  rows: ShortcutRow[];
-}
-
-const SECTIONS: Section[] = [
-  {
-    title: 'System',
-    rows: [
-      {action: 'Toggle panel (show / hide)', keys: ['Ctrl', 'Option', 'D']},
-    ],
-  },
-  {
-    title: 'Navigation',
-    rows: [
-      {action: 'Switch to Clipboard tab', keys: ['⌘', '1']},
-      {action: 'Switch to Snippets tab', keys: ['⌘', '2']},
-      {action: 'Switch to Settings tab', keys: ['⌘', '3']},
-    ],
-  },
-  {
-    title: 'Actions',
-    rows: [
-      {action: 'Focus search / jump to Snippets', keys: ['⌘', 'F']},
-      {action: 'Copy selected item (list focused)', keys: ['↵']},
-      {action: 'Copy selected item (detail editor)', keys: ['⌘', '↵']},
-      {action: 'Clear selection; hide panel if empty', keys: ['Esc']},
-      {action: 'Navigate list up / down', keys: ['↑ / ↓']},
-    ],
-  },
-];
 
 function KbdTag({label}: {label: string}) {
   return (
@@ -59,7 +23,7 @@ function KbdTag({label}: {label: string}) {
   );
 }
 
-function ShortcutRow({action, keys, isLast}: ShortcutRow & {isLast: boolean}) {
+function ShortcutRowView({action, keys, isLast}: ShortcutRow & {isLast: boolean}) {
   return (
     <View style={[styles.row, !isLast && styles.rowDivider]}>
       <Text style={styles.actionText}>{action}</Text>
@@ -110,11 +74,11 @@ export function ShortcutsModal({visible, onClose}: Props) {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
-          {SECTIONS.map((section, si) => (
+          {SHORTCUT_SECTIONS.map((section, si) => (
             <View key={section.title} style={si > 0 ? styles.section : styles.sectionFirst}>
               <Text style={styles.sectionLabel}>{section.title}</Text>
               {section.rows.map((row, ri) => (
-                <ShortcutRow key={row.action} {...row} isLast={ri === section.rows.length - 1} />
+                <ShortcutRowView key={row.action} {...row} isLast={ri === section.rows.length - 1} />
               ))}
             </View>
           ))}

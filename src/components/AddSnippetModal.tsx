@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import {Snippet} from '../types';
+import {parseTags} from '../utils';
 import {
   colors,
   spacing,
@@ -42,10 +43,7 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
       title: title.trim(),
       description: description.trim(),
       content: content.trim(),
-      tags: tags
-        .split(',')
-        .map(t => t.trim())
-        .filter(Boolean),
+      tags: parseTags(tags),
     });
     resetAndClose();
   }
