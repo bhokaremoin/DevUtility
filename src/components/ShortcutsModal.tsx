@@ -1,3 +1,13 @@
+/**
+ * @file components/ShortcutsModal.tsx
+ * @description Overlay modal that lists all keyboard shortcuts in grouped sections.
+ *
+ * Architecture Role: Read-only reference UI triggered by the "?" button in
+ * `TopHeader`. Renders `SHORTCUT_SECTIONS` data as styled key-badge rows.
+ * Contains a zero-size invisible `TextInput` focus trap so macOS routes key
+ * events to the React layer while the modal is open.
+ */
+
 import React, {useEffect, useRef} from 'react';
 import {
   ScrollView,
@@ -10,8 +20,11 @@ import {
 import {colors, radii, spacing, typography} from '../theme';
 import {SHORTCUT_SECTIONS, ShortcutRow} from '../data/shortcuts';
 
+/** Props for the `ShortcutsModal` component. */
 interface Props {
+  /** Controls modal visibility; renders nothing when `false`. */
   visible: boolean;
+  /** Called when the user presses the close (✕) button. */
   onClose: () => void;
 }
 

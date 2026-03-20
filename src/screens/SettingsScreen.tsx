@@ -1,3 +1,14 @@
+/**
+ * @file screens/SettingsScreen.tsx
+ * @description Settings screen for configuring the global toggle shortcut and
+ * viewing app behaviour documentation.
+ *
+ * Architecture Role: One of three top-level screens in `App.tsx`. Hosts the
+ * native `ShortcutRecorder` component and reads the active shortcut via
+ * `GlobalShortcut.getShortcut()`. Provides a reset button to restore the
+ * factory default (Ctrl+Option+D).
+ */
+
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ShortcutRecorder} from '../native/ShortcutRecorder';

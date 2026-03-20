@@ -1,3 +1,12 @@
+/**
+ * @file components/ClipMasterRow.tsx
+ * @description A single row in the clipboard history master list.
+ *
+ * Architecture Role: Pure presentational cell for `ClipCopyScreen`'s `FlatList`.
+ * Shows a truncated preview of the clipboard text and an inline "Copy" button.
+ * Selection and copy-feedback states are driven entirely by props.
+ */
+
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity} from 'react-native';
 import {ClipboardItem} from '../types';
@@ -5,6 +14,15 @@ import {colors, spacing, typography, radii} from '../theme';
 import {MAX_DISPLAY_LENGTH} from '../constants';
 import {truncateText} from '../utils';
 
+/**
+ * Renders a single clipboard history entry in the master list.
+ *
+ * @param item - The clipboard entry to display.
+ * @param isSelected - Whether this row is the currently keyboard-selected item.
+ * @param isCopied - Whether this item is showing the "Copied!" feedback badge.
+ * @param onSelect - Called with the item ID when the row is pressed.
+ * @param onCopy - Called with the full item when the inline "Copy" button is pressed.
+ */
 export function ClipMasterRow({
   item,
   isSelected,

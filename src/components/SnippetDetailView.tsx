@@ -1,3 +1,13 @@
+/**
+ * @file components/SnippetDetailView.tsx
+ * @description Detail pane for a selected snippet, with an editable content
+ * editor, tag display, copy/save/delete actions, and a confirmation prompt.
+ *
+ * Architecture Role: Right-hand panel of `SnippetManagerScreen`'s master-detail
+ * layout. Mirrors `ClipDetailView` in structure but adds delete confirmation
+ * and tag/description metadata display.
+ */
+
 import React, {useEffect, useState} from 'react';
 import {
   StyleSheet,
@@ -10,6 +20,17 @@ import {Snippet} from '../types';
 import {colors, spacing, typography, radii, MIN_TAP_TARGET} from '../theme';
 import {formatContentStats} from '../utils';
 
+/**
+ * Full-detail view for a snippet with an editable content area and CRUD actions.
+ *
+ * @param snippet - The snippet to display and potentially edit or delete.
+ * @param isCopied - Whether this snippet is showing the "Copied!" feedback state.
+ * @param onCopy - Called to copy; receives snippet plus optional draft override.
+ * @param onDelete - Called with the snippet ID after the user confirms deletion.
+ * @param onUpdate - Called to persist edited content back to storage.
+ * @param onEditorFocusChange - Called with `true`/`false` as the editor gains/
+ *   loses focus; used by the parent to suppress list navigation keys.
+ */
 export function SnippetDetailView({
   snippet,
   isCopied,

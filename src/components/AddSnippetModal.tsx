@@ -1,3 +1,13 @@
+/**
+ * @file components/AddSnippetModal.tsx
+ * @description Overlay modal for creating a new snippet with title, description,
+ * tags, and content fields.
+ *
+ * Architecture Role: Presentational form rendered on top of `SnippetManagerScreen`.
+ * Manages its own local draft state; calls `onSave` with the completed data or
+ * `onClose` to cancel, then resets all fields via `resetAndClose`.
+ */
+
 import React, {useState} from 'react';
 import {
   ScrollView,
@@ -17,9 +27,13 @@ import {
   MIN_TAP_TARGET,
 } from '../theme';
 
+/** Props for the `AddSnippetModal` component. */
 interface Props {
+  /** When `false` the modal renders nothing (avoids unmount/remount cost). */
   visible: boolean;
+  /** Called when the user cancels or after a successful save. */
   onClose: () => void;
+  /** Called with the completed snippet data when the user presses "Save Snippet". */
   onSave: (data: Omit<Snippet, 'id' | 'createdAt'>) => void;
 }
 

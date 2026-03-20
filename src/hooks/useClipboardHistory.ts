@@ -1,3 +1,14 @@
+/**
+ * @file hooks/useClipboardHistory.ts
+ * @description React hook that owns all clipboard history state and exposes
+ * operations for the ClipCopy screen.
+ *
+ * Architecture Role: Primary data layer for clipboard content. Composes three
+ * lower-level hooks/services — `useClipboardPoller` (native read polling),
+ * `useCopyFeedback` (transient UI state), and `clipboardStorage` (AsyncStorage
+ * persistence) — and surfaces a single stable API to `ClipCopyScreen`.
+ */
+
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {MAX_HISTORY_ITEMS} from '../constants';
 import {ClipboardItem} from '../types';
@@ -10,6 +21,17 @@ import {generateId} from '../utils';
 import {useCopyFeedback} from './useCopyFeedback';
 import {useClipboardPoller} from './useClipboardPoller';
 
+/**
+ * Manages clipboard history: loads persisted items on mount, polls the system
+ * clipboard for new content, persists changes, and provides copy/edit/clear ops.
+ *
+ * @returns An object containing:
+ *   - `history` — ordered array of captured clipboard items (newest first).
+ *   - `copiedId` — ID of the item currently showing copy-feedback, or `null`.
+ *   - `copyToClipboard` — writes an item (or draft override) to the clipboard.
+ *   - `updateItemText` — edits the stored text of an existing item.
+ *   - `clearHistory` — removes all items from history.
+ */
 export function useClipboardHistory() {
   const [history, setHistory] = useState<ClipboardItem[]>([]);
   const lastClipRef = useRef<string>('');

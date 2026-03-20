@@ -1,3 +1,17 @@
+/**
+ * @file screens/SnippetManagerScreen.tsx
+ * @description Master-detail screen for browsing, searching, and managing
+ * saved code snippets.
+ *
+ * Architecture Role: One of three top-level screens rendered by `App.tsx`.
+ * Owns the search bar, two-pane list/detail layout, and the "Add Snippet" modal.
+ * Exposes a full `ScreenHandle` via `forwardRef` so `App.tsx`'s keyboard
+ * dispatcher can trigger search focus, selection clear, add-modal, and navigation.
+ *
+ * All data operations are delegated to `useSnippets`; layout navigation is
+ * handled by `useListNavigation`.
+ */
+
 import React, {
   forwardRef,
   useCallback,

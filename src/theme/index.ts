@@ -1,3 +1,15 @@
+/**
+ * @file theme/index.ts
+ * @description Design-system tokens for DevUtility's dark macOS UI.
+ *
+ * Architecture Role: Single source of truth for colors, spacing, typography,
+ * and border-radius values. All components import from here so visual changes
+ * propagate globally without hunting through individual stylesheets.
+ */
+
+// ---------------------------------------------------------------------------
+// Colors — dark palette inspired by macOS system materials
+// ---------------------------------------------------------------------------
 export const colors = {
   bg: {
     primary: '#0D0D0D',
@@ -35,6 +47,9 @@ export const colors = {
   overlay: 'rgba(0, 0, 0, 0.65)',
 } as const;
 
+// ---------------------------------------------------------------------------
+// Spacing — 8-pt grid with named steps
+// ---------------------------------------------------------------------------
 export const spacing = {
   xxs: 2,
   xs: 4,
@@ -47,6 +62,9 @@ export const spacing = {
   huge: 48,
 } as const;
 
+// ---------------------------------------------------------------------------
+// Typography — predefined text styles
+// ---------------------------------------------------------------------------
 export const typography = {
   title: {fontSize: 20, fontWeight: '700' as const, letterSpacing: 0.3},
   heading: {fontSize: 17, fontWeight: '600' as const},
@@ -63,10 +81,14 @@ export const typography = {
   },
 } as const;
 
+// ---------------------------------------------------------------------------
+// Border radii
+// ---------------------------------------------------------------------------
 export const radii = {
   sm: 4,
   md: 8,
   lg: 12,
 } as const;
 
+/** Minimum touch target dimension (44 pt) per Apple HIG. */
 export const MIN_TAP_TARGET = 44;

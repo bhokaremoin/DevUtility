@@ -1,3 +1,13 @@
+/**
+ * @file components/ClipDetailView.tsx
+ * @description Detail pane for a selected clipboard item, featuring an editable
+ * code editor and copy/save action buttons.
+ *
+ * Architecture Role: Right-hand panel of the `ClipCopyScreen` master-detail
+ * layout. Manages a local `draftContent` state so edits don't immediately
+ * mutate the stored item — the user must press "Save Edits" explicitly.
+ */
+
 import React, {useEffect, useMemo, useState} from 'react';
 import {
   StyleSheet,
@@ -10,6 +20,17 @@ import {ClipboardItem} from '../types';
 import {colors, spacing, typography, radii, MIN_TAP_TARGET} from '../theme';
 import {formatContentStats} from '../utils';
 
+/**
+ * Full-detail view for a clipboard item with an editable text area.
+ *
+ * @param item - The clipboard entry to display and optionally edit.
+ * @param isCopied - Whether this item is showing the "Copied!" feedback state.
+ * @param onCopy - Called to copy the item; receives the item plus an optional
+ *   draft override so in-progress edits can be copied before saving.
+ * @param onUpdate - Called to persist edited text back to the history store.
+ * @param onEditorFocusChange - Called with `true`/`false` when the text editor
+ *   gains or loses focus; used by the parent to suppress list navigation.
+ */
 export function ClipDetailView({
   item,
   isCopied,

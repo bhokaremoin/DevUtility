@@ -1,16 +1,39 @@
+// KeyEventModule.swift
+// DevUtility
+//
+// Description: React Native event emitter that intercepts NSPanel keyboard events
+//   and translates them into JS-layer events for shortcut dispatch.
+// Architecture Role: Local NSEvent monitor bridge. Installed when JS subscribes
+//   (startObserving) and removed when all listeners are gone (stopObserving).
+//   Translates raw key codes into semantic event names consumed by
+//   `useKeyboardShortcuts` in the JS layer.
+
 import Cocoa
 
+/// React Native event emitter that intercepts local key-down events on the panel
+/// and emits named shortcut events to the JS layer.
+///
+/// Emitted events:
+/// - `onNavigate`        — ⌘1/⌘2/⌘3 tab switch; body `{tab: "clipboard"|"snippets"|"settings"}`
+/// - `onCopyAction`      — Enter (outside text input) or ⌘Enter; no body
+/// - `onEscape`          — Escape key; no body
+/// - `onSearch`          — ⌘F; no body
+/// - `onArrowNavigation` — ↑/↓; body `{direction: "up"|"down"}`
 @objc(KeyEventModule)
 class KeyEventModule: RCTEventEmitter {
+  /// The installed local NSEvent monitor, or `nil` when not observing.
   private var localMonitor: Any?
+  /// Guards event emission; set true/false in sync with monitor install/removal.
   private var hasListeners = false
 
   override static func requiresMainQueueSetup() -> Bool { true }
 
+  /// Declares the full set of events this emitter can dispatch to JS.
   override func supportedEvents() -> [String] {
     ["onNavigate", "onCopyAction", "onEscape", "onSearch", "onArrowNavigation"]
   }
 
+  /// Called by RN when the first JS listener subscribes. Installs the key monitor.
   override func startObserving() {
     // Set hasListeners and install the monitor together on the main thread
     // to avoid a race where hasListeners=true but the monitor closure already
@@ -26,6 +49,7 @@ class KeyEventModule: RCTEventEmitter {
     }
   }
 
+  /// Called by RN when the last JS listener unsubscribes. Removes the key monitor.
   override func stopObserving() {
     if Thread.isMainThread {
       hasListeners = false
@@ -38,6 +62,7 @@ class KeyEventModule: RCTEventEmitter {
     }
   }
 
+  /// Replaces any existing monitor with a fresh local key-down monitor.
   private func installMonitor() {
     removeMonitor()
     localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
@@ -48,6 +73,7 @@ class KeyEventModule: RCTEventEmitter {
     }
   }
 
+  /// Removes and nullifies the local key-down monitor.
   private func removeMonitor() {
     if let monitor = localMonitor {
       NSEvent.removeMonitor(monitor)
@@ -107,6 +133,8 @@ class KeyEventModule: RCTEventEmitter {
     return event
   }
 
+  /// Hides the panel. Exposed to JS so the Escape handler in `App.tsx` can
+  /// dismiss the panel without importing a separate native module.
   @objc func hidePanel() {
     DispatchQueue.main.async {
       PanelManager.shared.hide()

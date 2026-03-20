@@ -1,10 +1,37 @@
+/**
+ * @file hooks/useListNavigation.ts
+ * @description React hook that manages keyboard-driven list selection and
+ * scroll-into-view behavior for master-detail list screens.
+ *
+ * Architecture Role: Reusable navigation primitive shared by both
+ * `ClipCopyScreen` and `SnippetManagerScreen`. Tracks the selected item ID,
+ * exposes a `navigate` function for arrow-key movement, and integrates with
+ * `FlatList`'s viewability API to scroll only when the target item is
+ * off-screen.
+ */
+
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 import {FlatList} from 'react-native';
 
+/** Minimal constraint: list items must have a unique string `id`. */
 interface Identifiable {
   id: string;
 }
 
+/**
+ * Manages keyboard-driven selection and scroll-to for a `FlatList`.
+ *
+ * @param items - The array currently rendered by the list.
+ * @returns An object containing:
+ *   - `selectedId` / `setSelectedId` — currently selected item ID and setter.
+ *   - `selectedItem` — the full item object for the selected ID, or `null`.
+ *   - `flatListRef` — ref to attach to the `FlatList` for scroll control.
+ *   - `isDetailFocused` — ref that screens set `true` when the detail-pane
+ *     editor is focused, suppressing arrow-key list navigation.
+ *   - `navigate(delta)` — moves selection by `+1` (down) or `-1` (up).
+ *   - `onViewableItemsChanged` / `viewabilityConfig` — pass to `FlatList` so
+ *     the hook knows which items are currently visible before scrolling.
+ */
 export function useListNavigation<T extends Identifiable>(items: T[]) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const flatListRef = useRef<FlatList>(null);

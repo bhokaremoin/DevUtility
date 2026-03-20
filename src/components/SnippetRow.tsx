@@ -1,8 +1,26 @@
+/**
+ * @file components/SnippetRow.tsx
+ * @description A single row in the snippet manager master list.
+ *
+ * Architecture Role: Pure presentational cell for `SnippetManagerScreen`'s
+ * `FlatList`. Shows the snippet title, a content preview, and an inline "Copy"
+ * button. All state is driven by props — no local state.
+ */
+
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Snippet} from '../types';
 import {colors, spacing, typography, radii} from '../theme';
 
+/**
+ * Renders a single snippet row in the master list.
+ *
+ * @param snippet - The snippet data to display.
+ * @param isSelected - Whether this row is the currently selected item.
+ * @param isCopied - Whether this snippet is showing the "Copied!" feedback badge.
+ * @param onSelect - Called with the snippet ID when the row is pressed.
+ * @param onCopy - Called with the full snippet when the inline "Copy" button is pressed.
+ */
 export function SnippetRow({
   snippet,
   isSelected,

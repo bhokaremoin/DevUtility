@@ -1,3 +1,13 @@
+/**
+ * @file hooks/useSnippets.ts
+ * @description React hook that owns all snippet state and exposes CRUD and
+ * search operations for the SnippetManager screen.
+ *
+ * Architecture Role: Primary data layer for snippets. Loads from AsyncStorage
+ * on mount, maintains a search query for client-side filtering, and delegates
+ * persistence to `snippetStorage`. Composes `useCopyFeedback` for copy-state UI.
+ */
+
 import {useCallback, useEffect, useMemo, useState} from 'react';
 import {Snippet} from '../types';
 import {
@@ -9,6 +19,19 @@ import {
 import {setClipboardString} from '../services/clipboardNative';
 import {useCopyFeedback} from './useCopyFeedback';
 
+/**
+ * Manages snippet list state: loads on mount, filters by search query,
+ * and provides add/remove/copy/update operations.
+ *
+ * @returns An object containing:
+ *   - `snippets` — filtered list of snippets (all snippets when query is empty).
+ *   - `searchQuery` / `setSearchQuery` — current filter string and its setter.
+ *   - `copiedId` — ID of the snippet showing copy-feedback, or `null`.
+ *   - `addSnippet` — creates and persists a new snippet.
+ *   - `removeSnippet` — deletes a snippet by ID.
+ *   - `copySnippet` — copies snippet content to clipboard and triggers feedback.
+ *   - `updateSnippetContent` — saves an edited content string.
+ */
 export function useSnippets() {
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [searchQuery, setSearchQuery] = useState('');

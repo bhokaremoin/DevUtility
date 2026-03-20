@@ -1,15 +1,33 @@
+/**
+ * @file components/TopHeader.tsx
+ * @description Fixed header bar containing the app title, tab switcher, and
+ * contextual action buttons.
+ *
+ * Architecture Role: Global navigation shell rendered by `App.tsx` above all
+ * screen content. Hosts the Clipboard/Snippets tab group, the settings gear,
+ * the "?" help button, and context-sensitive actions (Clear All, + New).
+ */
+
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors, spacing, typography, radii, MIN_TAP_TARGET} from '../theme';
 
+/** The three top-level navigation tabs available in the app. */
 export type Tab = 'clipboard' | 'snippets' | 'settings';
 
+/** Props for the `TopHeader` component. */
 interface Props {
+  /** Currently active tab — controls which tab appears highlighted. */
   activeTab: Tab;
+  /** Called when the user taps a tab or the settings gear. */
   onTabChange: (tab: Tab) => void;
+  /** Called when the user confirms "Clear All" for clipboard history. */
   onClearAll?: () => void;
+  /** When `true`, renders the "Clear All" button (clipboard tab with items). */
   showClearAll?: boolean;
+  /** Called when the user taps "+ New" on the snippets tab. */
   onAddSnippet?: () => void;
+  /** Called when the user taps the "?" help button. */
   onHelpPress?: () => void;
 }
 

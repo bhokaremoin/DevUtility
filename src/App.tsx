@@ -1,3 +1,21 @@
+/**
+ * @file App.tsx
+ * @description Root application component for DevUtility.
+ *
+ * Architecture Role: Top-level coordinator that wires together screens, the
+ * shared clipboard state, and the global keyboard shortcut dispatcher.
+ *
+ * Responsibilities:
+ * - Renders `TopHeader` and the active screen (ClipCopy / Snippets / Settings).
+ * - Holds `clipboardState` from `useClipboardHistory` and passes it down to
+ *   `ClipCopyScreen` via spread props.
+ * - Maintains `clipboardRef` and `snippetRef` as `ScreenHandle` refs so
+ *   keyboard events can call screen-level actions imperatively.
+ * - Passes a `handlers` object to `useKeyboardShortcuts` — a stable object
+ *   (via `useMemo`) that reads `getActiveRef()` at call time, so screen refs
+ *   are always fresh without re-subscribing to native events on every render.
+ */
+
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Alert, Keyboard, NativeModules, StyleSheet, View} from 'react-native';
 import {ClipCopyScreen, SnippetManagerScreen, SettingsScreen} from './screens';
@@ -21,17 +39,23 @@ function App(): React.JSX.Element {
     return null;
   }, [activeTab]);
 
+  // Keyboard event handlers passed to useKeyboardShortcuts. Wrapped in useMemo
+  // so the object reference is stable across renders — the native subscriptions
+  // are created once and always call the latest handler via getActiveRef().
   const handlers = useMemo(
     () => ({
       onNavigate: (tab: Tab) => setActiveTab(tab),
       onCopyAction: () => getActiveRef()?.current?.copySelected?.(),
       onEscape: () => {
+        // Give the active screen a chance to handle Escape first (e.g. clear
+        // selection or search query); fall through to hide the panel if not consumed.
         const handled = getActiveRef()?.current?.handleEscape?.();
         if (!handled) {
           KeyEventModule?.hidePanel?.();
         }
       },
       onSearch: () => {
+        // ⌘F always switches to Snippets and focuses search, even from other tabs.
         if (activeTab !== 'snippets') {
           setActiveTab('snippets');
         }

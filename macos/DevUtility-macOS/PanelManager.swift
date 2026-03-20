@@ -1,5 +1,21 @@
+// PanelManager.swift
+// DevUtility
+//
+// Description: Singleton that owns and controls the floating NSPanel window.
+// Architecture Role: Central coordinator for all panel interactions. Receives
+//   show/hide calls from GlobalShortcutModule and AppDelegate, manages
+//   positioning relative to the active screen, drives the status bar icon,
+//   and installs/removes the global click-outside monitor.
+
 import Cocoa
 
+// MARK: - UtilityPanel
+
+/// A custom NSPanel subclass that accepts key and main window status,
+/// enabling it to receive keyboard events while the app is in panel mode.
+///
+/// Escape key handling is intentionally suppressed here and delegated
+/// to `KeyEventModule` so the JS layer can implement cascading dismiss logic.
 class UtilityPanel: NSPanel {
   override var canBecomeKey: Bool { true }
   override var canBecomeMain: Bool { true }
@@ -13,18 +29,44 @@ class UtilityPanel: NSPanel {
   }
 }
 
+// MARK: - PanelManager
+
+/// Singleton manager for DevUtility's floating `NSPanel` window.
+///
+/// Responsibilities:
+/// - One-time panel setup from the React Native root view (`setup(with:)`)
+/// - Toggle, show, and hide the panel with proper macOS activation
+/// - Center the panel on whichever screen the cursor is on
+/// - Install a global mouse monitor to dismiss on outside clicks
+/// - Manage the status bar icon and its left/right-click context menu
 @objc class PanelManager: NSObject {
+
+  // MARK: - Properties
+
+  /// The shared singleton instance.
   @objc static let shared = PanelManager()
 
+  /// The floating panel window that hosts the React Native root view.
   private var panel: UtilityPanel!
+  /// The macOS menu-bar status item (icon + button).
   private var statusItem: NSStatusItem!
+  /// Global mouse-down event monitor used to dismiss the panel on outside clicks.
   private var clickMonitor: Any?
+  /// Default panel dimensions. Can be overridden by dragging the panel.
   private var panelSize = NSSize(width: 800, height: 600)
+
+  // MARK: - Initialization
 
   private override init() {
     super.init()
   }
 
+  // MARK: - Public Interface
+
+  /// Configures the panel using the provided React Native root view.
+  /// Called once by `AppDelegate` after the RN bridge has bootstrapped.
+  ///
+  /// - Parameter rootView: The `NSView` created by `RCTAppDelegate` containing the RN hierarchy.
   @objc func setup(with rootView: NSView) {
     panel = UtilityPanel(
       contentRect: NSRect(origin: .zero, size: panelSize),
@@ -54,6 +96,9 @@ class UtilityPanel: NSPanel {
     setupStatusItem()
   }
 
+  // MARK: - Status Bar
+
+  /// Creates the menu-bar status item and configures its icon and click target.
   private func setupStatusItem() {
     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     guard let button = statusItem.button else { return }
@@ -70,8 +115,12 @@ class UtilityPanel: NSPanel {
     button.target = self
   }
 
+  // MARK: - Panel Lifecycle
+
+  /// Timestamp of the last toggle, used to debounce rapid double-calls.
   private var lastToggleTime: TimeInterval = 0
 
+  /// Toggles the panel between visible and hidden, debounced to 350 ms.
   @objc func toggle() {
     let now = ProcessInfo.processInfo.systemUptime
     guard now - lastToggleTime > 0.35 else { return }
@@ -84,6 +133,7 @@ class UtilityPanel: NSPanel {
     }
   }
 
+  /// Centers the panel on the screen containing the cursor and makes it key.
   @objc func show() {
     guard panel != nil else { return }
 
@@ -107,12 +157,17 @@ class UtilityPanel: NSPanel {
     installClickOutsideMonitor()
   }
 
+  /// Hides the panel and removes the global click monitor.
   @objc func hide() {
     guard panel != nil else { return }
     panel.orderOut(nil)
     removeClickOutsideMonitor()
   }
 
+  // MARK: - Private Helpers
+
+  /// Installs a global NSEvent monitor that hides the panel when the user
+  /// clicks outside its frame. Any existing monitor is replaced first.
   private func installClickOutsideMonitor() {
     removeClickOutsideMonitor()
     clickMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
@@ -124,6 +179,7 @@ class UtilityPanel: NSPanel {
     }
   }
 
+  /// Removes and nullifies the global click monitor, if one is installed.
   private func removeClickOutsideMonitor() {
     if let monitor = clickMonitor {
       NSEvent.removeMonitor(monitor)
@@ -131,6 +187,8 @@ class UtilityPanel: NSPanel {
     }
   }
 
+  /// Routes status-bar button clicks: right-click shows a context menu,
+  /// left-click toggles the panel (deferred to next run loop).
   @objc private func statusBarButtonClicked() {
     guard let event = NSApp.currentEvent else { return }
     if event.type == .rightMouseUp {
@@ -144,6 +202,7 @@ class UtilityPanel: NSPanel {
     }
   }
 
+  /// Builds and shows a transient right-click context menu with Open and Quit items.
   private func showContextMenu() {
     let menu = NSMenu()
     menu.addItem(NSMenuItem(title: "Open DevUtility", action: #selector(show), keyEquivalent: ""))
@@ -155,6 +214,7 @@ class UtilityPanel: NSPanel {
     statusItem.menu = nil
   }
 
+  /// Terminates the application.
   @objc private func quitApp() {
     NSApplication.shared.terminate(nil)
   }

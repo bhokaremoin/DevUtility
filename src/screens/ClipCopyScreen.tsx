@@ -1,3 +1,15 @@
+/**
+ * @file screens/ClipCopyScreen.tsx
+ * @description Master-detail screen for viewing and copying clipboard history.
+ *
+ * Architecture Role: One of three top-level screens rendered by `App.tsx`.
+ * Owns the two-pane layout (master list + detail editor) and exposes a
+ * `ScreenHandle` via `forwardRef`/`useImperativeHandle` so `App.tsx` can drive
+ * keyboard actions (copy, escape, arrow navigation) without lifting state.
+ *
+ * Data is provided entirely through props from `useClipboardHistory` in `App.tsx`.
+ */
+
 import React, {
   forwardRef,
   useCallback,
@@ -9,11 +21,17 @@ import {colors, spacing, typography} from '../theme';
 import {useListNavigation} from '../hooks';
 import {ClipMasterRow, ClipDetailView} from '../components';
 
+/** Props injected from `App.tsx` via the `useClipboardHistory` return value. */
 interface ClipCopyScreenProps {
+  /** Ordered clipboard history entries (newest first). */
   history: ClipboardItem[];
+  /** ID of the item currently showing copy feedback, or `null`. */
   copiedId: string | null;
+  /** Copies an item (or draft override) and triggers copy feedback. */
   copyToClipboard: (item: ClipboardItem, textOverride?: string) => void;
+  /** Persists an edited clipboard item text. */
   updateItemText: (id: string, text: string) => void;
+  /** Clears the entire clipboard history (called after confirmation). */
   clearHistory: () => void;
 }
 
