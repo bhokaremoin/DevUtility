@@ -1,0 +1,46 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build-and-release:
+    runs-on: macos-26
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install JS dependencies
+        run: npm install
+
+      - name: Install CocoaPods dependencies
+        run: |
+          gem install cocoapods --no-document
+          pod install --project-directory=macos
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+
+      - name: Build release DMG
+        run: ./scripts/build-release.sh
+
+      - name: Upload release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/DevUtility-${{ env.VERSION }}.dmg
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

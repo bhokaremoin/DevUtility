@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-PROJECT_ROOT="/Users/moin/Projects/utilityApp/DevUtility"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 WORKSPACE="$PROJECT_ROOT/macos/DevUtility.xcworkspace"
 SCHEME="DevUtility-macOS"
 ARCHIVE_PATH="$PROJECT_ROOT/build/DevUtility.xcarchive"
 EXPORT_PATH="$PROJECT_ROOT/build/export"
-VERSION="1.0"
-NODE_BINARY="/Users/moin/.nvm/versions/node/v24.13.1/bin/node"
+VERSION="${VERSION:-1.0}"
+NODE_BINARY="$(which node)"
 
 echo "==> Cleaning previous build artifacts..."
 rm -rf "$ARCHIVE_PATH" "$EXPORT_PATH"
@@ -19,13 +19,14 @@ xcodebuild archive \
   -scheme "$SCHEME" \
   -configuration Release \
   -archivePath "$ARCHIVE_PATH" \
-  NODE_BINARY="$NODE_BINARY"
+  NODE_BINARY="$NODE_BINARY" \
+  CODE_SIGN_IDENTITY="" \
+  CODE_SIGNING_REQUIRED=NO \
+  CODE_SIGNING_ALLOWED=NO
 
-echo "==> Exporting .app..."
-xcodebuild -exportArchive \
-  -archivePath "$ARCHIVE_PATH" \
-  -exportOptionsPlist "$PROJECT_ROOT/macos/ExportOptions.plist" \
-  -exportPath "$EXPORT_PATH"
+echo "==> Copying .app from archive..."
+mkdir -p "$EXPORT_PATH"
+cp -R "$ARCHIVE_PATH/Products/Applications/DevUtility.app" "$EXPORT_PATH/DevUtility.app"
 
 echo "==> Stripping quarantine xattrs..."
 xattr -cr "$EXPORT_PATH/DevUtility.app"
