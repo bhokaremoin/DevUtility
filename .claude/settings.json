@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(harness status)",
+      "Bash(harness status *)",
+      "Bash(harness check)",
+      "Bash(harness where)",
+      "Bash(python3 .claude/harness/review/pr_review.py *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v harness >/dev/null 2>&1 && harness check || true"
+          }
+        ]
+      }
+    ]
+  }
+}

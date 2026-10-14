@@ -1,0 +1,42 @@
+{
+  "version": "0.5.0",
+  "commit": "eba8e79",
+  "harness_repo": "https://github.com/bhokaremoin/apps-harness.git",
+  "synced_at": "2026-10-14T15:09:01",
+  "files": {
+    ".claude/harness/knowledge/code-standards.md": "ecedb343eb50ce37b6098feebcb8ded7355381fd9685198a13b197eaa6595d7e",
+    ".claude/harness/knowledge/profile.md": "f8ea7e54f7ac28929d750a01d9d68e5f1dde61f1ae4fa4d3df2776e90cce9f9f",
+    ".claude/harness/knowledge/working-rules.md": "00994c9077f01b78e0853ade17fd5232063d585b47d9f00f82e10ec0158b6cb1",
+    ".claude/harness/review/filter-rules.md": "7c4a9b91af964dc891840e13bb9a4c50e4db68629efc7538863e2436c12fd26b",
+    ".claude/harness/review/focus-areas.md": "6c5a9810b963e0bd1ba9eb5344e3e52e7c1998699ce22b8afa3097acbba4b26e",
+    ".claude/harness/review/pr_review.py": "e3586f1c302d60eb0f39ecc4e939c4a718bfd5cdbe2c2adb1aba7e544ea0f4e9",
+    ".claude/harness/review/triage-prompt.md": "20d1b9956cf64c9aa2f6c439bc3d8c4f508af2baa6646d168f8d246a9a180db3",
+    ".claude/skills/h-harness-improve/SKILL.md": "f9cd7f215703e043efb7232a7069c74c5c8e93b62e2c2b29e3e92780e5d7b0d2",
+    ".claude/skills/h-pr-address/SKILL.md": "6ef53cfbd19682856102a9571e310ac02a774c04f7ec94eb5c264dbb9ee42aa8",
+    ".claude/skills/h-pr-review/SKILL.md": "7ddc777f7b757cc47d676998ae906317c23a57647c162c91f794fde59e7fd2a6",
+    "CLAUDE.md": "b20eebd87a64ce5d5454199f52f08f89862e376c45673aafa42072d2e04585f1"
+  },
+  "settings": {
+    "permissions": {
+      "allow": [
+        "Bash(harness status)",
+        "Bash(harness status *)",
+        "Bash(harness check)",
+        "Bash(harness where)",
+        "Bash(python3 .claude/harness/review/pr_review.py *)"
+      ]
+    },
+    "hooks": {
+      "SessionStart": [
+        {
+          "hooks": [
+            {
+              "type": "command",
+              "command": "command -v harness >/dev/null 2>&1 && harness check || true"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
