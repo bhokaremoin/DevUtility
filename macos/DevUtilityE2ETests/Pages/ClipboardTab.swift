@@ -52,8 +52,11 @@ struct ClipboardTab {
   func clearAll(confirm: Bool) {
     element("header.clearAll").click()
     let buttonTitle = confirm ? "Clear All" : "Cancel"
-    let button = app.buttons[buttonTitle].firstMatch
-    XCTAssertTrue(button.waitForExistence(timeout: Wait.defaultTimeout), "\(buttonTitle) button in confirmation missing")
+    // Scoped to the alert: an unscoped query also matches Touch Bar buttons, which cannot be clicked.
+    let dialogButton = app.dialogs.buttons[buttonTitle]
+    let sheetButton = app.sheets.buttons[buttonTitle]
+    Wait.until("the \(buttonTitle) button in the confirmation appears") { dialogButton.exists || sheetButton.exists }
+    let button = dialogButton.exists ? dialogButton : sheetButton
     button.click()
   }
 
