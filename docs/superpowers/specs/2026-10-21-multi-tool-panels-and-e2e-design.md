@@ -51,11 +51,23 @@ in this repo is test-driven.
 
 ## Focus bug
 
-Cause: `PanelManager.show()` calls `NSRunningApplication.current.activate(options: [])` on macOS 14+.
-Activation there is cooperative, and the frontmost app may decline it, so the floating panel is drawn
-but never becomes key.
+Original hypothesis: `PanelManager.show()` calls `NSRunningApplication.current.activate(options: [])`
+on macOS 14+; activation is cooperative and may be declined, so the panel never becomes key.
 
-Fix: the panel is created with `[.nonactivatingPanel, .titled, .fullSizeContentView]` in its style
+Spike finding (2026-10-22), which supersedes that hypothesis as the primary cause: the bug
+reproduces even with DevUtility active. With the Snippets tab open, the app logged
+`panelKey=1 appActive=1`, the first responder was the field editor of `RCTUITextField`
+`snippets.search` (editable), and the key events `a`, `b`, `c` reached that window and were passed
+through by `KeyEventModule`, yet no text was committed. After one click on the field, typing worked.
+So the keystrokes are lost when a React Native text input receives focus programmatically
+(`searchInputRef.current?.focus()` on mount / `⌘F`), not because the window is not key. Step 3 finds
+the exact cause with systematic debugging, driven by the E2E test "type immediately after opening,
+no click".
+
+The non-activating-panel change below is still kept for the other-app-frontmost path, where the
+spike showed the panel does become key without app activation.
+
+Fix direction for window focus: the panel is created with `[.nonactivatingPanel, .titled, .fullSizeContentView]` in its style
 mask at init (toggling `.nonactivatingPanel` later is unreliable in AppKit), keeps
 `canBecomeKey = true`, and is shown with `makeKeyAndOrderFront(nil)` with **no** app activation:
 a non-activating panel takes key status without activating the app, which is exactly what the
@@ -305,6 +317,26 @@ Each step is its own branch and pull request, reviewed with `h-pr-review` before
      the UI tests run on the `macos-26` GitHub runner.
 
    Any failure is reported to the developer before step 2.
+
+   **Results (2026-10-22, local, Xcode 26.3, macOS 26.3):**
+   - ✅ UI test target added with the `xcodeproj` Ruby gem (bundled with CocoaPods); needs
+     `PRODUCT_NAME = $(TARGET_NAME)`. Tests run with `xcodebuild test -configuration Release`.
+   - ✅ RN `testID` found as an accessibility identifier (`header.tab.snippets`, a button).
+   - ✅ Status item found via `app.statusItems["statusItem.app"]`; clicks toggle the panel.
+   - ✅ `typeKey` sent through another app (`XCUIApplication(bundleIdentifier:).typeKey`) triggers
+     the `KeyboardShortcuts` global hotkey; `CGEvent` posting does not (no Accessibility grant) and
+     is not needed. Typing through Finder costs ~30s per call (Finder idle wait), so the "other app"
+     used by tests must be a lightweight one; step 2 picks it.
+   - ✅ `rootViewFactory.viewWithModuleName:` creates a second RN root from the same bridge; both
+     render and are hittable.
+   - ✅ A window at `.floating + 1` is in front of floating panels and hittable.
+   - ⚠️ Keyboard input to programmatically focused fields is lost until a click (see "Focus bug").
+     This affects the Settings window too, so the Settings design follows step 3's fix.
+   - ⚠️ After a click, the first character typed can be dropped; page objects click, wait for
+     keyboard focus, then type.
+   - ⏭ The CI run on `macos-26` is moved to step 2's first task (needs the workflow pushed).
+   - Note: until the `E2E` configuration exists, test runs use the production bundle ID and so the
+     developer's real data container; step 2 creates the separate bundle ID first.
 2. **E2E foundation + current-app suite.** E2E build configuration, test targets, page objects,
    `testID`s and status-item identifiers in product code, Jest setup (AsyncStorage mock), npm
    scripts, CI workflow, `CLAUDE.project.md` (commands, setup, TDD rule), and every unmarked test in
