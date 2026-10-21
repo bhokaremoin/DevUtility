@@ -48,9 +48,11 @@ struct SnippetsTab {
   }
 
   func addSnippet(title: String, description: String, tags: String, content: String) {
+    let rowCountBefore = rowCount
     let dialog = openAddDialog()
     dialog.fill(title: title, description: description, tags: tags, content: content)
     dialog.save()
+    Wait.until("the new snippet is listed") { self.rowCount == rowCountBefore + 1 }
   }
 
   var detailEditor: XCUIElement { element("snippets.detail.editor") }
@@ -61,7 +63,12 @@ struct SnippetsTab {
     detailEditor.typeText(text)
   }
 
-  func clickDetailSave() { element("snippets.detail.save").click() }
+  func clickDetailSave() {
+    let saveButton = element("snippets.detail.save")
+    saveButton.click()
+    // The button only shows while there are unsaved edits, so it vanishing means the save finished.
+    Wait.until("the edits are saved") { !saveButton.exists }
+  }
 
   func deleteSelected(confirm: Bool) {
     element("snippets.detail.delete").click()
