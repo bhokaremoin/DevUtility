@@ -13,6 +13,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # The runner's default Xcode 26.6 cannot compile the fmt pod bundled with
+      # React Native 0.76 (consteval errors); 26.3 is what the project builds with locally.
+      - name: Select Xcode 26.3
+        run: |
+          ls -d /Applications/Xcode_*.app
+          sudo xcode-select -s /Applications/Xcode_26.3.app
+          xcodebuild -version
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
