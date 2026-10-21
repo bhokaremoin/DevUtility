@@ -22,6 +22,7 @@
 		946E1392525380B69EE0DFBE /* SnippetsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = C984E44BA351EA476C4CAF57 /* SnippetsTab.swift */; };
 		98B4A1B370EA8B16FF83CD95 /* SettingsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872908EE62D43C6B5029260C /* SettingsTab.swift */; };
 		9B10C96D1D8A0727A8D4F1CC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */; };
+		9CE52C591BC2CEFCF9E9C96C /* SnippetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77D0304AE41E6F09A9E80F94 /* SnippetsTests.swift */; };
 		A247450907168F750B724DF0 /* OtherApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42A2816C19C46A5A1A53AA5 /* OtherApp.swift */; };
 		A4FEBADCC5FD7239DE350FC3 /* XCUIElement+Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156543116F4D53849AFB5136 /* XCUIElement+Text.swift */; };
 		BB0001000000000000000002 /* PanelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000002 /* PanelManager.swift */; };
@@ -69,6 +70,7 @@
 		514201572437B4B40078DB4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		514201592437B4B40078DB4F /* DevUtility.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DevUtility.entitlements; sourceTree = "<group>"; };
 		5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardHistoryTests.swift; sourceTree = "<group>"; };
+		77D0304AE41E6F09A9E80F94 /* SnippetsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsTests.swift; sourceTree = "<group>"; };
 		872908EE62D43C6B5029260C /* SettingsTab.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTab.swift; sourceTree = "<group>"; };
 		8EF8933463B01181FCF5C27A /* DevUtilityE2ETests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DevUtilityE2ETests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8F5F26DDB07D6AFCAC99741 /* Pods-DevUtility-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevUtility-macOS.release.xcconfig"; path = "Target Support Files/Pods-DevUtility-macOS/Pods-DevUtility-macOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				D971F53C728C38A0172693A4 /* ResetFlagTests.swift */,
 				0C70FAAD161AE16FE8D1187C /* PageObjectSmokeTests.swift */,
 				5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */,
+				77D0304AE41E6F09A9E80F94 /* SnippetsTests.swift */,
 			);
 			name = Specs;
 			path = Specs;
@@ -471,6 +474,7 @@
 				A247450907168F750B724DF0 /* OtherApp.swift in Sources */,
 				A4FEBADCC5FD7239DE350FC3 /* XCUIElement+Text.swift in Sources */,
 				734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */,
+				9CE52C591BC2CEFCF9E9C96C /* SnippetsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

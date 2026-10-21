@@ -17,6 +17,18 @@ struct SnippetsTab {
       .count
   }
 
+  func rowCountStays(_ count: Int, for seconds: TimeInterval) -> Bool {
+    let predicate = NSPredicate { _, _ in self.rowCount != count }
+    let rowCountChanged = XCTNSPredicateExpectation(predicate: predicate, object: nil)
+    rowCountChanged.isInverted = true
+    return XCTWaiter().wait(for: [rowCountChanged], timeout: seconds) == .completed
+  }
+
+  func isRowVisible(_ index: Int) -> Bool {
+    let row = element("snippets.row.\(index)")
+    return row.exists && row.isHittable
+  }
+
   func rowTitle(_ index: Int) -> String { element("snippets.row.\(index).title").displayedText }
 
   func selectRow(_ index: Int) { element("snippets.row.\(index)").click() }
