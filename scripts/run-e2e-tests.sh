@@ -29,6 +29,7 @@ xcodebuild test \
   -derivedDataPath "$PROJECT_ROOT/build/e2e-derived-data" \
   -resultBundlePath "$RESULT_BUNDLE" \
   -only-testing:DevUtilityE2ETests \
+  ONLY_ACTIVE_ARCH=YES \
   NODE_BINARY="$(command -v node)" \
   "$@"
 

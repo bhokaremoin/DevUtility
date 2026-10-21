@@ -73,9 +73,10 @@ export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
     );
 
     const renderItem = useCallback(
-      ({item}: {item: ClipboardItem}) => (
+      ({item, index}: {item: ClipboardItem; index: number}) => (
         <ClipMasterRow
           item={item}
+          testIDPrefix={`clipboard.row.${index}`}
           isSelected={selectedId === item.id}
           isCopied={copiedId === item.id}
           onSelect={setSelectedId}
@@ -90,7 +91,7 @@ export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
     return (
       <View style={styles.container}>
         {history.length === 0 ? (
-          <View style={styles.emptyState}>
+          <View testID="clipboard.emptyState" style={styles.emptyState}>
             <Text style={styles.emptyIcon}>📋</Text>
             <Text style={styles.emptyTitle}>No clipboard history yet</Text>
             <Text style={styles.emptySubtitle}>

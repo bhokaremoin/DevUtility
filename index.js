@@ -1,9 +1,15 @@
-// index.js — React Native entry point.
-// Registers the root App component with the native bridge so the macOS runtime
-// knows which component to mount when the JS bundle starts.
-
+import React from 'react';
 import {AppRegistry} from 'react-native';
 import App from './src/App';
+import {StorageResetGate} from './src/testSupport/StorageResetGate';
 import {name as appName} from './app.json';
 
-AppRegistry.registerComponent(appName, () => App);
+function Root({isE2EReset = false}) {
+  return (
+    <StorageResetGate shouldReset={isE2EReset}>
+      <App />
+    </StorageResetGate>
+  );
+}
+
+AppRegistry.registerComponent(appName, () => Root);
