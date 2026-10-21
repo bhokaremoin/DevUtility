@@ -91,7 +91,10 @@ export const ClipCopyScreen = forwardRef<ScreenHandle, ClipCopyScreenProps>(
     return (
       <View style={styles.container}>
         {history.length === 0 ? (
-          <View testID="clipboard.emptyState" style={styles.emptyState}>
+          <View
+            testID="clipboard.emptyState"
+            accessible
+            style={styles.emptyState}>
             <Text style={styles.emptyIcon}>📋</Text>
             <Text style={styles.emptyTitle}>No clipboard history yet</Text>
             <Text style={styles.emptySubtitle}>
