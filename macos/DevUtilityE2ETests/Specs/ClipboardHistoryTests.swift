@@ -32,8 +32,7 @@ final class ClipboardHistoryTests: XCTestCase {
   func test_sameTextCopiedTwiceInARowIsAddedOnce() {
     copyAndWaitForTopRow("repeat me")
     Pasteboard.write("repeat me")
-    copyAndWaitForTopRow("marker")
-    XCTAssertEqual(clipboard.rowCount, 2)
+    XCTAssertTrue(clipboard.rowCountStays(1, for: 3), "the repeated text was added to the history again")
   }
 
   func test_sameTextCopiedAgainLaterIsAddedAgain() {
@@ -48,8 +47,7 @@ final class ClipboardHistoryTests: XCTestCase {
     copyAndWaitForTopRow("newer")
     clipboard.clickCopy(onRow: 1)
     Wait.until("the pasteboard holds the re-copied row") { Pasteboard.read() == "older" }
-    copyAndWaitForTopRow("marker")
-    XCTAssertEqual(clipboard.rowCount, 3)
+    XCTAssertTrue(clipboard.rowCountStays(2, for: 3), "re-copying a row added a duplicate to the history")
   }
 
   func test_historyKeepsOnlyTheFifteenNewestItems() {
@@ -119,8 +117,9 @@ final class ClipboardHistoryTests: XCTestCase {
     for number in 1...15 {
       copyAndWaitForTopRow("scroll item \(number)")
     }
+    XCTAssertFalse(clipboard.isRowVisible(14), "the oldest row is visible before scrolling")
     clipboard.scrollToBottom()
-    Wait.until("the oldest row is visible") { self.clipboard.row(14).isHittable }
+    Wait.until("the oldest row is visible") { self.clipboard.isRowVisible(14) }
   }
 
   func test_copyingASnippetAddsItToHistory() {
@@ -152,5 +151,6 @@ final class ClipboardHistoryTests: XCTestCase {
     Pasteboard.write("   ")
     Wait.until("the whitespace item appears") { self.clipboard.row(0).exists }
     XCTAssertEqual(clipboard.rowCount, 1)
+    XCTAssertEqual(clipboard.rowText(0), "   ")
   }
 }

@@ -15,7 +15,16 @@ struct ClipboardTab {
       .count
   }
 
+  func rowCountStays(_ count: Int, for seconds: TimeInterval) -> Bool {
+    let predicate = NSPredicate { _, _ in self.rowCount != count }
+    let rowCountChanged = XCTNSPredicateExpectation(predicate: predicate, object: nil)
+    rowCountChanged.isInverted = true
+    return XCTWaiter().wait(for: [rowCountChanged], timeout: seconds) == .completed
+  }
+
   func row(_ index: Int) -> XCUIElement { element("clipboard.row.\(index)") }
+
+  func isRowVisible(_ index: Int) -> Bool { row(index).isHittable }
 
   func rowText(_ index: Int) -> String { element("clipboard.row.\(index).text").displayedText }
 
