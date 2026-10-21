@@ -39,7 +39,7 @@ jobs:
         run: sudo automationmodetool enable-automationmode-without-authentication
 
       - name: Run tests
-        run: npm run test:e2e
+        run: npm run test:all
 
       - name: Upload test results
         if: failure()
