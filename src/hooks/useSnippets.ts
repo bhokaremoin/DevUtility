@@ -18,6 +18,7 @@ import {
 } from '../services/snippetStorage';
 import {setClipboardString} from '../services/clipboardNative';
 import {useCopyFeedback} from './useCopyFeedback';
+import {filterSnippets} from './snippetSearch';
 
 /**
  * Manages snippet list state: loads on mount, filters by search query,
@@ -41,18 +42,10 @@ export function useSnippets() {
     loadSnippets().then(setSnippets);
   }, []);
 
-  const filteredSnippets = useMemo(() => {
-    if (!searchQuery.trim()) {
-      return snippets;
-    }
-    const q = searchQuery.toLowerCase();
-    return snippets.filter(
-      s =>
-        s.title.toLowerCase().includes(q) ||
-        s.description.toLowerCase().includes(q) ||
-        s.tags.some(tag => tag.toLowerCase().includes(q)),
-    );
-  }, [snippets, searchQuery]);
+  const filteredSnippets = useMemo(
+    () => filterSnippets(snippets, searchQuery),
+    [snippets, searchQuery],
+  );
 
   const addSnippet = useCallback(
     async (data: Omit<Snippet, 'id' | 'createdAt'>) => {

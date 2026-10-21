@@ -20,6 +20,7 @@ import {setClipboardString} from '../services/clipboardNative';
 import {generateId} from '../utils';
 import {useCopyFeedback} from './useCopyFeedback';
 import {useClipboardPoller} from './useClipboardPoller';
+import {addCapturedText} from './clipboardHistoryList';
 
 /**
  * Manages clipboard history: loads persisted items on mount, polls the system
@@ -59,14 +60,18 @@ export function useClipboardHistory() {
 
   // Poll the system clipboard for new content
   const handleNewClip = useCallback((text: string) => {
-    setHistory(prev => {
-      const newItem: ClipboardItem = {
-        id: generateId(),
+    setHistory(previous =>
+      addCapturedText(
+        previous,
         text,
-        timestamp: Date.now(),
-      };
-      return [newItem, ...prev].slice(0, MAX_HISTORY_ITEMS);
-    });
+        capturedText => ({
+          id: generateId(),
+          text: capturedText,
+          timestamp: Date.now(),
+        }),
+        MAX_HISTORY_ITEMS,
+      ),
+    );
   }, []);
   useClipboardPoller(lastClipRef, handleNewClip);
 
