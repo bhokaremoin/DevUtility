@@ -36,9 +36,9 @@ struct ClipboardTab {
   var detailEditor: XCUIElement { element("clipboard.detail.editor") }
 
   func replaceDetailText(with text: String) {
-    detailEditor.click()
+    detailEditor.focus()
     detailEditor.typeKey("a", modifierFlags: .command)
-    detailEditor.typeAfterFocusing(text)
+    detailEditor.typeText(text)
   }
 
   func clickDetailCopy() { element("clipboard.detail.copy").click() }

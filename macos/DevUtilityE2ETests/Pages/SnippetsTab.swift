@@ -44,9 +44,9 @@ struct SnippetsTab {
   var detailEditor: XCUIElement { element("snippets.detail.editor") }
 
   func replaceDetailText(with text: String) {
-    detailEditor.click()
+    detailEditor.focus()
     detailEditor.typeKey("a", modifierFlags: .command)
-    detailEditor.typeAfterFocusing(text)
+    detailEditor.typeText(text)
   }
 
   func clickDetailSave() { element("snippets.detail.save").click() }
