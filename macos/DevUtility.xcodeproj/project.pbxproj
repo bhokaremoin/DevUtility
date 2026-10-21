@@ -15,6 +15,7 @@
 		514201582437B4B40078DB4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 514201572437B4B40078DB4F /* main.m */; };
 		604BBC035AB4AFBFF6002F84 /* MainPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100E1047C93A9390C8868E10 /* MainPanel.swift */; };
 		6074A04C5BA92B509F4637E0 /* ResetFlagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D971F53C728C38A0172693A4 /* ResetFlagTests.swift */; };
+		734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */; };
 		8295E139C25E304526173EF3 /* AppLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23351A8825B9A54328E3CBB4 /* AppLauncher.swift */; };
 		82C83D88FD1B72190068705E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E282AE228594BF9DDED1F896 /* Cocoa.framework */; };
 		912F9BC0B73F987EFAE9733A /* ClipboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA7641EA2A80E1B28D1FFB6 /* ClipboardTab.swift */; };
@@ -67,6 +68,7 @@
 		514201562437B4B40078DB4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		514201572437B4B40078DB4F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		514201592437B4B40078DB4F /* DevUtility.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DevUtility.entitlements; sourceTree = "<group>"; };
+		5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardHistoryTests.swift; sourceTree = "<group>"; };
 		872908EE62D43C6B5029260C /* SettingsTab.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTab.swift; sourceTree = "<group>"; };
 		8EF8933463B01181FCF5C27A /* DevUtilityE2ETests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DevUtilityE2ETests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8F5F26DDB07D6AFCAC99741 /* Pods-DevUtility-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevUtility-macOS.release.xcconfig"; path = "Target Support Files/Pods-DevUtility-macOS/Pods-DevUtility-macOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -171,6 +173,7 @@
 			children = (
 				D971F53C728C38A0172693A4 /* ResetFlagTests.swift */,
 				0C70FAAD161AE16FE8D1187C /* PageObjectSmokeTests.swift */,
+				5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */,
 			);
 			name = Specs;
 			path = Specs;
@@ -467,6 +470,7 @@
 				5014281C3E368A10EEE419E8 /* PageObjectSmokeTests.swift in Sources */,
 				A247450907168F750B724DF0 /* OtherApp.swift in Sources */,
 				A4FEBADCC5FD7239DE350FC3 /* XCUIElement+Text.swift in Sources */,
+				734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
