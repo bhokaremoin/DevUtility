@@ -9,7 +9,9 @@
     "test": "jest",
     "pods": "pod install --project-directory=macos",
     "version-bump": "bash scripts/version-bump.sh",
-    "build-release": "bash scripts/build-release.sh"
+    "build-release": "bash scripts/build-release.sh",
+    "test:e2e": "bash scripts/run-e2e-tests.sh",
+    "xcode:add-e2e-targets": "ruby scripts/xcode/add-e2e-targets.rb"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.0.1",

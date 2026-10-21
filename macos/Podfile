@@ -1,5 +1,6 @@
 require_relative '../node_modules/react-native-macos/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
+project 'DevUtility', 'E2E' => :release
 
 prepare_react_native_project!
 
