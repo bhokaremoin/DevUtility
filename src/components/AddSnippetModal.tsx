@@ -80,6 +80,7 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
         <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
           <Text style={styles.label}>Title *</Text>
           <TextInput
+            testID="snippets.add.title"
             style={styles.input}
             value={title}
             onChangeText={setTitle}
@@ -90,6 +91,7 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
 
           <Text style={styles.label}>Description</Text>
           <TextInput
+            testID="snippets.add.description"
             style={styles.input}
             value={description}
             onChangeText={setDescription}
@@ -100,6 +102,7 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
 
           <Text style={styles.label}>Tags (comma separated)</Text>
           <TextInput
+            testID="snippets.add.tags"
             style={styles.input}
             value={tags}
             onChangeText={setTags}
@@ -110,6 +113,7 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
 
           <Text style={styles.label}>Content *</Text>
           <TextInput
+            testID="snippets.add.content"
             style={[styles.input, styles.contentInput]}
             value={content}
             onChangeText={setContent}
@@ -123,6 +127,7 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
 
         <View style={styles.actions}>
           <TouchableOpacity
+            testID="snippets.add.cancel"
             style={styles.cancelButton}
             onPress={resetAndClose}
             activeOpacity={0.7}
@@ -131,6 +136,7 @@ export function AddSnippetModal({visible, onClose, onSave}: Props) {
             <Text style={styles.cancelText}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity
+            testID="snippets.add.save"
             style={[styles.saveButton, !canSave && styles.saveButtonDisabled]}
             onPress={handleSave}
             activeOpacity={canSave ? 0.7 : 1}

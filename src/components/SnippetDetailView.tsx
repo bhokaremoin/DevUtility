@@ -77,6 +77,7 @@ export function SnippetDetailView({
       </View>
 
       <TextInput
+        testID="snippets.detail.editor"
         style={styles.detailCodeInput}
         value={draftContent}
         onChangeText={setDraftContent}
@@ -97,6 +98,7 @@ export function SnippetDetailView({
             <Text style={styles.confirmLabel}>Delete this snippet?</Text>
             <View style={styles.confirmActions}>
               <TouchableOpacity
+                testID="snippets.detail.confirmDelete"
                 style={styles.confirmYes}
                 onPress={() => {
                   setConfirming(false);
@@ -108,6 +110,7 @@ export function SnippetDetailView({
                 <Text style={styles.confirmYesText}>Delete</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                testID="snippets.detail.cancelDelete"
                 style={styles.confirmNo}
                 onPress={() => setConfirming(false)}
                 activeOpacity={0.7}
@@ -120,6 +123,7 @@ export function SnippetDetailView({
         ) : (
           <View style={styles.footerActions}>
             <TouchableOpacity
+              testID="snippets.detail.copy"
               style={[
                 styles.detailCopyBtn,
                 isCopied && styles.detailCopyBtnCopied,
@@ -140,6 +144,7 @@ export function SnippetDetailView({
             </TouchableOpacity>
             {hasEdits && (
               <TouchableOpacity
+                testID="snippets.detail.save"
                 style={styles.detailSaveBtn}
                 onPress={() => onUpdate(snippet.id, draftContent)}
                 activeOpacity={0.7}
@@ -149,6 +154,7 @@ export function SnippetDetailView({
               </TouchableOpacity>
             )}
             <TouchableOpacity
+              testID="snippets.detail.delete"
               style={styles.detailDeleteBtn}
               onPress={() => setConfirming(true)}
               activeOpacity={0.7}

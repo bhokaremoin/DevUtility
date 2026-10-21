@@ -28,6 +28,7 @@ class ShortcutRecorderManager: RCTViewManager {
     let recorder = KeyboardShortcuts.RecorderCocoa(for: .toggleApp)
     recorder.setContentHuggingPriority(.defaultHigh, for: .horizontal)
     recorder.setContentHuggingPriority(.defaultHigh, for: .vertical)
+    recorder.setAccessibilityIdentifier("settings.shortcut.recorder")
     return recorder
   }
 }

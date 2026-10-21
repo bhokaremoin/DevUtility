@@ -67,7 +67,7 @@ export function ShortcutsModal({visible, onClose}: Props) {
   }
 
   return (
-    <View style={styles.backdrop}>
+    <View testID="shortcuts.sheet" accessible style={styles.backdrop}>
       <TextInput ref={focusTrapRef} style={styles.focusTrap} editable={false} />
       <View style={styles.card}>
         <View style={styles.cardHeader}>
@@ -75,6 +75,7 @@ export function ShortcutsModal({visible, onClose}: Props) {
             Keyboard Shortcuts
           </Text>
           <TouchableOpacity
+            testID="shortcuts.close"
             onPress={onClose}
             style={styles.closeBtn}
             activeOpacity={0.7}
