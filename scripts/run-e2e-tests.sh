@@ -14,12 +14,22 @@ if [[ "$installed_app_was_running" == "true" ]]; then
   echo "==> Quitting installed DevUtility for the test run (it is reopened afterwards)"
   osascript -e "quit app id \"$INSTALLED_APP_ID\""
 fi
-reopen_installed_app() {
+
+# The tests overwrite the pasteboard. Put the developer's text back before the installed app
+# reopens, or its first poll would capture whatever test text was left into the real history.
+# pbpaste prints nothing for non-text content; restoring that empty text still clears the
+# leftover, and the app ignores an empty pasteboard.
+saved_pasteboard="$(mktemp)"
+pbpaste > "$saved_pasteboard" 2>/dev/null || true
+
+restore_developer_environment() {
+  pbcopy < "$saved_pasteboard" || true
+  rm -f "$saved_pasteboard"
   if [[ "$installed_app_was_running" == "true" ]]; then
     open -b "$INSTALLED_APP_ID" || true
   fi
 }
-trap reopen_installed_app EXIT
+trap restore_developer_environment EXIT
 
 mkdir -p "$RESULTS_DIR"
 xcodebuild test \
