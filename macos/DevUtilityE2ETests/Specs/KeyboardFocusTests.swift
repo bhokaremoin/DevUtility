@@ -137,7 +137,9 @@ final class KeyboardFocusTests: XCTestCase {
   }
 
   private func typeAsTheUser(_ text: String, through otherApp: XCUIApplication) {
-    otherApp.typeText(text)
+    for character in text {
+      otherApp.typeKey(String(character), modifierFlags: [])
+    }
   }
 
   private func hidePanelThenReopenItFromAnotherApp() -> XCUIApplication {
