@@ -36,10 +36,17 @@ function KbdTag({label}: {label: string}) {
   );
 }
 
-function ShortcutRowView({action, keys, isLast}: ShortcutRow & {isLast: boolean}) {
+function ShortcutRowView({
+  action,
+  keys,
+  isLast,
+  testID,
+}: ShortcutRow & {isLast: boolean; testID: string}) {
   return (
     <View style={[styles.row, !isLast && styles.rowDivider]}>
-      <Text accessible style={styles.actionText}>{action}</Text>
+      <Text testID={testID} accessible style={styles.actionText}>
+        {action}
+      </Text>
       <View style={styles.keysRow}>
         {keys.map((key, i) => (
           <React.Fragment key={i}>
@@ -92,7 +99,12 @@ export function ShortcutsModal({visible, onClose}: Props) {
             <View key={section.title} style={si > 0 ? styles.section : styles.sectionFirst}>
               <Text style={styles.sectionLabel}>{section.title}</Text>
               {section.rows.map((row, ri) => (
-                <ShortcutRowView key={row.action} {...row} isLast={ri === section.rows.length - 1} />
+                <ShortcutRowView
+                  key={row.action}
+                  {...row}
+                  isLast={ri === section.rows.length - 1}
+                  testID={`shortcuts.action.${si}.${ri}`}
+                />
               ))}
             </View>
           ))}

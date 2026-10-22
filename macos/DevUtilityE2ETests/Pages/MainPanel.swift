@@ -56,7 +56,12 @@ struct MainPanel {
 
   var shortcutsHelpTitle: XCUIElement { app.staticTexts["Keyboard Shortcuts"] }
 
-  func shortcutsHelpRow(describing action: String) -> XCUIElement { app.staticTexts[action] }
+  var shortcutsHelpActions: [String] {
+    app.descendants(matching: .any)
+      .matching(NSPredicate(format: "identifier BEGINSWITH %@", "shortcuts.action."))
+      .allElementsBoundByIndex
+      .map(\.displayedText)
+  }
 
   func press(_ character: String, modifiers: XCUIElement.KeyModifierFlags = []) {
     app.typeKey(character, modifierFlags: modifiers)

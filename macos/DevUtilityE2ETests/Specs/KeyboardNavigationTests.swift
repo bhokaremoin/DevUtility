@@ -143,8 +143,9 @@ final class KeyboardNavigationTests: XCTestCase {
   func test_shortcutsHelpListsTheShortcuts() {
     panel.openShortcutsHelp()
     XCTAssertTrue(panel.shortcutsHelpTitle.exists)
-    XCTAssertTrue(panel.shortcutsHelpRow(describing: "Switch to Snippets tab").exists)
-    XCTAssertTrue(panel.shortcutsHelpRow(describing: "Copy selected item (list focused)").exists)
+    let actions = panel.shortcutsHelpActions
+    XCTAssertTrue(actions.contains("Switch to Snippets tab"), "help actions: \(actions)")
+    XCTAssertTrue(actions.contains("Copy selected item (list focused)"), "help actions: \(actions)")
     panel.closeShortcutsHelp()
     Wait.until("the help sheet is closed") { !self.panel.shortcutsHelpSheet.exists }
   }
