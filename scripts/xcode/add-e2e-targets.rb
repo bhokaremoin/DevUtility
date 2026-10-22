@@ -68,6 +68,10 @@ test_target.build_configurations.each do |configuration|
   settings['CODE_SIGN_STYLE'] = 'Manual'
   settings['MACOSX_DEPLOYMENT_TARGET'] = '14.0'
 end
+# AppLauncher refuses to launch the app unless the suite was built with E2E_BUILD, so a Debug
+# test run can never wipe the data of the production-ID Debug app.
+test_target.build_configuration_list[E2E_CONFIGURATION].build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] =
+  '$(inherited) E2E_BUILD'
 
 test_group = project.main_group[TEST_TARGET_NAME]
 existing_paths = test_target.source_build_phase.files_references.map(&:real_path).map(&:to_s)
@@ -87,4 +91,5 @@ scheme = Xcodeproj::XCScheme.new(scheme_path)
 unless scheme.test_action.testables.any? { |testable| testable.buildable_references.any? { |ref| ref.target_name == TEST_TARGET_NAME } }
   scheme.test_action.add_testable(Xcodeproj::XCScheme::TestAction::TestableReference.new(test_target))
 end
+scheme.test_action.build_configuration = E2E_CONFIGURATION
 scheme.save!

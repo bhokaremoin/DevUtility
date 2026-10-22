@@ -802,6 +802,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = org.reactjs.native.DevUtilityE2ETests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) E2E_BUILD";
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = "DevUtility-macOS";
 			};
