@@ -117,9 +117,9 @@ final class KeyboardNavigationTests: XCTestCase {
     Wait.until("the Clipboard tab is shown") { clipboard.emptyState.exists }
   }
 
-  func test_commandThreeOpensSettings() {
+  func test_commandCommaOpensSettings() {
     _ = panel.openClipboard()
-    panel.press("3", modifiers: .command)
+    panel.press(",", modifiers: .command)
     Wait.until("the Settings tab is shown") { SettingsTab(app: self.app).isShown }
   }
 
