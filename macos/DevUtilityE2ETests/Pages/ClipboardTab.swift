@@ -59,8 +59,6 @@ struct ClipboardTab {
 
   func clickDetailCopy() { element("clipboard.detail.copy").click() }
 
-  var detailCopyButtonLabel: String { element("clipboard.detail.copy").label }
-
   var saveButton: XCUIElement { element("clipboard.detail.save") }
 
   func clickDetailSave() { saveButton.click() }
