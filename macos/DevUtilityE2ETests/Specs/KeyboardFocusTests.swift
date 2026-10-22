@@ -20,7 +20,7 @@ final class KeyboardFocusTests: XCTestCase {
   func test_typingRightAfterSwitchingToSnippetsGoesIntoSearch() {
     panel.press("2", modifiers: .command)
     let snippets = SnippetsTab(app: app)
-    Wait.until("search has keyboard focus") { snippets.isSearchFocused }
+    Wait.until("Snippets is shown") { snippets.isShown }
     panel.type("nginx")
     snippets.waitForSearchText("nginx")
   }
@@ -28,7 +28,7 @@ final class KeyboardFocusTests: XCTestCase {
   func test_typingRightAfterCommandFGoesIntoSearch() {
     panel.press("f", modifiers: .command)
     let snippets = SnippetsTab(app: app)
-    Wait.until("search has keyboard focus") { snippets.isSearchFocused }
+    Wait.until("Snippets is shown") { snippets.isShown }
     panel.type("docker")
     snippets.waitForSearchText("docker")
   }
@@ -41,10 +41,10 @@ final class KeyboardFocusTests: XCTestCase {
     let otherApp = OtherApp.bringToFront()
     otherApp.typeKey("d", modifierFlags: [.control, .option])
     panel.waitUntilVisible()
-    panel.press("2", modifiers: .command)
+    pressAsTheUser("2", modifiers: .command, through: otherApp)
     let snippets = SnippetsTab(app: app)
-    Wait.until("search has keyboard focus") { snippets.isSearchFocused }
-    panel.type("again")
+    Wait.until("Snippets is shown") { snippets.isShown }
+    typeAsTheUser("again", through: otherApp)
     snippets.waitForSearchText("again")
   }
 
@@ -55,13 +55,18 @@ final class KeyboardFocusTests: XCTestCase {
     XCTAssertEqual(otherApp.state, .runningForeground, "opening the panel activated DevUtility")
   }
 
-  func test_iconOpensThePanelWithoutActivatingTheApp() {
+  func test_typingWorksRightAfterTheIconOpensSnippetsOverAnotherApp() {
     let menuBar = MenuBar(app: app)
     menuBar.clickIcon()
     panel.waitUntilHidden()
     let otherApp = OtherApp.bringToFront()
     menuBar.clickIcon()
     panel.waitUntilVisible()
+    pressAsTheUser("2", modifiers: .command, through: otherApp)
+    let snippets = SnippetsTab(app: app)
+    Wait.until("Snippets is shown") { snippets.isShown }
+    typeAsTheUser("menu", through: otherApp)
+    snippets.waitForSearchText("menu")
     XCTAssertEqual(otherApp.state, .runningForeground, "opening the panel activated DevUtility")
   }
 
@@ -72,17 +77,17 @@ final class KeyboardFocusTests: XCTestCase {
     Pasteboard.write("newer")
     clipboard.waitForRowText(0, toEqual: "newer")
     let otherApp = hidePanelThenReopenItFromAnotherApp()
-    panel.press(.downArrow)
+    pressAsTheUser(.downArrow, through: otherApp)
     Wait.until("row 1 is selected") { clipboard.isRowSelected(1) }
     XCTAssertEqual(otherApp.state, .runningForeground, "sending keys activated DevUtility")
   }
 
   func test_typingWorksRightAfterTheShortcutOpensSnippetsOverAnotherApp() {
     let otherApp = hidePanelThenReopenItFromAnotherApp()
-    panel.press("2", modifiers: .command)
+    pressAsTheUser("2", modifiers: .command, through: otherApp)
     let snippets = SnippetsTab(app: app)
-    Wait.until("search has keyboard focus") { snippets.isSearchFocused }
-    panel.type("menu")
+    Wait.until("Snippets is shown") { snippets.isShown }
+    typeAsTheUser("menu", through: otherApp)
     snippets.waitForSearchText("menu")
     XCTAssertEqual(otherApp.state, .runningForeground, "sending keys activated DevUtility")
   }
@@ -109,14 +114,31 @@ final class KeyboardFocusTests: XCTestCase {
   func test_enterInsideSnippetSearchDoesNotCopyWhileAnotherAppIsFrontmost() {
     let snippets = panel.openSnippets()
     snippets.addSnippet(title: "Nginx proxy", description: "", tags: "", content: "proxy_pass")
-    _ = hidePanelThenReopenItFromAnotherApp()
+    let otherApp = hidePanelThenReopenItFromAnotherApp()
     snippets.search(for: "Nginx")
     Pasteboard.clear()
-    panel.press(.return)
+    pressAsTheUser(.return, through: otherApp)
     XCTAssertTrue(Pasteboard.staysEmpty(for: 2), "Enter inside search copied the snippet")
   }
 
   // MARK: - Helpers
+
+  // Keys sent through the frontmost app follow the system's keyboard routing, as a real keyboard does; keys addressed to DevUtility would bypass it.
+  private func pressAsTheUser(
+    _ character: String,
+    modifiers: XCUIElement.KeyModifierFlags = [],
+    through otherApp: XCUIApplication
+  ) {
+    otherApp.typeKey(character, modifierFlags: modifiers)
+  }
+
+  private func pressAsTheUser(_ key: XCUIKeyboardKey, through otherApp: XCUIApplication) {
+    otherApp.typeKey(key, modifierFlags: [])
+  }
+
+  private func typeAsTheUser(_ text: String, through otherApp: XCUIApplication) {
+    otherApp.typeText(text)
+  }
 
   private func hidePanelThenReopenItFromAnotherApp() -> XCUIApplication {
     let otherApp = OtherApp.bringToFront()
