@@ -1,3 +1,4 @@
+import {describe, expect, it} from '@jest/globals';
 import {addCapturedText} from '../src/hooks/clipboardHistoryList';
 import {ClipboardItem} from '../src/types';
 

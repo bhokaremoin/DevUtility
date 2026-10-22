@@ -1,3 +1,4 @@
+import {describe, expect, it} from '@jest/globals';
 import {formatContentStats, parseTags, truncateText} from '../src/utils';
 
 describe('truncateText', () => {

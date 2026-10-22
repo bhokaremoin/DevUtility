@@ -1,3 +1,4 @@
+import {describe, expect, it} from '@jest/globals';
 import {filterSnippets} from '../src/hooks/snippetSearch';
 import {Snippet} from '../src/types';
 
