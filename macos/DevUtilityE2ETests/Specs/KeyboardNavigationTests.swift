@@ -32,6 +32,19 @@ final class KeyboardNavigationTests: XCTestCase {
     Wait.until("row 0 is selected") { clipboard.isRowSelected(0) }
   }
 
+  func test_arrowKeysInSnippetSearchMoveTheListSelection() {
+    let snippets = panel.openSnippets()
+    for title in ["Third", "Second", "First"] {
+      snippets.addSnippet(title: title, description: "", tags: "", content: "\(title) content")
+    }
+    snippets.selectRow(0)
+    snippets.searchField.focus()
+    panel.press(.downArrow)
+    Wait.until("row 1 is selected") { snippets.isRowSelected(1) }
+    panel.press(.upArrow)
+    Wait.until("row 0 is selected") { snippets.isRowSelected(0) }
+  }
+
   func test_arrowKeysInsideTheDetailEditorMoveTheCursorNotTheSelection() {
     let clipboard = panel.openClipboard()
     Pasteboard.write("older item")
@@ -56,6 +69,17 @@ final class KeyboardNavigationTests: XCTestCase {
     // .return is the main Return key (keyCode 36); .enter is the keypad key, which the app does not handle.
     panel.press(.return)
     Wait.until("the pasteboard holds the selected item") { Pasteboard.read() == "two" }
+  }
+
+  func test_enterInTheSnippetListCopiesTheSelectedSnippet() {
+    let snippets = panel.openSnippets()
+    snippets.addSnippet(title: "Older", description: "", tags: "", content: "older content")
+    snippets.addSnippet(title: "Newer", description: "", tags: "", content: "newer content")
+    snippets.selectRow(1)
+    XCTAssertFalse(snippets.isSearchFocused, "the search field kept focus after clicking a row")
+    Pasteboard.clear()
+    panel.press(.return)
+    Wait.until("the pasteboard holds the selected snippet") { Pasteboard.read() == "older content" }
   }
 
   func test_enterInsideATextInputDoesNotCopy() {
@@ -83,6 +107,20 @@ final class KeyboardNavigationTests: XCTestCase {
     Wait.until("the search hides the snippet") { snippets.rowCount == 0 }
     panel.press(.escape)
     Wait.until("the cleared search shows the snippet again") { snippets.rowCount == 1 }
+  }
+
+  func test_commandOneAndTwoSwitchBetweenClipboardAndSnippets() {
+    let clipboard = panel.openClipboard()
+    panel.press("2", modifiers: .command)
+    Wait.until("the Snippets tab is shown") { SnippetsTab(app: self.app).isShown }
+    panel.press("1", modifiers: .command)
+    Wait.until("the Clipboard tab is shown") { clipboard.emptyState.exists }
+  }
+
+  func test_commandThreeOpensSettings() {
+    _ = panel.openClipboard()
+    panel.press("3", modifiers: .command)
+    Wait.until("the Settings tab is shown") { SettingsTab(app: self.app).isShown }
   }
 
   func test_commandFFocusesSnippetSearchFromAnotherTab() {

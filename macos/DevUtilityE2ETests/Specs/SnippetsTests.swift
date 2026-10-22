@@ -91,6 +91,13 @@ final class SnippetsTests: XCTestCase {
     Wait.until("the pasteboard holds the content") { Pasteboard.read() == "server { listen 80; }" }
   }
 
+  func test_detailCopyButtonCopiesTheContent() {
+    addNginxAndDocker()
+    snippets.selectRow(1)
+    snippets.clickDetailCopy()
+    Wait.until("the pasteboard holds the content") { Pasteboard.read() == "server { listen 80; }" }
+  }
+
   func test_editedContentPersistsAcrossRelaunch() {
     addNginxAndDocker()
     snippets.selectRow(0)

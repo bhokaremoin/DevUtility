@@ -7,6 +7,8 @@ struct SettingsTab {
     app.descendants(matching: .any)[identifier]
   }
 
+  var isShown: Bool { element("settings.shortcut.reset").exists }
+
   var currentShortcutText: String { element("settings.shortcut.current").displayedText }
 
   var recorderText: String { element("settings.shortcut.recorder").displayedText }

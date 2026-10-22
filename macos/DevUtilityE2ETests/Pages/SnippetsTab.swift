@@ -9,6 +9,8 @@ struct SnippetsTab {
 
   var searchField: XCUIElement { element("snippets.search") }
 
+  var isShown: Bool { searchField.exists }
+
   var isSearchFocused: Bool { (searchField.value(forKey: "hasKeyboardFocus") as? Bool) == true }
 
   var emptyStateTitle: String { element("snippets.emptyState.title").displayedText }
@@ -64,6 +66,8 @@ struct SnippetsTab {
     detailEditor.typeKey("a", modifierFlags: .command)
     detailEditor.typeText(text)
   }
+
+  func clickDetailCopy() { element("snippets.detail.copy").click() }
 
   func clickDetailSave() {
     let saveButton = element("snippets.detail.save")
