@@ -84,6 +84,7 @@ final class ClipboardHistoryTests: XCTestCase {
     clipboard.replaceDetailText(with: "edited")
     clipboard.clickDetailCopy()
     Wait.until("the pasteboard holds the edited text") { Pasteboard.read() == "edited" }
+    XCTAssertTrue(clipboard.rowCountStays(1, for: 3), "copying the draft added it to the history")
     XCTAssertEqual(clipboard.rowText(0), "original")
   }
 
