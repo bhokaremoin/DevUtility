@@ -17,6 +17,15 @@ struct MainPanel {
     Wait.until("the panel is hidden", file: file, line: line) { !self.isVisible }
   }
 
+  func staysVisible(for seconds: TimeInterval) -> Bool {
+    let hides = XCTNSPredicateExpectation(
+      predicate: NSPredicate { _, _ in !self.isVisible },
+      object: nil
+    )
+    hides.isInverted = true
+    return XCTWaiter().wait(for: [hides], timeout: seconds) == .completed
+  }
+
   func openClipboard() -> ClipboardTab {
     element("header.tab.clipboard").click()
     return ClipboardTab(app: app)

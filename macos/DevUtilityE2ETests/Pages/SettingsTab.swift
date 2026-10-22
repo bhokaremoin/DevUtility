@@ -9,6 +9,8 @@ struct SettingsTab {
 
   var currentShortcutText: String { element("settings.shortcut.current").displayedText }
 
+  var recorderText: String { element("settings.shortcut.recorder").displayedText }
+
   func recordShortcut(_ key: String, modifiers: XCUIElement.KeyModifierFlags) {
     let recorder = element("settings.shortcut.recorder")
     recorder.click()
