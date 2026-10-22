@@ -50,7 +50,8 @@ struct SnippetsTab {
       object: nil
     )
     _ = XCTWaiter().wait(for: [matches], timeout: Wait.defaultTimeout)
-    XCTAssertEqual(searchText, expected, "search text", file: file, line: line)
+    // The focus state tells "focus never landed" apart from "focus landed but the keys were lost".
+    XCTAssertEqual(searchText, expected, "search text (search focused: \(isSearchFocused))", file: file, line: line)
   }
 
   func search(for text: String) {
