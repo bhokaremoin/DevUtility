@@ -1,13 +1,14 @@
 import XCTest
 
 enum OtherApp {
-  // Calculator took 10-20s per synthesized keystroke on CI, so another built-in app is used.
-  static let bundleIdentifier = "com.apple.TextEdit"
+  // Calculator opens no document window or dialog, so activation is predictable on a fresh runner.
+  // Synthesized keystrokes into any other app take 10-20s on CI (Calculator and TextEdit measured alike).
+  static let bundleIdentifier = "com.apple.calculator"
 
   static func bringToFront() -> XCUIApplication {
     let app = XCUIApplication(bundleIdentifier: bundleIdentifier)
     app.activate()
-    Wait.until("TextEdit is frontmost", timeout: 10) { app.state == .runningForeground }
+    Wait.until("Calculator is frontmost", timeout: 10) { app.state == .runningForeground }
     return app
   }
 }
