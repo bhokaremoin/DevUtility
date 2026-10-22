@@ -9,8 +9,12 @@ struct MainPanel {
 
   var isVisible: Bool { element("header.tab.clipboard").exists }
 
-  func waitUntilVisible(file: StaticString = #filePath, line: UInt = #line) {
-    Wait.until("the panel is visible", file: file, line: line) { self.isVisible }
+  func waitUntilVisible(
+    timeout: TimeInterval = Wait.defaultTimeout,
+    file: StaticString = #filePath,
+    line: UInt = #line
+  ) {
+    Wait.until("the panel is visible", timeout: timeout, file: file, line: line) { self.isVisible }
   }
 
   func waitUntilHidden(file: StaticString = #filePath, line: UInt = #line) {

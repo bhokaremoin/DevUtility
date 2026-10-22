@@ -34,10 +34,6 @@ enum AppLauncher {
   }
 
   private static func waitUntilReady(_ app: XCUIApplication) {
-    let clipboardTab = app.descendants(matching: .any)["header.tab.clipboard"]
-    XCTAssertTrue(
-      clipboardTab.waitForExistence(timeout: launchTimeout),
-      "DevUtility did not finish launching"
-    )
+    MainPanel(app: app).waitUntilVisible(timeout: launchTimeout)
   }
 }
