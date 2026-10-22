@@ -67,6 +67,14 @@ struct MainPanel {
       .map(\.displayedText)
   }
 
+  func shortcutsHelpAction(section: Int, row: Int) -> String {
+    element("shortcuts.action.\(section).\(row)").displayedText
+  }
+
+  func shortcutsHelpKeys(section: Int, row: Int) -> String {
+    element("shortcuts.keys.\(section).\(row)").displayedText
+  }
+
   func press(_ character: String, modifiers: XCUIElement.KeyModifierFlags = []) {
     app.typeKey(character, modifierFlags: modifiers)
   }

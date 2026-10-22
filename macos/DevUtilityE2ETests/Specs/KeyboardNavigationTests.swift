@@ -149,4 +149,10 @@ final class KeyboardNavigationTests: XCTestCase {
     panel.closeShortcutsHelp()
     Wait.until("the help sheet is closed") { !self.panel.shortcutsHelpSheet.exists }
   }
+
+  func test_shortcutsHelpShowsCommandCommaForSettings() {
+    panel.openShortcutsHelp()
+    XCTAssertEqual(panel.shortcutsHelpAction(section: 1, row: 2), "Switch to Settings tab")
+    XCTAssertEqual(panel.shortcutsHelpKeys(section: 1, row: 2), "⌘ + ,")
+  }
 }

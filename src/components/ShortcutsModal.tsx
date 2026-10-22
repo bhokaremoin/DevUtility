@@ -40,14 +40,21 @@ function ShortcutRowView({
   action,
   keys,
   isLast,
-  testID,
-}: ShortcutRow & {isLast: boolean; testID: string}) {
+  position,
+}: ShortcutRow & {isLast: boolean; position: string}) {
   return (
     <View style={[styles.row, !isLast && styles.rowDivider]}>
-      <Text testID={testID} accessible style={styles.actionText}>
+      <Text
+        testID={`shortcuts.action.${position}`}
+        accessible
+        style={styles.actionText}>
         {action}
       </Text>
-      <View style={styles.keysRow}>
+      <View
+        testID={`shortcuts.keys.${position}`}
+        accessible
+        accessibilityLabel={keys.join(' + ')}
+        style={styles.keysRow}>
         {keys.map((key, i) => (
           <React.Fragment key={i}>
             {i > 0 && <Text style={styles.plus}>+</Text>}
@@ -103,7 +110,7 @@ export function ShortcutsModal({visible, onClose}: Props) {
                   key={row.action}
                   {...row}
                   isLast={ri === section.rows.length - 1}
-                  testID={`shortcuts.action.${si}.${ri}`}
+                  position={`${si}.${ri}`}
                 />
               ))}
             </View>
