@@ -11,7 +11,8 @@ final class ResetFlagTests: XCTestCase {
     app = AppLauncher.launchFresh()
     defer { app.terminate() }
 
-    let emptyState = MainPanel(app: app).openClipboard().emptyState
-    XCTAssertTrue(emptyState.waitForExistence(timeout: Wait.defaultTimeout))
+    let clipboard = MainPanel(app: app).openClipboard()
+    XCTAssertTrue(clipboard.emptyState.waitForExistence(timeout: Wait.defaultTimeout))
+    XCTAssertTrue(clipboard.rowCountStays(0, for: 1), "old history appeared after the reset launch")
   }
 }

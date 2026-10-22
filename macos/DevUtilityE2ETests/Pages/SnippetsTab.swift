@@ -9,6 +9,8 @@ struct SnippetsTab {
 
   var searchField: XCUIElement { element("snippets.search") }
 
+  var isSearchFocused: Bool { (searchField.value(forKey: "hasKeyboardFocus") as? Bool) == true }
+
   var emptyStateTitle: String { element("snippets.emptyState.title").displayedText }
 
   var rowCount: Int {

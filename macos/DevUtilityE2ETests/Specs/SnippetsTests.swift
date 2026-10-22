@@ -121,6 +121,7 @@ final class SnippetsTests: XCTestCase {
     for number in 1...20 {
       snippets.addSnippet(title: "Snippet \(number)", description: "", tags: "", content: "content \(number)")
     }
+    XCTAssertFalse(snippets.isRowVisible(19), "the oldest snippet is visible before scrolling")
     snippets.scrollToBottom()
     Wait.until("the oldest snippet is visible") { self.snippets.isRowVisible(19) }
   }

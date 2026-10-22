@@ -33,10 +33,19 @@ final class KeyboardNavigationTests: XCTestCase {
   }
 
   func test_arrowKeysInsideTheDetailEditorMoveTheCursorNotTheSelection() {
-    let clipboard = clipboardWithThreeItems()
+    let clipboard = panel.openClipboard()
+    Pasteboard.write("older item")
+    clipboard.waitForRowText(0, toEqual: "older item")
+    Pasteboard.write("first line\nsecond line")
+    Wait.until("the two-line item is at the top") { clipboard.rowCount == 2 }
     clipboard.selectRow(0)
-    clipboard.detailEditor.click()
+    clipboard.detailEditor.focus()
+    panel.press(.upArrow, modifiers: .command)
     panel.press(.downArrow)
+    panel.type("X")
+    Wait.until("the marker lands at the start of line 2") {
+      clipboard.detailEditor.displayedText == "first line\nXsecond line"
+    }
     XCTAssertTrue(clipboard.rowStaysSelected(0, for: 2))
   }
 
@@ -80,12 +89,24 @@ final class KeyboardNavigationTests: XCTestCase {
     _ = panel.openClipboard()
     panel.press("f", modifiers: .command)
     let snippets = SnippetsTab(app: app)
-    Wait.until("the search has focus") { (snippets.searchField.value(forKey: "hasKeyboardFocus") as? Bool) == true }
+    Wait.until("the search has focus") { snippets.isSearchFocused }
+  }
+
+  func test_commandFMovesFocusFromTheDetailEditorToSnippetSearch() {
+    let snippets = panel.openSnippets()
+    snippets.addSnippet(title: "Focus", description: "", tags: "", content: "focus content")
+    snippets.selectRow(0)
+    snippets.detailEditor.focus()
+    XCTAssertFalse(snippets.isSearchFocused, "the search still has focus while editing")
+    panel.press("f", modifiers: .command)
+    Wait.until("the search has focus") { snippets.isSearchFocused }
   }
 
   func test_shortcutsHelpListsTheShortcuts() {
     panel.openShortcutsHelp()
     XCTAssertTrue(panel.shortcutsHelpTitle.exists)
+    XCTAssertTrue(panel.shortcutsHelpRow(describing: "Switch to Snippets tab").exists)
+    XCTAssertTrue(panel.shortcutsHelpRow(describing: "Copy selected item (list focused)").exists)
     panel.closeShortcutsHelp()
     Wait.until("the help sheet is closed") { !self.panel.shortcutsHelpSheet.exists }
   }

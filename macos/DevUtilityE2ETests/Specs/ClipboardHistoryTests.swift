@@ -73,8 +73,9 @@ final class ClipboardHistoryTests: XCTestCase {
     copyAndWaitForTopRow("copy me")
     copyAndWaitForTopRow("other")
     clipboard.clickCopy(onRow: 1)
+    // The feedback label lasts only 1.5s, so check it before waiting on the pasteboard.
+    Wait.until("the copy button shows feedback") { self.clipboard.copyButtonLabel(onRow: 1) == "Copied to clipboard" }
     Wait.until("the pasteboard holds the row text") { Pasteboard.read() == "copy me" }
-    XCTAssertEqual(clipboard.copyButtonLabel(onRow: 1), "Copied to clipboard")
   }
 
   func test_editedTextCanBeCopiedWithoutSaving() {
@@ -106,6 +107,7 @@ final class ClipboardHistoryTests: XCTestCase {
   func test_clearAllCancelKeepsHistory() {
     copyAndWaitForTopRow("keep me")
     clipboard.clearAll(confirm: false)
+    XCTAssertTrue(clipboard.rowCountStays(1, for: 2), "cancelling Clear All still changed the history")
     XCTAssertEqual(clipboard.rowText(0), "keep me")
   }
 

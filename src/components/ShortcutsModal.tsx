@@ -39,7 +39,7 @@ function KbdTag({label}: {label: string}) {
 function ShortcutRowView({action, keys, isLast}: ShortcutRow & {isLast: boolean}) {
   return (
     <View style={[styles.row, !isLast && styles.rowDivider]}>
-      <Text style={styles.actionText}>{action}</Text>
+      <Text accessible style={styles.actionText}>{action}</Text>
       <View style={styles.keysRow}>
         {keys.map((key, i) => (
           <React.Fragment key={i}>
