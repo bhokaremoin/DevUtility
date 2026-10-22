@@ -25,10 +25,18 @@ final class SettingsTests: XCTestCase {
   }
 
   func test_resetRestoresTheDefaultShortcut() {
-    let settings = MainPanel(app: app).openSettings()
+    let panel = MainPanel(app: app)
+    let settings = panel.openSettings()
     settings.recordShortcut("k", modifiers: [.control, .option], shownAs: "⌃⌥K")
     settings.resetShortcut()
-    Wait.until("the default is shown") { settings.currentShortcutText == "⌃⌥D" }
+    // The "Current:" label already reads ⌃⌥D before Reset, so only the recorder proves the change.
+    Wait.until("the recorder shows the default shortcut") { settings.recorderText == "⌃⌥D" }
+
+    let otherApp = OtherApp.bringToFront()
+    otherApp.typeKey("k", modifierFlags: [.control, .option])
+    XCTAssertTrue(panel.staysVisible(for: 2), "the custom shortcut still toggled the panel after reset")
+    otherApp.typeKey("d", modifierFlags: [.control, .option])
+    panel.waitUntilHidden()
   }
 
   func test_customShortcutSurvivesRelaunch() {
