@@ -95,10 +95,12 @@ final class ClipboardHistoryTests: XCTestCase {
   }
 
   func test_historySurvivesRelaunch() {
-    copyAndWaitForTopRow("persist me")
+    copyAndWaitForTopRow("persist older")
+    copyAndWaitForTopRow("persist newer")
     app = AppLauncher.relaunchKeepingData(app)
     clipboard = MainPanel(app: app).openClipboard()
-    clipboard.waitForRowText(0, toEqual: "persist me")
+    clipboard.waitForRowText(0, toEqual: "persist newer")
+    XCTAssertEqual(clipboard.rowText(1), "persist older")
   }
 
   func test_clearAllCancelKeepsHistory() {

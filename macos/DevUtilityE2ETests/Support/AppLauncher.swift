@@ -14,6 +14,7 @@ enum AppLauncher {
 
   static func relaunchKeepingData(_ app: XCUIApplication) -> XCUIApplication {
     app.terminate()
+    Pasteboard.clear()
     app.launchArguments = []
     app.launch()
     waitUntilReady(app)
