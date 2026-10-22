@@ -1,11 +1,14 @@
 import XCTest
 
+// Keys go through Keyboard (HID-level events) so they follow the system's keyboard routing, as a
+// real keypress does, and land within milliseconds of each other. See Support/Keyboard.swift.
 final class KeyboardFocusTests: XCTestCase {
   private var app: XCUIApplication!
   private var panel: MainPanel!
 
   override func setUp() {
     continueAfterFailure = false
+    Keyboard.requirePermissionToPostEvents()
     app = AppLauncher.launchFresh()
     panel = MainPanel(app: app)
     panel.waitUntilVisible()
@@ -18,56 +21,65 @@ final class KeyboardFocusTests: XCTestCase {
   // MARK: - Typing after programmatic focus
 
   func test_typingRightAfterSwitchingToSnippetsGoesIntoSearch() {
-    panel.press("2", modifiers: .command)
+    Keyboard.press("2", modifiers: .maskCommand)
     let snippets = SnippetsTab(app: app)
     Wait.until("Snippets is shown") { snippets.isShown }
-    panel.type("nginx")
+    Keyboard.type("nginx")
     snippets.waitForSearchText("nginx")
   }
 
   func test_typingRightAfterCommandFGoesIntoSearch() {
-    panel.press("f", modifiers: .command)
+    Keyboard.press("f", modifiers: .maskCommand)
     let snippets = SnippetsTab(app: app)
     Wait.until("Snippets is shown") { snippets.isShown }
-    panel.type("docker")
+    Keyboard.type("docker")
     snippets.waitForSearchText("docker")
   }
 
   func test_typingWorksAgainAfterSnippetsIsRemountedByReopening() {
-    panel.press("2", modifiers: .command)
-    panel.press("1", modifiers: .command)
-    panel.press(.escape)
+    Keyboard.press("2", modifiers: .maskCommand)
+    Keyboard.press("1", modifiers: .maskCommand)
+    Keyboard.press(.escape)
     panel.waitUntilHidden()
-    let otherApp = OtherApp.bringToFront()
-    otherApp.typeKey("d", modifierFlags: [.control, .option])
+    OtherApp.bringToFront()
+    pressTheGlobalShortcut()
     panel.waitUntilVisible()
-    pressAsTheUser("2", modifiers: .command, through: otherApp)
+    Keyboard.press("2", modifiers: .maskCommand)
     let snippets = SnippetsTab(app: app)
     Wait.until("Snippets is shown") { snippets.isShown }
-    typeAsTheUser("again", through: otherApp)
+    Keyboard.type("again")
     snippets.waitForSearchText("again")
   }
 
   // MARK: - Panel over another app
 
   func test_shortcutOpensThePanelWithoutActivatingTheApp() {
-    let otherApp = hidePanelThenReopenItFromAnotherApp()
-    XCTAssertEqual(otherApp.state, .runningForeground, "opening the panel activated DevUtility")
+    hidePanelThenReopenItFromAnotherApp()
+    XCTAssertTrue(OtherApp.isFrontmost, "opening the panel with the shortcut activated DevUtility")
+  }
+
+  func test_iconOpensThePanelWithoutActivatingTheApp() {
+    let menuBar = MenuBar(app: app)
+    menuBar.clickIcon()
+    panel.waitUntilHidden()
+    OtherApp.bringToFront()
+    menuBar.clickIcon()
+    panel.waitUntilVisible()
+    XCTAssertTrue(OtherApp.isFrontmost, "opening the panel with the icon activated DevUtility")
   }
 
   func test_typingWorksRightAfterTheIconOpensSnippetsOverAnotherApp() {
     let menuBar = MenuBar(app: app)
     menuBar.clickIcon()
     panel.waitUntilHidden()
-    let otherApp = OtherApp.bringToFront()
+    OtherApp.bringToFront()
     menuBar.clickIcon()
     panel.waitUntilVisible()
-    pressAsTheUser("2", modifiers: .command, through: otherApp)
+    Keyboard.press("2", modifiers: .maskCommand)
     let snippets = SnippetsTab(app: app)
     Wait.until("Snippets is shown") { snippets.isShown }
-    typeAsTheUser("menu", through: otherApp)
+    Keyboard.type("menu")
     snippets.waitForSearchText("menu")
-    XCTAssertEqual(otherApp.state, .runningForeground, "opening the panel activated DevUtility")
   }
 
   func test_arrowKeysWorkRightAfterTheShortcutOpensThePanelOverAnotherApp() {
@@ -76,29 +88,30 @@ final class KeyboardFocusTests: XCTestCase {
     clipboard.waitForRowText(0, toEqual: "older")
     Pasteboard.write("newer")
     clipboard.waitForRowText(0, toEqual: "newer")
-    let otherApp = hidePanelThenReopenItFromAnotherApp()
-    pressAsTheUser(.downArrow, through: otherApp)
+    hidePanelThenReopenItFromAnotherApp()
+    Keyboard.press(.downArrow)
     Wait.until("row 1 is selected") { clipboard.isRowSelected(1) }
-    XCTAssertEqual(otherApp.state, .runningForeground, "sending keys activated DevUtility")
+    XCTAssertTrue(OtherApp.isFrontmost, "sending keys activated DevUtility")
   }
 
   func test_typingWorksRightAfterTheShortcutOpensSnippetsOverAnotherApp() {
-    let otherApp = hidePanelThenReopenItFromAnotherApp()
-    pressAsTheUser("2", modifiers: .command, through: otherApp)
+    hidePanelThenReopenItFromAnotherApp()
+    Keyboard.press("2", modifiers: .maskCommand)
     let snippets = SnippetsTab(app: app)
     Wait.until("Snippets is shown") { snippets.isShown }
-    typeAsTheUser("menu", through: otherApp)
+    Keyboard.type("menu")
     snippets.waitForSearchText("menu")
-    XCTAssertEqual(otherApp.state, .runningForeground, "sending keys activated DevUtility")
+    XCTAssertTrue(OtherApp.isFrontmost, "sending keys activated DevUtility")
   }
 
-  // MARK: - Panel key while the app is inactive
+  // MARK: - Panel keys while the app is inactive
 
   func test_clearAllAlertWorksWhileAnotherAppIsFrontmost() {
     Pasteboard.write("keep me")
     let clipboard = ClipboardTab(app: app)
     clipboard.waitForRowText(0, toEqual: "keep me")
-    _ = hidePanelThenReopenItFromAnotherApp()
+    hidePanelThenReopenItFromAnotherApp()
+    XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before Clear All")
     clipboard.clearAll(confirm: false)
     XCTAssertTrue(clipboard.rowCountStays(1, for: 2), "Cancel cleared the history")
     clipboard.clearAll(confirm: true)
@@ -106,48 +119,51 @@ final class KeyboardFocusTests: XCTestCase {
   }
 
   func test_shortcutRecorderWorksWhileAnotherAppIsFrontmost() {
-    _ = hidePanelThenReopenItFromAnotherApp()
+    hidePanelThenReopenItFromAnotherApp()
     let settings = panel.openSettings()
+    XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before recording")
     settings.recordShortcut("k", modifiers: [.control, .option], shownAs: "⌃⌥K")
   }
 
-  func test_enterInsideSnippetSearchDoesNotCopyWhileAnotherAppIsFrontmost() {
+  func test_returnOutsideSearchCopiesWhileAnotherAppIsFrontmost() {
+    Pasteboard.write("older")
+    let clipboard = ClipboardTab(app: app)
+    clipboard.waitForRowText(0, toEqual: "older")
+    Pasteboard.write("newer")
+    clipboard.waitForRowText(0, toEqual: "newer")
+    hidePanelThenReopenItFromAnotherApp()
+    Pasteboard.clear()
+    XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before Return")
+    Keyboard.press(.returnKey)
+    Wait.until("the pasteboard holds the selected item") { Pasteboard.read() == "newer" }
+  }
+
+  func test_returnInsideSnippetSearchDoesNotCopyWhileAnotherAppIsFrontmost() {
     let snippets = panel.openSnippets()
     snippets.addSnippet(title: "Nginx proxy", description: "", tags: "", content: "proxy_pass")
-    let otherApp = hidePanelThenReopenItFromAnotherApp()
+    hidePanelThenReopenItFromAnotherApp()
     snippets.search(for: "Nginx")
     Pasteboard.clear()
-    pressAsTheUser(.return, through: otherApp)
-    XCTAssertTrue(Pasteboard.staysEmpty(for: 2), "Enter inside search copied the snippet")
+    XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before Return")
+    Keyboard.press(.returnKey)
+    XCTAssertTrue(Pasteboard.staysEmpty(for: 2), "Return inside search copied the snippet")
+    XCTAssertEqual(snippets.searchText, "Nginx", "Return changed the search")
+    XCTAssertEqual(snippets.rowCount, 1, "Return changed the search results")
   }
 
   // MARK: - Helpers
 
-  // Keys sent through the frontmost app follow the system's keyboard routing, as a real keyboard does; keys addressed to DevUtility would bypass it.
-  private func pressAsTheUser(
-    _ character: String,
-    modifiers: XCUIElement.KeyModifierFlags = [],
-    through otherApp: XCUIApplication
-  ) {
-    otherApp.typeKey(character, modifierFlags: modifiers)
+  private func pressTheGlobalShortcut() {
+    Keyboard.press("d", modifiers: [.maskControl, .maskAlternate])
   }
 
-  private func pressAsTheUser(_ key: XCUIKeyboardKey, through otherApp: XCUIApplication) {
-    otherApp.typeKey(key, modifierFlags: [])
-  }
-
-  private func typeAsTheUser(_ text: String, through otherApp: XCUIApplication) {
-    for character in text {
-      otherApp.typeKey(String(character), modifierFlags: [])
-    }
-  }
-
-  private func hidePanelThenReopenItFromAnotherApp() -> XCUIApplication {
-    let otherApp = OtherApp.bringToFront()
-    otherApp.typeKey("d", modifierFlags: [.control, .option])
+  private func hidePanelThenReopenItFromAnotherApp() {
+    OtherApp.bringToFront()
+    pressTheGlobalShortcut()
     panel.waitUntilHidden()
-    otherApp.typeKey("d", modifierFlags: [.control, .option])
+    // The panel ignores a second toggle within 350 ms, and HID keys arrive far faster than that.
+    XCTAssertTrue(panel.staysHidden(for: 0.5), "the panel reopened by itself")
+    pressTheGlobalShortcut()
     panel.waitUntilVisible()
-    return otherApp
   }
 }

@@ -40,6 +40,7 @@
 		D0E437E821728A0649128AD1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */; };
 		DA415D8448963FCCC524FFEA /* Pasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3914121390036867674FB361 /* Pasteboard.swift */; };
 		E86E43389CC277C22947295F /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC7CBD03203626742CD31CA6 /* MenuBar.swift */; };
+		EAD58DD6FAA7725988E3672C /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46355A765C85B7DA9496741 /* Keyboard.swift */; };
 		FDBB0A226C25DDD6CB208DFA /* Wait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290E19018D40475772FDF3BB /* Wait.swift */; };
 /* End PBXBuildFile section */
 
@@ -91,6 +92,7 @@
 		AA0001000000000000000008 /* KeyEventModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEventModule.swift; sourceTree = "<group>"; };
 		AA0001000000000000000009 /* KeyEventModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyEventModuleBridge.m; sourceTree = "<group>"; };
 		AC7CBD03203626742CD31CA6 /* MenuBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
+		B46355A765C85B7DA9496741 /* Keyboard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		B4B13E76C391B35BF5BC3421 /* KeyboardNavigationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardNavigationTests.swift; sourceTree = "<group>"; };
 		C984E44BA351EA476C4CAF57 /* SnippetsTab.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsTab.swift; sourceTree = "<group>"; };
 		CB0DF0F3B4FD34C0531334E9 /* SettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
@@ -237,6 +239,7 @@
 				3914121390036867674FB361 /* Pasteboard.swift */,
 				F42A2816C19C46A5A1A53AA5 /* OtherApp.swift */,
 				156543116F4D53849AFB5136 /* XCUIElement+Text.swift */,
+				B46355A765C85B7DA9496741 /* Keyboard.swift */,
 			);
 			name = Support;
 			path = Support;
@@ -483,6 +486,7 @@
 				4270F4F1968239CA74D4173A /* MenuBarTests.swift in Sources */,
 				A194CB074101AF91A04D3F0B /* SettingsTests.swift in Sources */,
 				9E765D0F27073FD03BBE7AEE /* KeyboardFocusTests.swift in Sources */,
+				EAD58DD6FAA7725988E3672C /* Keyboard.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
