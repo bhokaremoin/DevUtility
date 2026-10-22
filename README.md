@@ -44,3 +44,11 @@ npm install
 cd macos && pod install && cd ..
 VERSION=1.0.1 ./scripts/build-release.sh
 ```
+
+## Development
+
+See `CLAUDE.project.md` for setup and commands. Run the full test suite with:
+
+```bash
+npm run test:all
+```
