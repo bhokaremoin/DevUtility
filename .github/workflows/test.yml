@@ -39,6 +39,9 @@ jobs:
       - name: Allow UI automation without a password prompt
         run: sudo automationmodetool enable-automationmode-without-authentication
 
+      - name: Allow the E2E runner to post key events
+        run: scripts/ci/allow-e2e-runner-to-post-key-events.sh
+
       - name: Run tests
         run: npm run test:all
 
