@@ -45,6 +45,12 @@ struct MainPanel {
     element("shortcuts.close").click()
   }
 
+  var shortcutsHelpTitle: XCUIElement { app.staticTexts["Keyboard Shortcuts"] }
+
+  func press(_ character: String, modifiers: XCUIElement.KeyModifierFlags = []) {
+    app.typeKey(character, modifierFlags: modifiers)
+  }
+
   func press(_ key: XCUIKeyboardKey, modifiers: XCUIElement.KeyModifierFlags = []) {
     app.typeKey(key, modifierFlags: modifiers)
   }

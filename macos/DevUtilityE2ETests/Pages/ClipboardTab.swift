@@ -38,6 +38,13 @@ struct ClipboardTab {
 
   func isRowSelected(_ index: Int) -> Bool { row(index).isSelected }
 
+  func rowStaysSelected(_ index: Int, for seconds: TimeInterval) -> Bool {
+    let predicate = NSPredicate { _, _ in !self.isRowSelected(index) }
+    let selectionLost = XCTNSPredicateExpectation(predicate: predicate, object: nil)
+    selectionLost.isInverted = true
+    return XCTWaiter().wait(for: [selectionLost], timeout: seconds) == .completed
+  }
+
   func clickCopy(onRow index: Int) { element("clipboard.row.\(index).copy").click() }
 
   func copyButtonLabel(onRow index: Int) -> String { element("clipboard.row.\(index).copy").label }

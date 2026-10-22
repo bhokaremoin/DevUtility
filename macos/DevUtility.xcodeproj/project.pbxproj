@@ -16,6 +16,7 @@
 		604BBC035AB4AFBFF6002F84 /* MainPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100E1047C93A9390C8868E10 /* MainPanel.swift */; };
 		6074A04C5BA92B509F4637E0 /* ResetFlagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D971F53C728C38A0172693A4 /* ResetFlagTests.swift */; };
 		734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */; };
+		7F0A37443207622515531AAD /* KeyboardNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B13E76C391B35BF5BC3421 /* KeyboardNavigationTests.swift */; };
 		8295E139C25E304526173EF3 /* AppLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23351A8825B9A54328E3CBB4 /* AppLauncher.swift */; };
 		82C83D88FD1B72190068705E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E282AE228594BF9DDED1F896 /* Cocoa.framework */; };
 		912F9BC0B73F987EFAE9733A /* ClipboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA7641EA2A80E1B28D1FFB6 /* ClipboardTab.swift */; };
@@ -84,6 +85,7 @@
 		AA0001000000000000000008 /* KeyEventModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEventModule.swift; sourceTree = "<group>"; };
 		AA0001000000000000000009 /* KeyEventModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyEventModuleBridge.m; sourceTree = "<group>"; };
 		AC7CBD03203626742CD31CA6 /* MenuBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
+		B4B13E76C391B35BF5BC3421 /* KeyboardNavigationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardNavigationTests.swift; sourceTree = "<group>"; };
 		C984E44BA351EA476C4CAF57 /* SnippetsTab.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsTab.swift; sourceTree = "<group>"; };
 		D971F53C728C38A0172693A4 /* ResetFlagTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ResetFlagTests.swift; sourceTree = "<group>"; };
 		E282AE228594BF9DDED1F896 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
@@ -177,6 +179,7 @@
 				0C70FAAD161AE16FE8D1187C /* PageObjectSmokeTests.swift */,
 				5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */,
 				77D0304AE41E6F09A9E80F94 /* SnippetsTests.swift */,
+				B4B13E76C391B35BF5BC3421 /* KeyboardNavigationTests.swift */,
 			);
 			name = Specs;
 			path = Specs;
@@ -475,6 +478,7 @@
 				A4FEBADCC5FD7239DE350FC3 /* XCUIElement+Text.swift in Sources */,
 				734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */,
 				9CE52C591BC2CEFCF9E9C96C /* SnippetsTests.swift in Sources */,
+				7F0A37443207622515531AAD /* KeyboardNavigationTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
