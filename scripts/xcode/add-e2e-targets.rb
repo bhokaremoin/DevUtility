@@ -22,6 +22,22 @@ def add_configuration_copied_from_release(configuration_list, project)
   configuration_list.build_configurations << e2e
 end
 
+# new_target links Cocoa.framework through a path inside one SDK version (e.g. MacOSX15.0.sdk),
+# which dangles on any other Xcode. Swift links Cocoa automatically from `import`, so drop it.
+def remove_sdk_pinned_cocoa_framework(project, test_target)
+  cocoa_build_files = test_target.frameworks_build_phase.files.select { |file| file.display_name == 'Cocoa.framework' }
+  cocoa_build_files.each(&:remove_from_project)
+
+  sdk_pinned_cocoa_references = project.files.select do |reference|
+    reference.path.to_s.match?(%r{/MacOSX[0-9.]+\.sdk/.*/Cocoa\.framework\z}) && reference.build_files.empty?
+  end
+  sdk_pinned_cocoa_references.each do |reference|
+    parent_group = reference.parent
+    reference.remove_from_project
+    parent_group.remove_from_project if parent_group.children.empty? && parent_group != project.frameworks_group
+  end
+end
+
 add_configuration_copied_from_release(project.build_configuration_list, project)
 project.targets.each do |target|
   add_configuration_copied_from_release(target.build_configuration_list, project)
@@ -40,6 +56,7 @@ unless project.targets.any? { |target| target.name == TEST_TARGET_NAME }
 end
 
 test_target = project.targets.find { |target| target.name == TEST_TARGET_NAME }
+remove_sdk_pinned_cocoa_framework(project, test_target)
 test_target.build_configurations.each do |configuration|
   settings = configuration.build_settings
   settings['PRODUCT_NAME'] = '$(TARGET_NAME)'

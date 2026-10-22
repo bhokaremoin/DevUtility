@@ -19,7 +19,6 @@
 		734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */; };
 		7F0A37443207622515531AAD /* KeyboardNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B13E76C391B35BF5BC3421 /* KeyboardNavigationTests.swift */; };
 		8295E139C25E304526173EF3 /* AppLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23351A8825B9A54328E3CBB4 /* AppLauncher.swift */; };
-		82C83D88FD1B72190068705E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E282AE228594BF9DDED1F896 /* Cocoa.framework */; };
 		912F9BC0B73F987EFAE9733A /* ClipboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA7641EA2A80E1B28D1FFB6 /* ClipboardTab.swift */; };
 		946E1392525380B69EE0DFBE /* SnippetsTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = C984E44BA351EA476C4CAF57 /* SnippetsTab.swift */; };
 		961F759800AD27B0D87D5A09 /* GlobalShortcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2D1B387ECEFC8A63A6AF61 /* GlobalShortcutTests.swift */; };
@@ -94,7 +93,6 @@
 		C984E44BA351EA476C4CAF57 /* SnippetsTab.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsTab.swift; sourceTree = "<group>"; };
 		CB0DF0F3B4FD34C0531334E9 /* SettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
 		D971F53C728C38A0172693A4 /* ResetFlagTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ResetFlagTests.swift; sourceTree = "<group>"; };
-		E282AE228594BF9DDED1F896 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F42A2816C19C46A5A1A53AA5 /* OtherApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OtherApp.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -120,7 +118,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				82C83D88FD1B72190068705E /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,20 +135,11 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		1C149C280680E8E065147F57 /* OS X */ = {
-			isa = PBXGroup;
-			children = (
-				E282AE228594BF9DDED1F896 /* Cocoa.framework */,
-			);
-			name = "OS X";
-			sourceTree = "<group>";
-		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				02F90F8E4D90D9291DD3F91A /* libPods-DevUtility-macOS.a */,
-				1C149C280680E8E065147F57 /* OS X */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
