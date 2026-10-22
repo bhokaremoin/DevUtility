@@ -6,6 +6,7 @@ interface Props {
   children: React.ReactNode;
 }
 
+// Renders children immediately unless the E2E build's --e2e-reset flag asked for a storage wipe.
 export function StorageResetGate({shouldReset, children}: Props) {
   const [isReady, setIsReady] = useState(!shouldReset);
 
