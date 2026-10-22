@@ -41,6 +41,18 @@ struct SnippetsTab {
 
   func clickCopy(onRow index: Int) { element("snippets.row.\(index).copy").click() }
 
+  var searchText: String { (searchField.value as? String) ?? "" }
+
+  // Wait.until builds its message before waiting, so the actual text is asserted afterwards to keep it current.
+  func waitForSearchText(_ expected: String, file: StaticString = #filePath, line: UInt = #line) {
+    let matches = XCTNSPredicateExpectation(
+      predicate: NSPredicate { _, _ in self.searchText == expected },
+      object: nil
+    )
+    _ = XCTWaiter().wait(for: [matches], timeout: Wait.defaultTimeout)
+    XCTAssertEqual(searchText, expected, "search text", file: file, line: line)
+  }
+
   func search(for text: String) {
     searchField.typeAfterFocusing(text)
   }
