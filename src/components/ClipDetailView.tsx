@@ -65,6 +65,7 @@ export function ClipDetailView({
         </View>
       </View>
       <TextInput
+        testID="clipboard.detail.editor"
         style={styles.detailCodeInput}
         value={draftContent}
         onChangeText={setDraftContent}
@@ -81,6 +82,7 @@ export function ClipDetailView({
         </Text>
         <View style={styles.footerActions}>
           <TouchableOpacity
+            testID="clipboard.detail.copy"
             style={[
               styles.detailCopyBtn,
               isCopied && styles.detailCopyBtnCopied,
@@ -101,6 +103,7 @@ export function ClipDetailView({
           </TouchableOpacity>
           {hasEdits && (
             <TouchableOpacity
+              testID="clipboard.detail.save"
               style={styles.detailSaveBtn}
               onPress={() => onUpdate(item.id, draftContent)}
               activeOpacity={0.7}

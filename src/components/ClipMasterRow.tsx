@@ -18,6 +18,7 @@ import {truncateText} from '../utils';
  * Renders a single clipboard history entry in the master list.
  *
  * @param item - The clipboard entry to display.
+ * @param testIDPrefix - Base test identifier; the row, its text and its copy button derive theirs from it.
  * @param isSelected - Whether this row is the currently keyboard-selected item.
  * @param isCopied - Whether this item is showing the "Copied!" feedback badge.
  * @param onSelect - Called with the item ID when the row is pressed.
@@ -25,12 +26,14 @@ import {truncateText} from '../utils';
  */
 export function ClipMasterRow({
   item,
+  testIDPrefix,
   isSelected,
   isCopied,
   onSelect,
   onCopy,
 }: {
   item: ClipboardItem;
+  testIDPrefix: string;
   isSelected: boolean;
   isCopied: boolean;
   onSelect: (id: string) => void;
@@ -40,16 +43,21 @@ export function ClipMasterRow({
 
   return (
     <TouchableOpacity
+      testID={testIDPrefix}
       style={[styles.row, isSelected && styles.rowSelected]}
       onPress={() => onSelect(item.id)}
       activeOpacity={0.7}
       accessibilityRole="button"
       accessibilityState={{selected: isSelected}}
       accessibilityLabel={`Clipboard item: ${displayText}`}>
-      <Text style={[styles.rowText, isSelected && styles.rowTextSelected]} numberOfLines={2}>
+      <Text
+        testID={`${testIDPrefix}.text`}
+        style={[styles.rowText, isSelected && styles.rowTextSelected]}
+        numberOfLines={2}>
         {displayText}
       </Text>
       <TouchableOpacity
+        testID={`${testIDPrefix}.copy`}
         style={[styles.rowCopyBtn, isCopied && styles.rowCopyBtnCopied]}
         onPress={() => onCopy(item)}
         activeOpacity={0.7}

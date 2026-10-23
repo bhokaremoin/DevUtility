@@ -6,10 +6,15 @@
     "start": "react-native start",
     "macos": "react-native run-macos",
     "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "jest",
     "test": "jest",
+    "test:all": "npm run lint -- --max-warnings 0 && npm run typecheck && npm run test:unit && npm run test:e2e",
     "pods": "pod install --project-directory=macos",
     "version-bump": "bash scripts/version-bump.sh",
-    "build-release": "bash scripts/build-release.sh"
+    "build-release": "bash scripts/build-release.sh",
+    "test:e2e": "bash scripts/run-e2e-tests.sh",
+    "xcode:add-e2e-targets": "ruby scripts/xcode/add-e2e-targets.rb"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.0.1",
@@ -22,6 +27,7 @@
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.3",
     "@babel/runtime": "^7.25.0",
+    "@jest/globals": "^29.7.0",
     "@react-native-community/cli": "15.0.0-alpha.2",
     "@react-native/babel-preset": "0.76.0",
     "@react-native/eslint-config": "0.76.0",

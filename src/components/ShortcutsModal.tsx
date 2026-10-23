@@ -36,11 +36,25 @@ function KbdTag({label}: {label: string}) {
   );
 }
 
-function ShortcutRowView({action, keys, isLast}: ShortcutRow & {isLast: boolean}) {
+function ShortcutRowView({
+  action,
+  keys,
+  isLast,
+  position,
+}: ShortcutRow & {isLast: boolean; position: string}) {
   return (
     <View style={[styles.row, !isLast && styles.rowDivider]}>
-      <Text style={styles.actionText}>{action}</Text>
-      <View style={styles.keysRow}>
+      <Text
+        testID={`shortcuts.action.${position}`}
+        accessible
+        style={styles.actionText}>
+        {action}
+      </Text>
+      <View
+        testID={`shortcuts.keys.${position}`}
+        accessible
+        accessibilityLabel={keys.join(' + ')}
+        style={styles.keysRow}>
         {keys.map((key, i) => (
           <React.Fragment key={i}>
             {i > 0 && <Text style={styles.plus}>+</Text>}
@@ -67,7 +81,7 @@ export function ShortcutsModal({visible, onClose}: Props) {
   }
 
   return (
-    <View style={styles.backdrop}>
+    <View testID="shortcuts.sheet" accessible style={styles.backdrop}>
       <TextInput ref={focusTrapRef} style={styles.focusTrap} editable={false} />
       <View style={styles.card}>
         <View style={styles.cardHeader}>
@@ -75,6 +89,7 @@ export function ShortcutsModal({visible, onClose}: Props) {
             Keyboard Shortcuts
           </Text>
           <TouchableOpacity
+            testID="shortcuts.close"
             onPress={onClose}
             style={styles.closeBtn}
             activeOpacity={0.7}
@@ -91,7 +106,12 @@ export function ShortcutsModal({visible, onClose}: Props) {
             <View key={section.title} style={si > 0 ? styles.section : styles.sectionFirst}>
               <Text style={styles.sectionLabel}>{section.title}</Text>
               {section.rows.map((row, ri) => (
-                <ShortcutRowView key={row.action} {...row} isLast={ri === section.rows.length - 1} />
+                <ShortcutRowView
+                  key={row.action}
+                  {...row}
+                  isLast={ri === section.rows.length - 1}
+                  position={`${si}.${ri}`}
+                />
               ))}
             </View>
           ))}

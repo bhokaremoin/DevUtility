@@ -1,0 +1,51 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # The runner's default Xcode 26.6 cannot compile the fmt pod bundled with
+      # React Native 0.76 (consteval errors); 26.3 is what the project builds with locally.
+      - name: Select Xcode 26.3
+        run: |
+          ls -d /Applications/Xcode_*.app
+          sudo xcode-select -s /Applications/Xcode_26.3.app
+          xcodebuild -version
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install JS dependencies
+        run: npm ci
+
+      - name: Install CocoaPods dependencies
+        run: |
+          gem install cocoapods --no-document
+          pod install --project-directory=macos
+
+      - name: Allow UI automation without a password prompt
+        run: sudo automationmodetool enable-automationmode-without-authentication
+
+      - name: Run tests
+        run: npm run test:all
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-results
+          path: build/e2e/*.xcresult
+          retention-days: 7

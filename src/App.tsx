@@ -34,8 +34,8 @@ function App(): React.JSX.Element {
   const snippetRef = useRef<ScreenHandle>(null);
 
   const getActiveRef = useCallback(() => {
-    if (activeTab === 'clipboard') return clipboardRef;
-    if (activeTab === 'snippets') return snippetRef;
+    if (activeTab === 'clipboard') {return clipboardRef;}
+    if (activeTab === 'snippets') {return snippetRef;}
     return null;
   }, [activeTab]);
 
@@ -63,8 +63,8 @@ function App(): React.JSX.Element {
       },
       onArrowNavigation: (direction: 'up' | 'down') => {
         const ref = getActiveRef();
-        if (direction === 'down') ref?.current?.navigateDown?.();
-        else ref?.current?.navigateUp?.();
+        if (direction === 'down') {ref?.current?.navigateDown?.();}
+        else {ref?.current?.navigateUp?.();}
       },
     }),
     [activeTab, getActiveRef],

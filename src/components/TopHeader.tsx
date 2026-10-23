@@ -56,6 +56,7 @@ export function TopHeader({
           return (
             <TouchableOpacity
               key={item.key}
+              testID={`header.tab.${item.key}`}
               style={[styles.tab, isActive && styles.tabActive]}
               onPress={() => onTabChange(item.key)}
               activeOpacity={0.7}
@@ -73,6 +74,7 @@ export function TopHeader({
       <View style={styles.actions}>
         {showClearAll && onClearAll && (
           <TouchableOpacity
+            testID="header.clearAll"
             onPress={onClearAll}
             activeOpacity={0.7}
             style={styles.clearButton}
@@ -83,6 +85,7 @@ export function TopHeader({
         )}
         {activeTab === 'snippets' && onAddSnippet && (
           <TouchableOpacity
+            testID="header.addSnippet"
             style={styles.addButton}
             onPress={onAddSnippet}
             activeOpacity={0.7}
@@ -93,6 +96,7 @@ export function TopHeader({
         )}
         {onHelpPress && (
           <TouchableOpacity
+            testID="header.help"
             style={styles.helpBtn}
             onPress={onHelpPress}
             activeOpacity={0.7}
@@ -102,6 +106,7 @@ export function TopHeader({
           </TouchableOpacity>
         )}
         <TouchableOpacity
+          testID="header.settings"
           style={[styles.settingsBtn, activeTab === 'settings' && styles.settingsBtnActive]}
           onPress={() => onTabChange('settings')}
           activeOpacity={0.7}

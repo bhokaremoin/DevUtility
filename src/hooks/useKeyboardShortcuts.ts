@@ -21,7 +21,7 @@ const emitter = KeyEventModule
 
 /** Callbacks invoked by `useKeyboardShortcuts` when native key events fire. */
 interface Handlers {
-  /** Called when a tab-switch shortcut fires (⌘1/⌘2/⌘3). */
+  /** Called when a tab-switch shortcut fires (⌘1/⌘2/⌘,). */
   onNavigate: (tab: Tab) => void;
   /** Called when the copy shortcut fires (Enter or ⌘Enter). */
   onCopyAction: () => void;

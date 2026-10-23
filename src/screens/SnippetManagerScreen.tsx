@@ -97,9 +97,10 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
     }, []);
 
     const renderItem = useCallback(
-      ({item}: {item: Snippet}) => (
+      ({item, index}: {item: Snippet; index: number}) => (
         <SnippetRow
           snippet={item}
+          testIDPrefix={`snippets.row.${index}`}
           isSelected={selectedId === item.id}
           isCopied={copiedId === item.id}
           onSelect={setSelectedId}
@@ -115,6 +116,7 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
       <View style={styles.container}>
         <View style={styles.searchContainer}>
           <TextInput
+            testID="snippets.search"
             ref={searchInputRef}
             style={styles.searchInput}
             value={searchQuery}
@@ -137,7 +139,10 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
         {snippets.length === 0 ? (
           <View style={styles.emptyState}>
             <Text style={styles.emptyIcon}>{'</>'}</Text>
-            <Text style={styles.emptyTitle}>
+            <Text
+              testID="snippets.emptyState.title"
+              accessible
+              style={styles.emptyTitle}>
               {searchQuery.trim() ? 'No matching snippets' : 'No snippets yet'}
             </Text>
             <Text style={styles.emptySubtitle}>

@@ -18,17 +18,20 @@ import {colors, spacing, typography, radii} from '../theme';
  * @param snippet - The snippet data to display.
  * @param isSelected - Whether this row is the currently selected item.
  * @param isCopied - Whether this snippet is showing the "Copied!" feedback badge.
+ * @param testIDPrefix - Base test identifier; the row, its title and its copy button derive theirs from it.
  * @param onSelect - Called with the snippet ID when the row is pressed.
  * @param onCopy - Called with the full snippet when the inline "Copy" button is pressed.
  */
 export function SnippetRow({
   snippet,
+  testIDPrefix,
   isSelected,
   isCopied,
   onSelect,
   onCopy,
 }: {
   snippet: Snippet;
+  testIDPrefix: string;
   isSelected: boolean;
   isCopied: boolean;
   onSelect: (id: string) => void;
@@ -36,6 +39,7 @@ export function SnippetRow({
 }) {
   return (
     <TouchableOpacity
+      testID={testIDPrefix}
       style={[styles.row, isSelected && styles.rowSelected]}
       onPress={() => onSelect(snippet.id)}
       activeOpacity={0.7}
@@ -43,7 +47,11 @@ export function SnippetRow({
       accessibilityState={{selected: isSelected}}
       accessibilityLabel={`Snippet: ${snippet.title}`}>
       <View style={styles.rowContent}>
-        <Text style={[styles.rowTitle, isSelected && styles.rowTitleSelected]} numberOfLines={1}>
+        <Text
+          testID={`${testIDPrefix}.title`}
+          accessible
+          style={[styles.rowTitle, isSelected && styles.rowTitleSelected]}
+          numberOfLines={1}>
           {snippet.title}
         </Text>
         <Text style={styles.rowPreview} numberOfLines={1}>
@@ -51,6 +59,7 @@ export function SnippetRow({
         </Text>
       </View>
       <TouchableOpacity
+        testID={`${testIDPrefix}.copy`}
         style={[styles.rowCopyBtn, isCopied && styles.rowCopyBtnCopied]}
         onPress={() => onCopy(snippet)}
         activeOpacity={0.7}

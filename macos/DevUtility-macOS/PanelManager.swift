@@ -102,6 +102,7 @@ class UtilityPanel: NSPanel {
   private func setupStatusItem() {
     statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     guard let button = statusItem.button else { return }
+    button.setAccessibilityIdentifier("statusItem.app")
 
     if let image = NSImage(named: "MenuBarIcon") {
       image.isTemplate = true

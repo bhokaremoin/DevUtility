@@ -14,7 +14,7 @@ import Cocoa
 /// and emits named shortcut events to the JS layer.
 ///
 /// Emitted events:
-/// - `onNavigate`        — ⌘1/⌘2/⌘3 tab switch; body `{tab: "clipboard"|"snippets"|"settings"}`
+/// - `onNavigate`        — ⌘1/⌘2/⌘, tab switch; body `{tab: "clipboard"|"snippets"|"settings"}`
 /// - `onCopyAction`      — Enter (outside text input) or ⌘Enter; no body
 /// - `onEscape`          — Escape key; no body
 /// - `onSearch`          — ⌘F; no body

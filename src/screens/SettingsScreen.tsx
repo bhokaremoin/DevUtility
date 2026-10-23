@@ -57,12 +57,16 @@ export function SettingsScreen() {
 
           <View style={styles.currentShortcutRow}>
             <Text style={styles.currentLabel}>Current:</Text>
-            <Text style={styles.currentValue}>
+            <Text
+              testID="settings.shortcut.current"
+              accessible
+              style={styles.currentValue}>
               {currentShortcut ?? DEFAULT_SHORTCUT_LABEL}
             </Text>
           </View>
 
           <TouchableOpacity
+            testID="settings.shortcut.reset"
             style={styles.resetButton}
             onPress={handleReset}
             activeOpacity={0.7}>

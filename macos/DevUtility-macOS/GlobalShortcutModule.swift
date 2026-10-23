@@ -24,6 +24,10 @@ class GlobalShortcutModule: NSObject {
 
   @objc static func requiresMainQueueSetup() -> Bool { true }
 
+  @objc static func resetShortcutsForE2E() {
+    KeyboardShortcuts.reset(.toggleApp)
+  }
+
   override init() {
     super.init()
     // Register the global key-down handler — fires even when the app is backgrounded.

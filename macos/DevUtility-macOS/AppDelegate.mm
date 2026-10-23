@@ -13,12 +13,27 @@
 
 @implementation AppDelegate
 
+// MARK: - E2E
+
+// Only the E2E build honors --e2e-reset, so a stray flag can never wipe a user's data.
+- (BOOL)isE2EResetRequested
+{
+#if E2E_BUILD
+  return [[[NSProcessInfo processInfo] arguments] containsObject:@"--e2e-reset"];
+#else
+  return NO;
+#endif
+}
+
 // MARK: - Lifecycle
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
   self.moduleName = @"DevUtility";
-  self.initialProps = @{};
+  self.initialProps = @{@"isE2EReset": @([self isE2EResetRequested])};
+  if ([self isE2EResetRequested]) {
+    [GlobalShortcutModule resetShortcutsForE2E];
+  }
 
   // Let RCTAppDelegate create the React Native root view inside a default window.
   [super applicationDidFinishLaunching:notification];
