@@ -1,7 +1,7 @@
 import XCTest
 
-// Keys go through Keyboard (HID-level events) so they follow the system's keyboard routing, as a
-// real keypress does, and land within milliseconds of each other. See Support/Keyboard.swift.
+// Keys and clicks go through Keyboard and Mouse (HID-level events), as a real keyboard and mouse
+// do: XCUITest's own input activates DevUtility first, which hides activation and focus bugs.
 final class KeyboardFocusTests: XCTestCase {
   private var app: XCUIApplication!
   private var panel: MainPanel!
@@ -60,20 +60,20 @@ final class KeyboardFocusTests: XCTestCase {
 
   func test_iconOpensThePanelWithoutActivatingTheApp() {
     let menuBar = MenuBar(app: app)
-    menuBar.clickIcon()
+    Mouse.click(menuBar.icon)
     panel.waitUntilHidden()
     OtherApp.bringToFront()
-    menuBar.clickIcon()
+    Mouse.click(menuBar.icon)
     panel.waitUntilVisible()
     XCTAssertTrue(OtherApp.isFrontmost, "opening the panel with the icon activated DevUtility")
   }
 
   func test_typingWorksRightAfterTheIconOpensSnippetsOverAnotherApp() {
     let menuBar = MenuBar(app: app)
-    menuBar.clickIcon()
+    Mouse.click(menuBar.icon)
     panel.waitUntilHidden()
     OtherApp.bringToFront()
-    menuBar.clickIcon()
+    Mouse.click(menuBar.icon)
     panel.waitUntilVisible()
     Keyboard.press("2", modifiers: .maskCommand)
     let snippets = SnippetsTab(app: app)
@@ -120,9 +120,13 @@ final class KeyboardFocusTests: XCTestCase {
 
   func test_shortcutRecorderWorksWhileAnotherAppIsFrontmost() {
     hidePanelThenReopenItFromAnotherApp()
-    let settings = panel.openSettings()
+    Mouse.click(panel.settingsButton)
+    let settings = SettingsTab(app: app)
+    Wait.until("Settings is shown") { settings.isShown }
+    Mouse.click(settings.recorder)
     XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before recording")
-    settings.recordShortcut("k", modifiers: [.control, .option], shownAs: "⌃⌥K")
+    Keyboard.press("k", modifiers: [.maskControl, .maskAlternate])
+    Wait.until("the recorder shows ⌃⌥K") { settings.recorderText == "⌃⌥K" }
   }
 
   func test_returnOutsideSearchCopiesWhileAnotherAppIsFrontmost() {
@@ -132,22 +136,26 @@ final class KeyboardFocusTests: XCTestCase {
     Pasteboard.write("newer")
     clipboard.waitForRowText(0, toEqual: "newer")
     hidePanelThenReopenItFromAnotherApp()
+    Keyboard.press(.downArrow)
+    Wait.until("row 1 is selected") { clipboard.isRowSelected(1) }
     Pasteboard.clear()
     XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before Return")
     Keyboard.press(.returnKey)
-    Wait.until("the pasteboard holds the selected item") { Pasteboard.read() == "newer" }
+    Wait.until("the pasteboard holds the selected item") { Pasteboard.read() == "older" }
   }
 
   func test_returnInsideSnippetSearchDoesNotCopyWhileAnotherAppIsFrontmost() {
     let snippets = panel.openSnippets()
     snippets.addSnippet(title: "Nginx proxy", description: "", tags: "", content: "proxy_pass")
     hidePanelThenReopenItFromAnotherApp()
-    snippets.search(for: "Nginx")
+    Mouse.click(snippets.searchField)
+    Keyboard.type("nginx")
+    snippets.waitForSearchText("nginx")
     Pasteboard.clear()
     XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before Return")
     Keyboard.press(.returnKey)
     XCTAssertTrue(Pasteboard.staysEmpty(for: 2), "Return inside search copied the snippet")
-    XCTAssertEqual(snippets.searchText, "Nginx", "Return changed the search")
+    XCTAssertEqual(snippets.searchText, "nginx", "Return changed the search")
     XCTAssertEqual(snippets.rowCount, 1, "Return changed the search results")
   }
 
