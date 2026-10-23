@@ -64,6 +64,7 @@ class KeyEventModule: RCTEventEmitter {
 
   /// Replaces any existing monitor with a fresh local key-down monitor.
   private func installMonitor() {
+    NSLog("[focus-diag] key monitor installed")
     removeMonitor()
     localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
       guard let self = self, self.hasListeners else {
@@ -82,6 +83,9 @@ class KeyEventModule: RCTEventEmitter {
   }
 
   private func handleKeyEvent(_ event: NSEvent) -> NSEvent? {
+    NSLog("[focus-diag] key code=%d window=%@ keyWindow=%@ active=%d firstResponder=%@",
+          event.keyCode, String(describing: event.window), String(describing: NSApp.keyWindow),
+          NSApp.isActive, String(describing: NSApp.keyWindow?.firstResponder))
     let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
     let isCmd = flags.contains(.command)
     // The event's own window, not NSApp.keyWindow, which is nil while the app is inactive.

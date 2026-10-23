@@ -38,7 +38,9 @@ xcodebuild test \
   -configuration E2E \
   -derivedDataPath "$PROJECT_ROOT/build/e2e-derived-data" \
   -resultBundlePath "$RESULT_BUNDLE" \
-  -only-testing:DevUtilityE2ETests \
+  -only-testing:DevUtilityE2ETests/KeyboardFocusTests/test_iconOpensThePanelWithoutActivatingTheApp \
+  -only-testing:DevUtilityE2ETests/KeyboardFocusTests/test_returnInsideSnippetSearchDoesNotCopyWhileAnotherAppIsFrontmost \
+  -only-testing:DevUtilityE2ETests/KeyboardFocusTests/test_shortcutRecorderWorksWhileAnotherAppIsFrontmost \
   ONLY_ACTIVE_ARCH=YES \
   NODE_BINARY="$(command -v node)" \
   "$@"

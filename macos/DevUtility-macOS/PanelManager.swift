@@ -95,8 +95,33 @@ class UtilityPanel: NSPanel {
     rootView.autoresizingMask = [.width, .height]
     panel.contentViewController = viewController
     presenter = PanelPresenter(panel: panel)
+    installFocusDiagnostics()
 
     setupStatusItem()
+  }
+
+  private func describeState() -> String {
+    "active=\(NSApp.isActive) keyWindow=\(String(describing: NSApp.keyWindow)) mainWindow=\(String(describing: NSApp.mainWindow)) panelKey=\(panel.isKeyWindow) panelMain=\(panel.isMainWindow) frontmost=\(NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "nil") styleNonActivating=\(panel.styleMask.contains(.nonactivatingPanel))"
+  }
+
+  private func installFocusDiagnostics() {
+    let center = NotificationCenter.default
+    for name in [NSApplication.willBecomeActiveNotification, NSApplication.didBecomeActiveNotification,
+                 NSWindow.didBecomeKeyNotification, NSWindow.didBecomeMainNotification] {
+      center.addObserver(forName: name, object: nil, queue: .main) { [weak self] note in
+        guard let self else { return }
+        NSLog("[focus-diag] %@ object=%@ currentEvent=%@ %@", note.name.rawValue, String(describing: note.object),
+              String(describing: NSApp.currentEvent), self.describeState())
+        if note.name == NSApplication.willBecomeActiveNotification {
+          NSLog("[focus-diag] stack %@", Thread.callStackSymbols.prefix(25).joined(separator: " | "))
+        }
+      }
+    }
+    NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .leftMouseUp]) { [weak self] event in
+      NSLog("[focus-diag] mouse %@ window=%@ %@", String(describing: event.type), String(describing: event.window),
+            self?.describeState() ?? "")
+      return event
+    }
   }
 
   // MARK: - Status Bar
@@ -149,7 +174,12 @@ class UtilityPanel: NSPanel {
     let visibleFrame = screen.visibleFrame
     let x = visibleFrame.midX - panel.frame.width / 2
     let y = visibleFrame.midY - panel.frame.height / 2
+    NSLog("[focus-diag] show before %@", describeState())
     presenter.show(at: NSPoint(x: x, y: y))
+    NSLog("[focus-diag] show after %@", describeState())
+    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+      NSLog("[focus-diag] show +0.5s %@", self?.describeState() ?? "")
+    }
 
     installClickOutsideMonitor()
   }

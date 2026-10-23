@@ -1,3 +1,4 @@
+import AppKit
 import CoreGraphics
 import XCTest
 
@@ -49,6 +50,8 @@ enum Keyboard {
   }
 
   private static func post(_ keyCode: CGKeyCode, modifiers: CGEventFlags) {
+    NSLog("[focus-diag] runner posts key %d frontmost=%@", keyCode,
+          NSWorkspace.shared.frontmostApplication?.bundleIdentifier ?? "nil")
     for isKeyDown in [true, false] {
       let event = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: isKeyDown)
       event?.flags = modifiers
