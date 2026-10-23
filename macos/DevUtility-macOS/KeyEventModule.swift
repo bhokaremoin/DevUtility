@@ -84,7 +84,8 @@ class KeyEventModule: RCTEventEmitter {
   private func handleKeyEvent(_ event: NSEvent) -> NSEvent? {
     let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
     let isCmd = flags.contains(.command)
-    let isTextInputFocused = NSApp.keyWindow?.firstResponder is NSTextView
+    // The event's own window, not NSApp.keyWindow, which is nil while the app is inactive.
+    let isTextInputFocused = event.window?.firstResponder is NSTextView
 
     if isCmd && event.keyCode == 18 {
       sendEvent(withName: "onNavigate", body: ["tab": "clipboard"])
@@ -120,7 +121,7 @@ class KeyEventModule: RCTEventEmitter {
       // If a multiline text editor is focused (detail pane editor), pass the event
       // through so cursor movement still works, but also notify JS so it can decide
       // whether to navigate (it will bail if the detail editor is focused).
-      if let textView = NSApp.keyWindow?.firstResponder as? NSTextView,
+      if let textView = event.window?.firstResponder as? NSTextView,
          (textView.textContainer?.maximumNumberOfLines ?? 0) == 0 {
         sendEvent(withName: "onArrowNavigation", body: ["direction": direction])
         return event // don't consume — let cursor move in the editor

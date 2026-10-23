@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		37359FE9758096F4AC5A40A4 /* libPods-DevUtility-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 02F90F8E4D90D9291DD3F91A /* libPods-DevUtility-macOS.a */; };
 		4270F4F1968239CA74D4173A /* MenuBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADCEF1A1CB4A15BD5550EAA /* MenuBarTests.swift */; };
+		47E60192B0ED916448DAD795 /* PanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACFCD08E153EA59EB888FAB /* PanelPresenter.swift */; };
 		5014281C3E368A10EEE419E8 /* PageObjectSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70FAAD161AE16FE8D1187C /* PageObjectSmokeTests.swift */; };
 		5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.mm */; };
 		514201522437B4B40078DB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 514201512437B4B40078DB4F /* Assets.xcassets */; };
@@ -64,6 +65,7 @@
 		23351A8825B9A54328E3CBB4 /* AppLauncher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLauncher.swift; sourceTree = "<group>"; };
 		290E19018D40475772FDF3BB /* Wait.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Wait.swift; sourceTree = "<group>"; };
 		2AA7641EA2A80E1B28D1FFB6 /* ClipboardTab.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardTab.swift; sourceTree = "<group>"; };
+		2ACFCD08E153EA59EB888FAB /* PanelPresenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PanelPresenter.swift; sourceTree = "<group>"; };
 		32C5DA337FCB7F34C0AB3E87 /* KeyboardFocusTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardFocusTests.swift; sourceTree = "<group>"; };
 		3914121390036867674FB361 /* Pasteboard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pasteboard.swift; sourceTree = "<group>"; };
 		43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 				514201562437B4B40078DB4F /* Info.plist */,
 				514201572437B4B40078DB4F /* main.m */,
 				514201592437B4B40078DB4F /* DevUtility.entitlements */,
+				2ACFCD08E153EA59EB888FAB /* PanelPresenter.swift */,
 			);
 			path = "DevUtility-macOS";
 			sourceTree = "<group>";
@@ -510,6 +513,7 @@
 				BB0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m in Sources */,
 				BB0001000000000000000008 /* KeyEventModule.swift in Sources */,
 				BB0001000000000000000009 /* KeyEventModuleBridge.m in Sources */,
+				47E60192B0ED916448DAD795 /* PanelPresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
