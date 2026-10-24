@@ -5,18 +5,22 @@
 // Architecture Role: Used by PanelManager. Activation on macOS 14+ is a request the system can
 //   decline (it does for an app launched in the background), and an inactive app's ordinary
 //   window gets no keys. A non-activating panel takes key status on its own, so keys reach it
-//   whether or not DevUtility is the active app.
+//   whether or not DevUtility is the active app. A click inside the panel still makes the window
+//   server activate DevUtility, so hiding hands focus back to the app that was in front before.
 
 import Cocoa
 
 final class PanelPresenter {
   private let panel: NSPanel
+  private var appInFrontBeforeShow: NSRunningApplication?
 
   init(panel: NSPanel) {
     self.panel = panel
   }
 
   func show(at origin: NSPoint) {
+    let frontmostApp = NSWorkspace.shared.frontmostApplication
+    appInFrontBeforeShow = frontmostApp == .current ? nil : frontmostApp
     panel.setFrameOrigin(origin)
     panel.makeKeyAndOrderFront(nil)
     // The window server can finish ordering the panel in after this run-loop turn; retry once then.
@@ -29,7 +33,19 @@ final class PanelPresenter {
     }
   }
 
-  func hide() {
+  /// Pass `returningFocus: false` when the user hid the panel by clicking another app, which
+  /// should keep the focus that click gave it.
+  func hide(returningFocus: Bool) {
     panel.orderOut(nil)
+    if returningFocus {
+      returnFocusIfThePanelTookIt()
+    }
+  }
+
+  private func returnFocusIfThePanelTookIt() {
+    guard NSWorkspace.shared.frontmostApplication == .current,
+          let previousApp = appInFrontBeforeShow,
+          !previousApp.isTerminated else { return }
+    previousApp.activate(options: [])
   }
 }
