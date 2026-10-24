@@ -54,6 +54,12 @@ clipboard history and a snippet manager. Spec for the multi-tool restructure:
   visible to XCUITest when it also has `accessible`.
 - In XCUITest use `XCUIKeyboardKey.return`; `.enter` is the keypad Enter (key code 76), which the
   app's key handler does not treat as Return (36).
-- Keys sent to a programmatically focused React Native text field are lost until it is clicked
-  (known bug, fixed in delivery step 3); page objects click before typing.
+- XCUITest's `typeKey`/`typeText`/`click` activate the app before sending input, so they can't
+  show focus or activation bugs. Specs about those use `Support/Keyboard.swift` and
+  `Support/Mouse.swift`, which post HID-level events like a real keyboard and mouse. Check the
+  frontmost app with `OtherApp.isFrontmost` (NSWorkspace); `XCUIApplication.state` reports
+  foreground for any running app.
+- A mouse-down inside the panel makes macOS activate DevUtility even though the panel is
+  non-activating (accepted limit, see the spec's Focus bug section). Reach a screen by keyboard
+  when a spec must keep the app inactive.
 - Type definitions: `react-native` is mapped to `react-native-macos` in `tsconfig.json`.
