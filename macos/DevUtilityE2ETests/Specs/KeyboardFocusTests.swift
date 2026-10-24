@@ -118,13 +118,15 @@ final class KeyboardFocusTests: XCTestCase {
     Wait.until("history is empty") { clipboard.emptyState.exists }
   }
 
-  func test_shortcutRecorderWorksWhileAnotherAppIsFrontmost() {
+  // A mouse-down inside the panel makes the window server activate DevUtility (see the spec's
+  // Focus bug section), so the recorder, which needs a click, is checked after it.
+  func test_shortcutRecorderWorksAfterTheShortcutOpensThePanelOverAnotherApp() {
     hidePanelThenReopenItFromAnotherApp()
-    Mouse.click(panel.settingsButton)
+    Keyboard.press(",", modifiers: .maskCommand)
     let settings = SettingsTab(app: app)
     Wait.until("Settings is shown") { settings.isShown }
+    XCTAssertTrue(OtherApp.isFrontmost, "opening Settings with ⌘, activated DevUtility")
     Mouse.click(settings.recorder)
-    XCTAssertTrue(OtherApp.isFrontmost, "DevUtility was active before recording")
     Keyboard.press("k", modifiers: [.maskControl, .maskAlternate])
     Wait.until("the recorder shows ⌃⌥K") { settings.recorderText == "⌃⌥K" }
   }
@@ -148,7 +150,7 @@ final class KeyboardFocusTests: XCTestCase {
     let snippets = panel.openSnippets()
     snippets.addSnippet(title: "Nginx proxy", description: "", tags: "", content: "proxy_pass")
     hidePanelThenReopenItFromAnotherApp()
-    Mouse.click(snippets.searchField)
+    Keyboard.press("f", modifiers: .maskCommand)
     Keyboard.type("nginx")
     snippets.waitForSearchText("nginx")
     Pasteboard.clear()
@@ -157,6 +159,17 @@ final class KeyboardFocusTests: XCTestCase {
     XCTAssertTrue(Pasteboard.staysEmpty(for: 2), "Return inside search copied the snippet")
     XCTAssertEqual(snippets.searchText, "nginx", "Return changed the search")
     XCTAssertEqual(snippets.rowCount, 1, "Return changed the search results")
+  }
+
+  // MARK: - Focus after the panel hides
+
+  func test_hidingThePanelAfterAClickInsideItGivesFocusBackToTheOtherApp() {
+    hidePanelThenReopenItFromAnotherApp()
+    Mouse.click(panel.settingsButton)
+    Wait.until("the click activated DevUtility, which this spec is about") { !OtherApp.isFrontmost }
+    Keyboard.press(.escape)
+    panel.waitUntilHidden()
+    Wait.until("Calculator is frontmost again") { OtherApp.isFrontmost }
   }
 
   // MARK: - Helpers
