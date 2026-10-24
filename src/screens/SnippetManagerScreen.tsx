@@ -71,6 +71,7 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
           return false;
         },
         focusSearch: () => {
+          console.warn('[focus-diag] js focusSearch, isFocused=' + searchInputRef.current?.isFocused());
           searchInputRef.current?.focus();
         },
         blurAll: () => {
@@ -120,7 +121,9 @@ export const SnippetManagerScreen = forwardRef<ScreenHandle>(
             ref={searchInputRef}
             style={styles.searchInput}
             value={searchQuery}
-            onChangeText={setSearchQuery}
+            onChangeText={t => { console.warn('[focus-diag] js search change ' + t); setSearchQuery(t); }}
+            onFocus={() => console.warn('[focus-diag] js search focus')}
+            onBlur={() => console.warn('[focus-diag] js search blur')}
             placeholder="Search by title, description, or tag…"
             placeholderTextColor={colors.text.placeholder}
             accessibilityRole="search"
