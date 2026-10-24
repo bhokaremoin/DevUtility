@@ -9,6 +9,10 @@ clipboard history and a snippet manager. Spec for the multi-tool restructure:
 - `npm install`, then `npm run pods`.
 - One-time per Mac, in a real terminal (needs your password):
   `sudo automationmodetool enable-automationmode-without-authentication`.
+- One-time per Mac, after the first `npm run test:e2e`: allow `DevUtilityE2ETests-Runner` under
+  System Settings > Privacy & Security > Accessibility. The focus specs post real key events
+  (`Support/Keyboard.swift`) and fail at setup without it. CI grants it in
+  `scripts/ci/allow-e2e-runner-to-post-key-events.sh`.
 
 ## Commands
 

@@ -35,7 +35,7 @@ class UtilityPanel: NSPanel {
 ///
 /// Responsibilities:
 /// - One-time panel setup from the React Native root view (`setup(with:)`)
-/// - Toggle, show, and hide the panel with proper macOS activation
+/// - Toggle, show, and hide the panel as a key window without activating the app
 /// - Center the panel on whichever screen the cursor is on
 /// - Install a global mouse monitor to dismiss on outside clicks
 /// - Manage the status bar icon and its left/right-click context menu
@@ -48,6 +48,8 @@ class UtilityPanel: NSPanel {
 
   /// The floating panel window that hosts the React Native root view.
   private var panel: UtilityPanel!
+  /// Shows the panel as the key window without activating the app.
+  private var presenter: PanelPresenter!
   /// The macOS menu-bar status item (icon + button).
   private var statusItem: NSStatusItem!
   /// Global mouse-down event monitor used to dismiss the panel on outside clicks.
@@ -70,7 +72,7 @@ class UtilityPanel: NSPanel {
   @objc func setup(with rootView: NSView) {
     panel = UtilityPanel(
       contentRect: NSRect(origin: .zero, size: panelSize),
-      styleMask: [.titled, .fullSizeContentView],
+      styleMask: [.nonactivatingPanel, .titled, .fullSizeContentView],
       backing: .buffered,
       defer: false
     )
@@ -92,6 +94,7 @@ class UtilityPanel: NSPanel {
     rootView.frame = NSRect(origin: .zero, size: panelSize)
     rootView.autoresizingMask = [.width, .height]
     panel.contentViewController = viewController
+    presenter = PanelPresenter(panel: panel)
 
     setupStatusItem()
   }
@@ -146,22 +149,19 @@ class UtilityPanel: NSPanel {
     let visibleFrame = screen.visibleFrame
     let x = visibleFrame.midX - panel.frame.width / 2
     let y = visibleFrame.midY - panel.frame.height / 2
-    panel.setFrameOrigin(NSPoint(x: x, y: y))
-
-    if #available(macOS 14.0, *) {
-      NSRunningApplication.current.activate(options: [])
-    } else {
-      NSRunningApplication.current.activate(options: .activateIgnoringOtherApps)
-    }
-    panel.makeKeyAndOrderFront(nil)
+    presenter.show(at: NSPoint(x: x, y: y))
 
     installClickOutsideMonitor()
   }
 
   /// Hides the panel and removes the global click monitor.
   @objc func hide() {
+    hide(returningFocus: true)
+  }
+
+  private func hide(returningFocus: Bool) {
     guard panel != nil else { return }
-    panel.orderOut(nil)
+    presenter.hide(returningFocus: returningFocus)
     removeClickOutsideMonitor()
   }
 
@@ -175,7 +175,7 @@ class UtilityPanel: NSPanel {
       guard let self = self, self.panel.isVisible else { return }
       let mouseLocation = NSEvent.mouseLocation
       if !self.panel.frame.contains(mouseLocation) {
-        self.hide()
+        self.hide(returningFocus: false)
       }
     }
   }
