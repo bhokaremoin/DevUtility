@@ -89,8 +89,9 @@ Accepted limit: a mouse-down inside the panel makes the window server activate D
 (`-[NSApplication _handleActivatedEvent:]`, before the app sees the click). It happens with
 `canBecomeMain` false too, and no app code can veto it. So opening the panel and pressing keys in
 it never activate the app, but clicking in it does. To limit the cost, hiding the panel hands focus
-back to the app that was frontmost when it opened, except when the panel hid because the user
-clicked another app.
+back to the app that was frontmost when it opened, but only while DevUtility is still frontmost.
+A click on another app makes that app frontmost before the click-outside monitor hides the panel,
+so that click keeps its focus.
 
 ## Architecture
 

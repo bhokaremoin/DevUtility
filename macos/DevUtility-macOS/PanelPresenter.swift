@@ -33,16 +33,14 @@ final class PanelPresenter {
     }
   }
 
-  /// Pass `returningFocus: false` when the user hid the panel by clicking another app, which
-  /// should keep the focus that click gave it.
-  func hide(returningFocus: Bool) {
+  func hide() {
     panel.orderOut(nil)
-    if returningFocus {
-      returnFocusIfThePanelTookIt()
-    }
+    returnFocusIfThePanelTookIt()
   }
 
   private func returnFocusIfThePanelTookIt() {
+    // A click on another app makes that app frontmost before the panel hides, so this also
+    // leaves the focus that click gave it.
     guard NSWorkspace.shared.frontmostApplication == .current,
           let previousApp = appInFrontBeforeShow,
           !previousApp.isTerminated else { return }

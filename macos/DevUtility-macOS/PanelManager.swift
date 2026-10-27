@@ -156,12 +156,8 @@ class UtilityPanel: NSPanel {
 
   /// Hides the panel and removes the global click monitor.
   @objc func hide() {
-    hide(returningFocus: true)
-  }
-
-  private func hide(returningFocus: Bool) {
     guard panel != nil else { return }
-    presenter.hide(returningFocus: returningFocus)
+    presenter.hide()
     removeClickOutsideMonitor()
   }
 
@@ -175,7 +171,7 @@ class UtilityPanel: NSPanel {
       guard let self = self, self.panel.isVisible else { return }
       let mouseLocation = NSEvent.mouseLocation
       if !self.panel.frame.contains(mouseLocation) {
-        self.hide(returningFocus: false)
+        self.hide()
       }
     }
   }
