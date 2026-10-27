@@ -81,8 +81,9 @@ Right after launch the app is inactive, `activate(options: [])` was declined, an
 never key (`active=0 keyWindow=nil`, frontmost app Calculator or Finder). The spike's text-field
 symptom did not reproduce once keys were posted at the HID level, as a real keyboard posts them:
 XCUITest's `typeKey`/`typeText` activate the app first, which hid the bug in both directions. The
-non-activating panel above fixed every typing and arrow-key spec. `KeyEventModule` reads the
-event's own window instead of `NSApp.keyWindow`, which is nil while the app is inactive.
+non-activating panel above fixed every typing and arrow-key spec. Once it is key, AppKit reports
+DevUtility as active and the panel as `NSApp.keyWindow` even while another app is frontmost, so
+`KeyEventModule` needs no change (a mutation that switched it to `event.window` changed no result).
 
 Accepted limit: a mouse-down inside the panel makes the window server activate DevUtility
 (`-[NSApplication _handleActivatedEvent:]`, before the app sees the click). It happens with
