@@ -20,15 +20,6 @@ enum OtherApp {
     return XCTWaiter().wait(for: [losesFront], timeout: seconds) == .completed
   }
 
-  static func staysInBackground(for seconds: TimeInterval) -> Bool {
-    let comesToFront = XCTNSPredicateExpectation(
-      predicate: NSPredicate { _, _ in isFrontmost },
-      object: nil
-    )
-    comesToFront.isInverted = true
-    return XCTWaiter().wait(for: [comesToFront], timeout: seconds) == .completed
-  }
-
   @discardableResult
   static func bringToFront() -> XCUIApplication {
     let app = XCUIApplication(bundleIdentifier: bundleIdentifier)
