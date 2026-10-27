@@ -151,6 +151,8 @@ final class KeyboardFocusTests: XCTestCase {
     snippets.addSnippet(title: "Nginx proxy", description: "", tags: "", content: "proxy_pass")
     hidePanelThenReopenItFromAnotherApp()
     Keyboard.press("f", modifiers: .maskCommand)
+    // ⌘F focuses search through a JS round trip; keys posted in the same instant reach the panel first.
+    Wait.until("search is focused") { snippets.isSearchFocused }
     Keyboard.type("nginx")
     snippets.waitForSearchText("nginx")
     Pasteboard.clear()
