@@ -55,7 +55,7 @@ final class KeyboardFocusTests: XCTestCase {
 
   func test_shortcutOpensThePanelWithoutActivatingTheApp() {
     hidePanelThenReopenItFromAnotherApp()
-    XCTAssertTrue(OtherApp.isFrontmost, "opening the panel with the shortcut activated DevUtility")
+    XCTAssertTrue(OtherApp.staysFrontmost(for: 1), "opening the panel with the shortcut activated DevUtility")
   }
 
   func test_iconOpensThePanelWithoutActivatingTheApp() {
@@ -65,7 +65,7 @@ final class KeyboardFocusTests: XCTestCase {
     OtherApp.bringToFront()
     Mouse.click(menuBar.icon)
     panel.waitUntilVisible()
-    XCTAssertTrue(OtherApp.isFrontmost, "opening the panel with the icon activated DevUtility")
+    XCTAssertTrue(OtherApp.staysFrontmost(for: 1), "opening the panel with the icon activated DevUtility")
   }
 
   func test_typingWorksRightAfterTheIconOpensSnippetsOverAnotherApp() {
@@ -91,7 +91,7 @@ final class KeyboardFocusTests: XCTestCase {
     hidePanelThenReopenItFromAnotherApp()
     Keyboard.press(.downArrow)
     Wait.until("row 1 is selected") { clipboard.isRowSelected(1) }
-    XCTAssertTrue(OtherApp.isFrontmost, "sending keys activated DevUtility")
+    XCTAssertTrue(OtherApp.staysFrontmost(for: 1), "sending keys activated DevUtility")
   }
 
   func test_typingWorksRightAfterTheShortcutOpensSnippetsOverAnotherApp() {
@@ -101,7 +101,7 @@ final class KeyboardFocusTests: XCTestCase {
     Wait.until("Snippets is shown") { snippets.isShown }
     Keyboard.type("menu")
     snippets.waitForSearchText("menu")
-    XCTAssertTrue(OtherApp.isFrontmost, "sending keys activated DevUtility")
+    XCTAssertTrue(OtherApp.staysFrontmost(for: 1), "sending keys activated DevUtility")
   }
 
   // MARK: - Panel keys while the app is inactive

@@ -11,6 +11,15 @@ enum OtherApp {
     NSWorkspace.shared.frontmostApplication?.bundleIdentifier == bundleIdentifier
   }
 
+  static func staysFrontmost(for seconds: TimeInterval) -> Bool {
+    let losesFront = XCTNSPredicateExpectation(
+      predicate: NSPredicate { _, _ in !isFrontmost },
+      object: nil
+    )
+    losesFront.isInverted = true
+    return XCTWaiter().wait(for: [losesFront], timeout: seconds) == .completed
+  }
+
   @discardableResult
   static func bringToFront() -> XCUIApplication {
     let app = XCUIApplication(bundleIdentifier: bundleIdentifier)
