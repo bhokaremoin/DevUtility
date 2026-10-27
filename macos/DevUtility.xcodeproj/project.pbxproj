@@ -19,6 +19,7 @@
 		604BBC035AB4AFBFF6002F84 /* MainPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100E1047C93A9390C8868E10 /* MainPanel.swift */; };
 		6074A04C5BA92B509F4637E0 /* ResetFlagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D971F53C728C38A0172693A4 /* ResetFlagTests.swift */; };
 		734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */; };
+		7D7F0BD13CB39BBC425EE9AD /* Desktop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 508CC01D5460F68D6D6AF296 /* Desktop.swift */; };
 		7F0A37443207622515531AAD /* KeyboardNavigationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B13E76C391B35BF5BC3421 /* KeyboardNavigationTests.swift */; };
 		8295E139C25E304526173EF3 /* AppLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23351A8825B9A54328E3CBB4 /* AppLauncher.swift */; };
 		912F9BC0B73F987EFAE9733A /* ClipboardTab.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AA7641EA2A80E1B28D1FFB6 /* ClipboardTab.swift */; };
@@ -70,6 +71,7 @@
 		32C5DA337FCB7F34C0AB3E87 /* KeyboardFocusTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardFocusTests.swift; sourceTree = "<group>"; };
 		3914121390036867674FB361 /* Pasteboard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pasteboard.swift; sourceTree = "<group>"; };
 		43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		508CC01D5460F68D6D6AF296 /* Desktop.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Desktop.swift; sourceTree = "<group>"; };
 		514201492437B4B30078DB4F /* DevUtility.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevUtility.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5142014B2437B4B30078DB4F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		5142014C2437B4B30078DB4F /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				156543116F4D53849AFB5136 /* XCUIElement+Text.swift */,
 				B46355A765C85B7DA9496741 /* Keyboard.swift */,
 				88A17E1DBCE96C3E11976075 /* Mouse.swift */,
+				508CC01D5460F68D6D6AF296 /* Desktop.swift */,
 			);
 			name = Support;
 			path = Support;
@@ -494,6 +497,7 @@
 				9E765D0F27073FD03BBE7AEE /* KeyboardFocusTests.swift in Sources */,
 				EAD58DD6FAA7725988E3672C /* Keyboard.swift in Sources */,
 				23B6FE9745344DD28004B7C6 /* Mouse.swift in Sources */,
+				7D7F0BD13CB39BBC425EE9AD /* Desktop.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

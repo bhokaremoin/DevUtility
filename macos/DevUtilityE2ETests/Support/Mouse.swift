@@ -12,9 +12,12 @@ enum Mouse {
       line: line
     )
     // XCUIElement.frame and CGEvent locations share the same space: global, top-left origin.
-    let center = CGPoint(x: element.frame.midX, y: element.frame.midY)
+    click(at: CGPoint(x: element.frame.midX, y: element.frame.midY))
+  }
+
+  static func click(at point: CGPoint) {
     for type in [CGEventType.mouseMoved, .leftMouseDown, .leftMouseUp] {
-      let event = CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: center, mouseButton: .left)
+      let event = CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: point, mouseButton: .left)
       event?.post(tap: .cghidEventTap)
     }
   }

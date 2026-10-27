@@ -174,6 +174,16 @@ final class KeyboardFocusTests: XCTestCase {
     Wait.until("Calculator is frontmost again") { OtherApp.isFrontmost }
   }
 
+  func test_hidingThePanelByClickingAnotherAppLeavesThatAppInFront() {
+    hidePanelThenReopenItFromAnotherApp()
+    Mouse.click(panel.settingsButton)
+    Wait.until("the click activated DevUtility, which this spec is about") { !OtherApp.isFrontmost }
+    Desktop.click()
+    panel.waitUntilHidden()
+    Wait.until("Finder is frontmost") { Desktop.isFinderFrontmost }
+    XCTAssertTrue(OtherApp.staysInBackground(for: 1), "hiding the panel pulled Calculator back in front")
+  }
+
   // MARK: - Helpers
 
   private func pressTheGlobalShortcut() {
