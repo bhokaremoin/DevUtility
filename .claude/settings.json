@@ -4,6 +4,10 @@
       "Bash(harness status)",
       "Bash(harness status *)",
       "Bash(harness check)",
+      "Bash(harness lessons)",
+      "Bash(harness learn *)",
+      "Bash(harness history)",
+      "Bash(harness history *)",
       "Bash(harness where)",
       "Bash(python3 .claude/harness/review/pr_review.py *)"
     ]
@@ -15,6 +19,10 @@
           {
             "type": "command",
             "command": "command -v harness >/dev/null 2>&1 && harness check || true"
+          },
+          {
+            "type": "command",
+            "command": "command -v harness >/dev/null 2>&1 && harness lessons || true"
           }
         ]
       }
