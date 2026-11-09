@@ -15,10 +15,10 @@ Reviewers grade every finding; the triage agent re-grades if the reviewer got it
 - **Low**: polish, preference, nits.
 
 ## What gets posted
-- **Critical and High: always**, once verified.
-- **Medium: only if it matters and is an easy win**: a real improvement, localized, fixable in
-  roughly 15 minutes without redesign. Otherwise drop it.
-- **Low: never.**
+- **Critical and High: only**, once verified and when the change is necessary (a concrete
+  problem worth changing code for, not polish).
+- **Medium and Low: never.** List them under `dropped` so the developer can see them; they don't
+  get a thread, don't block the verdict and don't lead to code changes.
 
 Every posted finding is labelled **Functional** (breaks or risks behavior) or **Code quality**.
 Functional findings come first.

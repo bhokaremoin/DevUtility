@@ -67,7 +67,7 @@ A few sentences of reasoning if needed, then exactly one fenced `json` block in 
   ],
   "findings": [
     {
-      "severity": "critical | high | medium",
+      "severity": "critical | high",
       "category": "functional | code-quality",
       "path": "backend/app/orders/service.py",
       "line": 42,
