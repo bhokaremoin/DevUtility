@@ -30,6 +30,15 @@ struct MainPanel {
     return XCTWaiter().wait(for: [hides], timeout: seconds) == .completed
   }
 
+  func staysHidden(for seconds: TimeInterval) -> Bool {
+    let shows = XCTNSPredicateExpectation(
+      predicate: NSPredicate { _, _ in self.isVisible },
+      object: nil
+    )
+    shows.isInverted = true
+    return XCTWaiter().wait(for: [shows], timeout: seconds) == .completed
+  }
+
   func openClipboard() -> ClipboardTab {
     element("header.tab.clipboard").click()
     return ClipboardTab(app: app)
@@ -40,6 +49,8 @@ struct MainPanel {
     XCTAssertTrue(element("snippets.search").waitForExistence(timeout: Wait.defaultTimeout))
     return SnippetsTab(app: app)
   }
+
+  var settingsButton: XCUIElement { element("header.settings") }
 
   func openSettings() -> SettingsTab {
     element("header.settings").click()

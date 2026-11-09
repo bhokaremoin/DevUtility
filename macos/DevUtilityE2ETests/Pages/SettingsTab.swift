@@ -11,7 +11,9 @@ struct SettingsTab {
 
   var currentShortcutText: String { element("settings.shortcut.current").displayedText }
 
-  var recorderText: String { element("settings.shortcut.recorder").displayedText }
+  var recorder: XCUIElement { element("settings.shortcut.recorder") }
+
+  var recorderText: String { recorder.displayedText }
 
   func recordShortcut(
     _ key: String,
@@ -20,7 +22,6 @@ struct SettingsTab {
     file: StaticString = #filePath,
     line: UInt = #line
   ) {
-    let recorder = element("settings.shortcut.recorder")
     recorder.click()
     recorder.typeKey(key, modifierFlags: modifiers)
     Wait.until("the recorder shows \(expectedLabel)", file: file, line: line) { self.recorderText == expectedLabel }
