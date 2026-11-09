@@ -10,8 +10,9 @@
   One logical change per commit. Branches: `type/short-description` (`feat/daily-revenue-report`).
 - PR descriptions say what changed, why, and how it was tested.
 - Keep project-specific knowledge (commands, gotchas, decisions) in `CLAUDE.project.md`, not here.
-- When you learn something that applies to all projects, suggest adding it to the harness
-  with the `h-harness-improve` skill instead of only fixing it locally.
+- Use `h-learn` without being asked when I correct you, state how I like something done, a fix
+  takes more than one attempt, or a review finds a Critical or High issue.
+- A rule, skill or setting that should change for all projects goes through `h-harness-improve`.
 
 ## Superpowers skills
 
