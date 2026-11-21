@@ -32,18 +32,25 @@ final class MenuBarTests: XCTestCase {
     snippets.waitUntilHidden()
   }
 
-  func test_rightClickMenuOpensTheTool() {
-    MenuBar(app: app).chooseFromRightClickMenu("Open Snippets", on: SnippetsPanel.toolId)
+  func test_rightClickMenuNamesItsToolAndOpensIt() {
+    let menuBar = MenuBar(app: app)
+    Mouse.rightClick(menuBar.icon(for: SnippetsPanel.toolId))
+    let openItem = menuBar.rightClickMenuItem(.openTool)
+    XCTAssertTrue(openItem.waitForExistence(timeout: Wait.defaultTimeout), "the menu did not open")
+    XCTAssertEqual(openItem.title, "Open Snippets")
+    XCTAssertEqual(menuBar.rightClickMenuItem(.settings).title, "Settings…")
+    XCTAssertEqual(menuBar.rightClickMenuItem(.quit).title, "Quit DevUtility")
+    Mouse.click(openItem)
     SnippetsPanel(app: app).waitUntilVisible()
   }
 
   func test_rightClickMenuOpensSettings() {
-    MenuBar(app: app).chooseFromRightClickMenu("Settings…", on: ClipboardPanel.toolId)
+    MenuBar(app: app).chooseFromRightClickMenu(.settings, on: ClipboardPanel.toolId)
     SettingsWindow(app: app).waitUntilShown()
   }
 
   func test_rightClickMenuQuitsTheApp() {
-    MenuBar(app: app).chooseFromRightClickMenu("Quit DevUtility", on: ClipboardPanel.toolId)
+    MenuBar(app: app).chooseFromRightClickMenu(.quit, on: ClipboardPanel.toolId)
     XCTAssertTrue(app.wait(for: .notRunning, timeout: Wait.defaultTimeout), "DevUtility is still running")
   }
 }

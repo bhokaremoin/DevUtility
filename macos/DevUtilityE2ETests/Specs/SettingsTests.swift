@@ -63,14 +63,14 @@ final class SettingsTests: XCTestCase {
   }
 
   func test_settingsMenuItemOpensSettings() {
-    MenuBar(app: app).chooseFromRightClickMenu("Settings…", on: ClipboardPanel.toolId)
+    MenuBar(app: app).chooseFromRightClickMenu(.settings, on: ClipboardPanel.toolId)
     SettingsWindow(app: app).waitUntilShown()
   }
 
   func test_openingSettingsAgainKeepsOneWindow() {
     let clipboard = ClipboardPanel(app: app).open()
     let settings = clipboard.openSettings()
-    MenuBar(app: app).chooseFromRightClickMenu("Settings…", on: SnippetsPanel.toolId)
+    MenuBar(app: app).chooseFromRightClickMenu(.settings, on: SnippetsPanel.toolId)
     clipboard.press(",", modifiers: .command)
     XCTAssertTrue(settings.window.isHittable, "Settings is no longer in front")
     XCTAssertEqual(settings.openWindowCount, 1)

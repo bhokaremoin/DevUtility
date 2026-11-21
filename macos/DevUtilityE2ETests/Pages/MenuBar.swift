@@ -1,6 +1,13 @@
 import XCTest
 
 struct MenuBar {
+  // The app menu has its own Settings… and Quit items, so the icon's menu items are found by identifier.
+  enum IconMenuItem: String {
+    case openTool = "statusMenu.open"
+    case settings = "statusMenu.settings"
+    case quit = "statusMenu.quit"
+  }
+
   let app: XCUIApplication
 
   func icon(for toolId: String) -> XCUIElement { app.statusItems["statusItem.\(toolId)"] }
@@ -11,10 +18,12 @@ struct MenuBar {
     icon.click()
   }
 
-  func chooseFromRightClickMenu(_ title: String, on toolId: String, file: StaticString = #filePath, line: UInt = #line) {
+  func rightClickMenuItem(_ item: IconMenuItem) -> XCUIElement { app.menuItems[item.rawValue] }
+
+  func chooseFromRightClickMenu(_ item: IconMenuItem, on toolId: String, file: StaticString = #filePath, line: UInt = #line) {
     Mouse.rightClick(icon(for: toolId), file: file, line: line)
-    let item = app.menuItems[title]
-    XCTAssertTrue(item.waitForExistence(timeout: Wait.defaultTimeout), "no \(title) menu item", file: file, line: line)
-    Mouse.click(item, file: file, line: line)
+    let menuItem = rightClickMenuItem(item)
+    XCTAssertTrue(menuItem.waitForExistence(timeout: Wait.defaultTimeout), "no \(item) menu item", file: file, line: line)
+    Mouse.click(menuItem, file: file, line: line)
   }
 }

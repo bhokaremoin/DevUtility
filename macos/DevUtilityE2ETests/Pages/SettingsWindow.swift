@@ -3,13 +3,14 @@ import XCTest
 struct SettingsWindow {
   let app: XCUIApplication
 
-  var window: XCUIElement { app.windows["settings.window"] }
+  // Settings is a floating panel, which app.windows does not list.
+  var window: XCUIElement { app.descendants(matching: .any)["settings.window"] }
 
   private func element(_ identifier: String) -> XCUIElement {
     window.descendants(matching: .any)[identifier]
   }
 
-  var openWindowCount: Int { app.windows.matching(identifier: "settings.window").count }
+  var openWindowCount: Int { app.descendants(matching: .any).matching(identifier: "settings.window").count }
 
   var isShown: Bool { window.exists }
 

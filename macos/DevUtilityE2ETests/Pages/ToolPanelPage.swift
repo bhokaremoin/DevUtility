@@ -9,7 +9,8 @@ protocol ToolPanelPage {
 }
 
 extension ToolPanelPage {
-  var window: XCUIElement { app.windows["\(Self.toolId).window"] }
+  // Floating panels are not listed in app.windows, so the window is found by identifier among all elements.
+  var window: XCUIElement { app.descendants(matching: .any)["\(Self.toolId).window"] }
 
   func element(_ identifier: String) -> XCUIElement {
     window.descendants(matching: .any)[identifier]
