@@ -12,9 +12,9 @@ struct MenuBar {
 
   func chooseFromRightClickMenu(_ title: String, file: StaticString = #filePath, line: UInt = #line) {
     XCTAssertTrue(icon.waitForExistence(timeout: Wait.defaultTimeout), "menu-bar icon missing", file: file, line: line)
-    icon.rightClick()
+    Mouse.rightClick(icon, file: file, line: line)
     let item = app.menuItems[title]
     XCTAssertTrue(item.waitForExistence(timeout: Wait.defaultTimeout), "no \(title) menu item", file: file, line: line)
-    item.click()
+    Mouse.click(item, file: file, line: line)
   }
 }

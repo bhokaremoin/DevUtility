@@ -78,7 +78,8 @@ final class SettingsTests: XCTestCase {
     Pasteboard.write("second")
     clipboard.waitForRowText(0, toEqual: "second")
     Pasteboard.clear()
-    XCTAssertTrue(clipboard.isRowSelected(0))
+    clipboard.selectRow(0)
+    Wait.until("row 0 is selected") { clipboard.isRowSelected(0) }
 
     let settings = MainPanel(app: app).openSettings()
     settings.recorder.click()

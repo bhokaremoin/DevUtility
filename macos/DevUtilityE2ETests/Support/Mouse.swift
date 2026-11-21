@@ -11,10 +11,29 @@ enum Mouse {
       file: file,
       line: line
     )
-    // XCUIElement.frame and CGEvent locations share the same space: global, top-left origin.
-    let center = CGPoint(x: element.frame.midX, y: element.frame.midY)
-    for type in [CGEventType.mouseMoved, .leftMouseDown, .leftMouseUp] {
-      let event = CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: center, mouseButton: .left)
+    post([.mouseMoved, .leftMouseDown, .leftMouseUp], at: center(of: element), button: .left)
+  }
+
+  // XCUIElement.rightClick() on a menu-bar icon waits for a menu-open notification that a status
+  // item's menu never sends, so it times out even when the menu opens.
+  static func rightClick(_ element: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
+    XCTAssertTrue(
+      element.waitForExistence(timeout: Wait.defaultTimeout),
+      "\(element.identifier) is not on screen",
+      file: file,
+      line: line
+    )
+    post([.mouseMoved, .rightMouseDown, .rightMouseUp], at: center(of: element), button: .right)
+  }
+
+  // XCUIElement.frame and CGEvent locations share the same space: global, top-left origin.
+  private static func center(of element: XCUIElement) -> CGPoint {
+    CGPoint(x: element.frame.midX, y: element.frame.midY)
+  }
+
+  private static func post(_ types: [CGEventType], at point: CGPoint, button: CGMouseButton) {
+    for type in types {
+      let event = CGEvent(mouseEventSource: nil, mouseType: type, mouseCursorPosition: point, mouseButton: button)
       event?.post(tap: .cghidEventTap)
     }
   }
