@@ -3,9 +3,31 @@ import KeyboardShortcuts
 
 /// Reads and resets each tool's global shortcut for the Settings screen. The shortcuts themselves
 /// are registered by each tool's ToolPanelController.
+///
+/// Event `onShortcutChange`, body `{assignedToolId, clearedToolIds}`: the user recorded or cleared
+/// a tool's shortcut, and `clearedToolIds` lost that same shortcut.
 @objc(GlobalShortcutModule)
-final class GlobalShortcutModule: NSObject {
-  @objc static func requiresMainQueueSetup() -> Bool { true }
+final class GlobalShortcutModule: RCTEventEmitter {
+  private var shortcutChangeObserver: NSObjectProtocol?
+
+  override static func requiresMainQueueSetup() -> Bool { true }
+
+  override func supportedEvents() -> [String] { ["onShortcutChange"] }
+
+  override func startObserving() {
+    shortcutChangeObserver = NotificationCenter.default.addObserver(
+      forName: .toolShortcutDidChange, object: nil, queue: .main
+    ) { [weak self] notification in
+      self?.sendEvent(withName: "onShortcutChange", body: notification.userInfo)
+    }
+  }
+
+  override func stopObserving() {
+    if let observer = shortcutChangeObserver {
+      NotificationCenter.default.removeObserver(observer)
+      shortcutChangeObserver = nil
+    }
+  }
 
   @objc static func resetShortcutsForE2E() {
     KeyboardShortcuts.reset(ToolShortcuts.allNames)
@@ -13,7 +35,7 @@ final class GlobalShortcutModule: NSObject {
 
   /// `tools`: every tool in registry order, as `{id, displayName, defaultShortcutLabel}`.
   /// React Native reads constants on the main queue because of requiresMainQueueSetup.
-  @objc func constantsToExport() -> [AnyHashable: Any] {
+  override func constantsToExport() -> [AnyHashable: Any]! {
     MainActor.assumeIsolated { ["tools": toolConstants()] }
   }
 
@@ -54,10 +76,18 @@ final class GlobalShortcutModule: NSObject {
     }
   }
 
+  /// A default can clash with a shortcut another tool was given, so the reset goes through the
+  /// same clash rule as recording.
   @objc func resetShortcut(_ toolId: String) {
     DispatchQueue.main.async {
       guard let name = ToolShortcuts.name(for: toolId) else { return }
       KeyboardShortcuts.reset(name)
+      let clearedToolIds = ToolShortcuts.removeFromOtherTools(theShortcutOf: toolId)
+      NotificationCenter.default.post(
+        name: .toolShortcutDidChange,
+        object: nil,
+        userInfo: ["assignedToolId": toolId, "clearedToolIds": clearedToolIds]
+      )
     }
   }
 }

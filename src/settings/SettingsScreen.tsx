@@ -4,7 +4,32 @@ import {ShortcutRecorder} from '../shared/native/ShortcutRecorder';
 import {GlobalShortcut, ToolShortcutInfo} from '../shared/native/GlobalShortcut';
 import {colors, spacing, typography, radii} from '../shared/theme';
 
+interface ConflictNote {
+  toolId: string;
+  text: string;
+}
+
 export function SettingsScreen() {
+  // Bumped on every shortcut change, so every row reads its shortcut again.
+  const [shortcutVersion, setShortcutVersion] = useState(0);
+  const [conflictNote, setConflictNote] = useState<ConflictNote | null>(null);
+
+  useEffect(
+    () =>
+      GlobalShortcut.onShortcutChange(({assignedToolId, clearedToolIds}) => {
+        setShortcutVersion(version => version + 1);
+        const clearedNames = GlobalShortcut.tools
+          .filter(tool => clearedToolIds.includes(tool.id))
+          .map(tool => tool.displayName);
+        setConflictNote(
+          clearedNames.length > 0
+            ? {toolId: assignedToolId, text: `Removed this shortcut from ${clearedNames.join(', ')}.`}
+            : null,
+        );
+      }),
+    [],
+  );
+
   return (
     <View style={styles.container}>
       <Text style={styles.heading}>Settings</Text>
@@ -15,15 +40,29 @@ export function SettingsScreen() {
           any app.
         </Text>
         {GlobalShortcut.tools.map(tool => (
-          <ToolShortcutRow key={tool.id} tool={tool} />
+          <ToolShortcutRow
+            key={tool.id}
+            tool={tool}
+            shortcutVersion={shortcutVersion}
+            conflictNote={conflictNote?.toolId === tool.id ? conflictNote.text : null}
+          />
         ))}
       </View>
     </View>
   );
 }
 
-function ToolShortcutRow({tool}: {tool: ToolShortcutInfo}) {
-  const [currentShortcut, setCurrentShortcut] = useState<string | null>(null);
+interface ToolShortcutRowProps {
+  tool: ToolShortcutInfo;
+  shortcutVersion: number;
+  conflictNote: string | null;
+}
+
+const NOT_SET = 'Not set';
+
+function ToolShortcutRow({tool, shortcutVersion, conflictNote}: ToolShortcutRowProps) {
+  // undefined until the first read: show the default label rather than flash "Not set".
+  const [currentShortcut, setCurrentShortcut] = useState<string | null | undefined>(undefined);
 
   const refreshShortcut = useCallback(async () => {
     try {
@@ -37,7 +76,7 @@ function ToolShortcutRow({tool}: {tool: ToolShortcutInfo}) {
 
   useEffect(() => {
     refreshShortcut();
-  }, [refreshShortcut]);
+  }, [refreshShortcut, shortcutVersion]);
 
   const resetShortcut = useCallback(() => {
     GlobalShortcut.resetShortcut(tool.id);
@@ -54,7 +93,7 @@ function ToolShortcutRow({tool}: {tool: ToolShortcutInfo}) {
       <View style={styles.currentShortcutRow}>
         <Text style={styles.currentLabel}>Current:</Text>
         <Text testID={`settings.shortcut.${tool.id}.current`} accessible style={styles.currentValue}>
-          {currentShortcut ?? tool.defaultShortcutLabel}
+          {currentShortcut === undefined ? tool.defaultShortcutLabel : currentShortcut ?? NOT_SET}
         </Text>
         <TouchableOpacity
           testID={`settings.shortcut.${tool.id}.reset`}
@@ -64,6 +103,11 @@ function ToolShortcutRow({tool}: {tool: ToolShortcutInfo}) {
           <Text style={styles.resetButtonText}>Reset to {tool.defaultShortcutLabel}</Text>
         </TouchableOpacity>
       </View>
+      {conflictNote && (
+        <Text testID={`settings.shortcut.${tool.id}.conflictNote`} accessible style={styles.conflictNote}>
+          {conflictNote}
+        </Text>
+      )}
     </View>
   );
 }
@@ -140,6 +184,12 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border.default,
+  },
+  conflictNote: {
+    ...typography.caption,
+    color: colors.text.secondary,
+    marginTop: spacing.xs,
+    paddingHorizontal: spacing.sm,
   },
   resetButtonText: {
     ...typography.caption,

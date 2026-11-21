@@ -14,7 +14,15 @@ final class ShortcutRecorderView: NSView {
     recorder?.removeFromSuperview()
     guard let name = ToolShortcuts.name(for: toolId) else { return }
 
-    let recorder = KeyboardShortcuts.RecorderCocoa(for: name)
+    let recorder = KeyboardShortcuts.RecorderCocoa(for: name) { _ in
+      // The recorder reports changes on the main thread, where it handles the key press.
+      let clearedToolIds = MainActor.assumeIsolated { ToolShortcuts.removeFromOtherTools(theShortcutOf: toolId) }
+      NotificationCenter.default.post(
+        name: .toolShortcutDidChange,
+        object: nil,
+        userInfo: ["assignedToolId": toolId, "clearedToolIds": clearedToolIds]
+      )
+    }
     recorder.setAccessibilityIdentifier("settings.shortcut.\(toolId)")
     recorder.translatesAutoresizingMaskIntoConstraints = false
     addSubview(recorder)
