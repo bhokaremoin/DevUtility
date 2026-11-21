@@ -132,7 +132,101 @@ final class PanelBehaviorTests: XCTestCase {
     XCTAssertEqual(snippets.window.frame.size, CGSize(width: 800, height: 600))
   }
 
+  // MARK: - What closes each panel
+
+  func test_clipboardClosesOnAClickInAnotherApp() {
+    OtherApp.bringToFront()
+    openClipboardInTheTopLeftCorner()
+    Mouse.click(at: point(in: OtherApp.window.frame, outside: clipboard.window.frame))
+    clipboard.waitUntilHidden()
+  }
+
+  func test_clipboardClosesOnAClickOnTheDesktop() {
+    openClipboardInTheTopLeftCorner()
+    Mouse.click(at: CGPoint(x: Screen.visibleFrame.maxX - 20, y: Screen.visibleFrame.maxY - 20))
+    clipboard.waitUntilHidden()
+  }
+
+  func test_clipboardClosesOnAClickOnTheSnippetsPanel() {
+    snippets.open()
+    openClipboardInTheTopLeftCorner()
+    Mouse.click(at: point(in: snippets.window.frame, outside: clipboard.window.frame))
+    clipboard.waitUntilHidden()
+    XCTAssertTrue(snippets.isVisible, "the click closed Snippets")
+  }
+
+  func test_snippetsStaysOpenOnClicksOutsideIt() {
+    OtherApp.bringToFront()
+    pressShortcut("s")
+    snippets.waitUntilVisible()
+    Mouse.click(at: point(in: OtherApp.window.frame, outside: snippets.window.frame))
+    openClipboardInTheTopLeftCorner()
+    Mouse.click(at: point(in: clipboard.window.frame, outside: snippets.window.frame))
+    XCTAssertTrue(snippets.staysVisible(for: 2), "a click outside Snippets closed it")
+  }
+
+  func test_clickingClipboardsOwnIconClosesItForGood() {
+    clipboard.open()
+    Mouse.click(MenuBar(app: app).icon(for: ClipboardPanel.toolId))
+    clipboard.waitUntilHidden()
+    XCTAssertTrue(clipboard.staysHidden(for: 1), "Clipboard reopened after its icon closed it")
+  }
+
+  func test_clipboardStaysOpenThroughItsClearAllAlert() {
+    clipboard.open()
+    Pasteboard.write("keep me")
+    clipboard.waitForRowText(0, toEqual: "keep me")
+    clipboard.clearAll(confirm: false)
+    XCTAssertTrue(clipboard.staysVisible(for: 1), "answering the Clear all alert closed Clipboard")
+  }
+
+  func test_clipboardStaysOpenForClicksInTheSettingsItOpened() {
+    let settings = clipboard.open().openSettings()
+    Mouse.click(settings.recorder(for: ClipboardPanel.toolId))
+    XCTAssertTrue(clipboard.staysVisible(for: 1), "a click in Settings closed the Clipboard that opened it")
+  }
+
+  func test_snippetsCloseButtonClosesIt() {
+    snippets.open()
+    snippets.closeButton.click()
+    snippets.waitUntilHidden()
+  }
+
+  func test_closingClipboardWhileSnippetsIsOpenLeavesTheKeyboardWithSnippets() {
+    OtherApp.bringToFront()
+    pressShortcut("s")
+    snippets.waitUntilVisible()
+    pressShortcut("v")
+    clipboard.waitUntilVisible()
+    Keyboard.press(.escape)
+    clipboard.waitUntilHidden()
+    Keyboard.type("nginx")
+    snippets.waitForSearchText("nginx")
+  }
+
   // MARK: - Helpers
+
+  private func openClipboardInTheTopLeftCorner() {
+    Mouse.move(to: CGPoint(x: Screen.visibleFrame.minX + 10, y: Screen.visibleFrame.minY + 10))
+    pressShortcut("v")
+    clipboard.waitUntilVisible()
+  }
+
+  /// A point just inside one corner of `frame` that is not covered by `other`.
+  private func point(in frame: CGRect, outside other: CGRect, file: StaticString = #filePath, line: UInt = #line) -> CGPoint {
+    let inset: CGFloat = 8
+    let corners = [
+      CGPoint(x: frame.maxX - inset, y: frame.maxY - inset),
+      CGPoint(x: frame.minX + inset, y: frame.maxY - inset),
+      CGPoint(x: frame.maxX - inset, y: frame.minY + inset),
+      CGPoint(x: frame.minX + inset, y: frame.minY + inset),
+    ]
+    guard let corner = corners.first(where: { !other.contains($0) }) else {
+      XCTFail("every corner of \(frame) is covered by \(other)", file: file, line: line)
+      return .zero
+    }
+    return corner
+  }
 
   private func assertEqual(_ actual: CGPoint, _ expected: CGPoint, _ what: String, file: StaticString = #filePath, line: UInt = #line) {
     XCTAssertEqual(actual.x, expected.x, accuracy: 2, "\(what) x", file: file, line: line)
