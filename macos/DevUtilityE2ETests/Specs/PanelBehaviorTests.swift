@@ -198,6 +198,10 @@ final class PanelBehaviorTests: XCTestCase {
     snippets.waitUntilVisible()
     pressShortcut("v")
     clipboard.waitUntilVisible()
+    // A click inside makes DevUtility the active app, so closing Clipboard would hand focus back to
+    // the other app, away from Snippets, unless Snippets takes the keyboard.
+    Mouse.click(clipboard.emptyState)
+    Wait.until("the click activated DevUtility") { !OtherApp.isFrontmost }
     Keyboard.press(.escape)
     clipboard.waitUntilHidden()
     Keyboard.type("nginx")
