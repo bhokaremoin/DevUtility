@@ -31,6 +31,15 @@ restore_developer_environment() {
 }
 trap restore_developer_environment EXIT
 
+# Run the whole E2E target unless the caller names specs with -only-testing (xcodebuild runs the
+# union of every -only-testing, so the default would swallow the narrower ones).
+test_selection=(-only-testing:DevUtilityE2ETests)
+for argument in "$@"; do
+  if [[ "$argument" == -only-testing:* ]]; then
+    test_selection=()
+  fi
+done
+
 mkdir -p "$RESULTS_DIR"
 xcodebuild test \
   -workspace "$PROJECT_ROOT/macos/DevUtility.xcworkspace" \
@@ -38,7 +47,7 @@ xcodebuild test \
   -configuration E2E \
   -derivedDataPath "$PROJECT_ROOT/build/e2e-derived-data" \
   -resultBundlePath "$RESULT_BUNDLE" \
-  -only-testing:DevUtilityE2ETests \
+  ${test_selection[@]+"${test_selection[@]}"} \
   ONLY_ACTIVE_ARCH=YES \
   NODE_BINARY="$(command -v node)" \
   "$@"

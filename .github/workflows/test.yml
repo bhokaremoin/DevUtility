@@ -2,6 +2,11 @@ name: Test
 
 on:
   workflow_dispatch:
+    inputs:
+      only_testing:
+        description: "Comma-separated E2E specs to run instead of the full suite, e.g. DevUtilityE2ETests/SettingsTests"
+        required: false
+        default: ""
   pull_request:
   push:
     branches: [main]
@@ -43,7 +48,20 @@ jobs:
         run: scripts/ci/allow-e2e-runner-to-post-key-events.sh
 
       - name: Run tests
+        if: inputs.only_testing == ''
         run: npm run test:all
+
+      # A manual run can target a few specs while a change is being built test-first.
+      # The full suite still runs on every pull request and push to main.
+      - name: Run selected E2E specs
+        if: inputs.only_testing != ''
+        env:
+          ONLY_TESTING: ${{ inputs.only_testing }}
+        run: |
+          IFS=',' read -ra specs <<< "$ONLY_TESTING"
+          args=()
+          for spec in "${specs[@]}"; do args+=("-only-testing:$spec"); done
+          npm run test:e2e -- "${args[@]}"
 
       - name: Upload test results
         if: failure()
