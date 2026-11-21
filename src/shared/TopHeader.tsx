@@ -2,14 +2,13 @@ import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {colors, spacing, typography, radii, MIN_TAP_TARGET, HEADER_HEIGHT} from './theme';
 
-/** The three top-level navigation tabs available in the app. */
-export type Tab = 'clipboard' | 'snippets' | 'settings';
+export type Tab = 'clipboard' | 'snippets';
 
 /** Props for the `TopHeader` component. */
 interface Props {
   /** Currently active tab — controls which tab appears highlighted. */
   activeTab: Tab;
-  /** Called when the user taps a tab or the settings gear. */
+  /** Called when the user taps a tab. */
   onTabChange: (tab: Tab) => void;
   /** Called when the user confirms "Clear All" for clipboard history. */
   onClearAll?: () => void;
@@ -95,16 +94,6 @@ export function TopHeader({
             <Text style={styles.helpIcon}>?</Text>
           </TouchableOpacity>
         )}
-        <TouchableOpacity
-          testID="header.settings"
-          style={[styles.settingsBtn, activeTab === 'settings' && styles.settingsBtnActive]}
-          onPress={() => onTabChange('settings')}
-          activeOpacity={0.7}
-          accessibilityRole="button"
-          accessibilityLabel="Settings"
-          accessibilityState={{selected: activeTab === 'settings'}}>
-          <Text style={styles.settingsIcon}>⚙</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -200,21 +189,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.text.tertiary,
     fontWeight: '600',
-  },
-  settingsBtn: {
-    width: MIN_TAP_TARGET - spacing.sm,
-    height: MIN_TAP_TARGET - spacing.sm,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: radii.md,
-  },
-  settingsBtnActive: {
-    backgroundColor: colors.accent.muted,
-    borderWidth: 1,
-    borderColor: colors.accent.border,
-  },
-  settingsIcon: {
-    fontSize: 16,
-    color: colors.text.tertiary,
   },
 });

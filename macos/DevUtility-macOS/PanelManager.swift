@@ -203,12 +203,17 @@ class UtilityPanel: NSPanel {
   private func showContextMenu() {
     let menu = NSMenu()
     menu.addItem(NSMenuItem(title: "Open DevUtility", action: #selector(show), keyEquivalent: ""))
+    menu.addItem(NSMenuItem(title: "Settings…", action: #selector(openSettings), keyEquivalent: ","))
     menu.addItem(NSMenuItem.separator())
     menu.addItem(NSMenuItem(title: "Quit DevUtility", action: #selector(quitApp), keyEquivalent: "q"))
     for item in menu.items { item.target = self }
     statusItem.menu = menu
     statusItem.button?.performClick(nil)
     statusItem.menu = nil
+  }
+
+  @objc private func openSettings() {
+    SettingsWindowController.shared.show(openedFromToolId: nil)
   }
 
   /// Terminates the application.

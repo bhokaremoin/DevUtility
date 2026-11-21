@@ -14,7 +14,7 @@ import Cocoa
 /// and emits named shortcut events to the JS layer.
 ///
 /// Emitted events:
-/// - `onNavigate`        — ⌘1/⌘2/⌘, tab switch; body `{tab: "clipboard"|"snippets"|"settings"}`
+/// - `onNavigate`        — ⌘1/⌘2 tab switch; body `{tab: "clipboard"|"snippets"}` (⌘, opens Settings natively)
 /// - `onCopyAction`      — Enter (outside text input) or ⌘Enter; no body
 /// - `onEscape`          — Escape key; no body
 /// - `onSearch`          — ⌘F; no body
@@ -82,6 +82,9 @@ class KeyEventModule: RCTEventEmitter {
   }
 
   private func handleKeyEvent(_ event: NSEvent) -> NSEvent? {
+    // Keys typed in Settings, alerts or the shortcut recorder belong to those windows.
+    guard NSApp.keyWindow is UtilityPanel else { return event }
+
     let flags = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
     let isCmd = flags.contains(.command)
     let isTextInputFocused = NSApp.keyWindow?.firstResponder is NSTextView
@@ -95,7 +98,7 @@ class KeyEventModule: RCTEventEmitter {
       return nil
     }
     if isCmd && event.keyCode == 43 {
-      sendEvent(withName: "onNavigate", body: ["tab": "settings"])
+      SettingsWindowController.shared.show(openedFromToolId: nil)
       return nil
     }
     if isCmd && event.keyCode == 3 {

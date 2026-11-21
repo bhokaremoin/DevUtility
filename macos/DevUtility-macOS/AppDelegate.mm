@@ -59,6 +59,9 @@
     // Give PanelManager the root view; it will embed it in the floating NSPanel.
     [[PanelManager shared] setupWith:rootView];
     [[PanelManager shared] show];
+
+    NSView *settingsRootView = [self.rootViewFactory viewWithModuleName:@"Settings" initialProperties:@{}];
+    [[SettingsWindowController shared] setUpWithRootView:settingsRootView];
   } else {
     NSLog(@"[DevUtility] ERROR: No default window found after super init");
   }

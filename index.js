@@ -2,6 +2,7 @@ import React from 'react';
 import {AppRegistry} from 'react-native';
 import App from './src/App';
 import {StorageResetGate} from './src/shared/StorageResetGate';
+import {SettingsWindow} from './src/settings/SettingsWindow';
 import {name as appName} from './app.json';
 
 function Root({isE2EReset = false}) {
@@ -13,3 +14,4 @@ function Root({isE2EReset = false}) {
 }
 
 AppRegistry.registerComponent(appName, () => Root);
+AppRegistry.registerComponent('Settings', () => SettingsWindow);

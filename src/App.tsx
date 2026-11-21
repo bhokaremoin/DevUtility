@@ -2,7 +2,6 @@ import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Alert, Keyboard, NativeModules, StyleSheet, View} from 'react-native';
 import {ClipboardScreen} from './tools/clipboard/ClipboardScreen';
 import {SnippetsScreen} from './tools/snippets/SnippetsScreen';
-import {SettingsScreen} from './settings/SettingsScreen';
 import {TopHeader, Tab} from './shared/TopHeader';
 import {ShortcutsModal} from './shared/ShortcutsModal';
 import {useClipboardHistory} from './tools/clipboard/useClipboardHistory';
@@ -95,7 +94,6 @@ function App(): React.JSX.Element {
           {activeTab === 'snippets' && (
             <SnippetsScreen ref={snippetRef} />
           )}
-          {activeTab === 'settings' && <SettingsScreen />}
         </View>
       </View>
     </View>

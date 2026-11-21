@@ -30,7 +30,7 @@ export const SHORTCUT_SECTIONS: ShortcutSection[] = [
     rows: [
       {action: 'Switch to Clipboard tab', keys: ['⌘', '1']},
       {action: 'Switch to Snippets tab', keys: ['⌘', '2']},
-      {action: 'Switch to Settings tab', keys: ['⌘', ',']},
+      {action: 'Open Settings', keys: ['⌘', ',']},
     ],
   },
   {
