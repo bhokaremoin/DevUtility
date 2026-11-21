@@ -38,6 +38,12 @@ struct SnippetsPanel: ToolPanelPage {
 
   func isRowSelected(_ index: Int) -> Bool { element("snippets.row.\(index)").isSelected }
 
+  func rowStaysSelected(_ index: Int, for seconds: TimeInterval) -> Bool {
+    let selectionLost = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !self.isRowSelected(index) }, object: nil)
+    selectionLost.isInverted = true
+    return XCTWaiter().wait(for: [selectionLost], timeout: seconds) == .completed
+  }
+
   func clickCopy(onRow index: Int) { element("snippets.row.\(index).copy").click() }
 
   var searchText: String { (searchField.value as? String) ?? "" }

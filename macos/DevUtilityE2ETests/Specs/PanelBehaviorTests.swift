@@ -31,22 +31,32 @@ final class PanelBehaviorTests: XCTestCase {
     XCTAssertTrue(snippets.staysHidden(for: 0.1), "Snippets opened at launch")
   }
 
+  // Clipboard closes on any click outside it, the Snippets icon included, so Snippets opens first.
   func test_bothPanelsCanBeOpenAtOnce() {
-    clipboard.open()
     snippets.open()
-    XCTAssertTrue(clipboard.staysVisible(for: 1), "opening Snippets closed Clipboard")
+    clipboard.open()
+    XCTAssertTrue(snippets.staysVisible(for: 1), "opening Clipboard closed Snippets")
+    XCTAssertTrue(clipboard.isVisible)
   }
 
   func test_keysReachOnlyTheKeyPanel() {
-    clipboardWithTwoRows().selectRow(0)
     snippets.open()
     for title in ["Second", "First"] {
       snippets.addSnippet(title: title, description: "", tags: "", content: "\(title) content")
     }
     snippets.selectRow(0)
+    // Clipboard opens last, by its shortcut, so no click lands outside it and it is the key panel.
+    Pasteboard.write("older")
+    // Longer than the 2 s clipboard poll, so both copies are captured.
+    XCTAssertTrue(clipboard.staysHidden(for: 2.5))
+    Pasteboard.write("newer")
+    pressShortcut("v")
+    clipboard.waitUntilVisible()
+    clipboard.waitForRowText(0, toEqual: "newer")
+    clipboard.waitForRowText(1, toEqual: "older")
     Keyboard.press(.downArrow)
-    Wait.until("the Snippets selection moved") { self.snippets.isRowSelected(1) }
-    XCTAssertTrue(clipboard.rowStaysSelected(0, for: 1), "↓ in Snippets also moved the Clipboard selection")
+    Wait.until("the Clipboard selection moved") { self.clipboard.isRowSelected(1) }
+    XCTAssertTrue(snippets.rowStaysSelected(0, for: 1), "↓ in Clipboard also moved the Snippets selection")
   }
 
   // MARK: - Shortcuts acting on open panels
@@ -108,8 +118,8 @@ final class PanelBehaviorTests: XCTestCase {
   }
 
   func test_defaultSizesAre560x420And800x600() {
-    clipboard.open()
     snippets.open()
+    clipboard.open()
     XCTAssertEqual(clipboard.window.frame.size, CGSize(width: 560, height: 420))
     XCTAssertEqual(snippets.window.frame.size, CGSize(width: 800, height: 600))
   }
