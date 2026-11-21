@@ -9,7 +9,7 @@ final class ToolPanel: NSPanel {
     // .nonactivatingPanel must be set at creation: toggling it later is unreliable in AppKit.
     super.init(
       contentRect: NSRect(origin: .zero, size: tool.size),
-      styleMask: [.nonactivatingPanel, .titled, .fullSizeContentView],
+      styleMask: [.nonactivatingPanel, .titled, .fullSizeContentView, .resizable],
       backing: .buffered,
       defer: false
     )

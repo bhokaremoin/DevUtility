@@ -50,11 +50,13 @@ final class ToolPanelController: NSObject {
       panel.makeKeyAndOrderFront(nil)
       return
     }
+    // Position and size are not remembered: every opening starts from the tool's rule and default size.
     let screens = NSScreen.screens.map { ScreenArea(frame: $0.frame, visibleFrame: $0.visibleFrame) }
     let mouse = NSEvent.mouseLocation
     let visibleFrame = PanelFrameCalculator.visibleFrame(containing: mouse, screens: screens)
     let frame = PanelFrameCalculator.frame(
-      for: .centeredOnMouseScreen, size: panel.frame.size, mouse: mouse, visibleFrame: visibleFrame)
+      for: tool.openingPosition, size: tool.size, mouse: mouse, visibleFrame: visibleFrame)
+    panel.setFrame(frame, display: false)
     presenter.show(at: frame.origin)
     installClickOutsideMonitor()
   }
