@@ -34,8 +34,6 @@ export interface Snippet {
 export interface ScreenHandle {
   /** Copy the currently selected list item to the clipboard. */
   copySelected?: () => void;
-  /** Whether a text input in the screen has keyboard focus. */
-  isTextInputFocused?: () => boolean;
   /** The current search text, for screens with a search field. */
   searchText?: () => string;
   /** Whether the "Add Snippet" dialog is open. */

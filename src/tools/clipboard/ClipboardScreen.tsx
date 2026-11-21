@@ -48,11 +48,10 @@ export const ClipboardScreen = forwardRef<ScreenHandle, ClipboardScreenProps>(
             copyToClipboard(selectedItem);
           }
         },
-        isTextInputFocused: () => isDetailFocused.current,
         navigateUp: () => navigate(-1),
         navigateDown: () => navigate(1),
       }),
-      [selectedItem, copyToClipboard, navigate, isDetailFocused],
+      [selectedItem, copyToClipboard, navigate],
     );
 
     const renderItem = useCallback(

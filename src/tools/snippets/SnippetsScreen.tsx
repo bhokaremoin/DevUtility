@@ -29,7 +29,6 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
     } = useSnippets();
     const [modalVisible, setModalVisible] = useState(false);
     const searchInputRef = useRef<TextInput>(null);
-    const isSearchFocused = useRef(false);
     const {
       selectedId,
       setSelectedId,
@@ -49,7 +48,6 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
             copySnippet(selectedSnippet);
           }
         },
-        isTextInputFocused: () => isSearchFocused.current || isDetailFocused.current,
         searchText: () => searchQuery,
         isAddDialogOpen: () => modalVisible,
         closeAddDialog: () => setModalVisible(false),
@@ -71,7 +69,6 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
         copySnippet,
         setSearchQuery,
         navigate,
-        isDetailFocused,
       ],
     );
 
@@ -105,12 +102,6 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
-            onFocus={() => {
-              isSearchFocused.current = true;
-            }}
-            onBlur={() => {
-              isSearchFocused.current = false;
-            }}
             placeholder="Search by title, description, or tag…"
             placeholderTextColor={colors.text.placeholder}
             accessibilityRole="search"

@@ -30,13 +30,13 @@ function Snippets(): React.JSX.Element {
   const keyHandlers = useMemo(
     () => ({
       onCopyAction: () => screenRef.current?.copySelected?.(),
-      onEscape: () => {
+      onEscape: (isTextInputFocused: boolean) => {
         const screen = screenRef.current;
         const action = snippetsEscapeAction({
           isSheetOpen: isShortcutsHelpOpen,
           isAddDialogOpen: screen?.isAddDialogOpen?.() ?? false,
           searchText: screen?.searchText?.() ?? '',
-          isInputFocused: screen?.isTextInputFocused?.() ?? false,
+          isInputFocused: isTextInputFocused,
         });
         if (action === 'closeSheet') {
           setIsShortcutsHelpOpen(false);

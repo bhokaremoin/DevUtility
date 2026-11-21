@@ -5,7 +5,7 @@ import Cocoa
 ///
 /// Events:
 /// - `onCopyAction`: Return outside a text input, or ⌘Return anywhere
-/// - `onEscape`: Esc
+/// - `onEscape`: Esc, body `{isTextInputFocused}`
 /// - `onSearch`: ⌘F
 /// - `onArrowNavigation`: ↑ or ↓, body `{direction: "up" | "down"}`
 /// - `onPanelShown`: the tool's panel has just opened
@@ -99,7 +99,8 @@ final class KeyEventModule: RCTEventEmitter {
       send("onCopyAction", toolId: toolId)
       return nil
     case KeyCode.escape:
-      send("onEscape", toolId: toolId)
+      // The panel's first responder is the truth about focus; JS focus events can miss a blur.
+      send("onEscape", toolId: toolId, body: ["isTextInputFocused": focusedTextView != nil])
       return nil
     case KeyCode.downArrow, KeyCode.upArrow:
       send("onArrowNavigation", toolId: toolId, body: ["direction": event.keyCode == KeyCode.downArrow ? "down" : "up"])

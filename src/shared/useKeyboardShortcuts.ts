@@ -8,7 +8,7 @@ const emitter = KeyEventModule ? new NativeEventEmitter(KeyEventModule) : null;
 interface Handlers {
   /** Return outside a text input, or ⌘Return anywhere. */
   onCopyAction: () => void;
-  onEscape: () => void;
+  onEscape: (isTextInputFocused: boolean) => void;
   /** ⌘F */
   onSearch?: () => void;
   onArrowNavigation: (direction: 'up' | 'down') => void;
@@ -42,9 +42,9 @@ export function useKeyboardShortcuts(toolId: ToolId, handlers: Handlers) {
           handlersRef.current.onCopyAction();
         }
       }),
-      emitter.addListener('onEscape', (event: ToolKeyEvent) => {
+      emitter.addListener('onEscape', (event: ToolKeyEvent & {isTextInputFocused: boolean}) => {
         if (isForThisTool(event)) {
-          handlersRef.current.onEscape();
+          handlersRef.current.onEscape(event.isTextInputFocused);
         }
       }),
       emitter.addListener('onSearch', (event: ToolKeyEvent) => {

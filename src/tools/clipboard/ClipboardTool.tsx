@@ -32,11 +32,8 @@ function Clipboard(): React.JSX.Element {
   const keyHandlers = useMemo(
     () => ({
       onCopyAction: () => screenRef.current?.copySelected?.(),
-      onEscape: () => {
-        const action = clipboardEscapeAction({
-          isSheetOpen: isShortcutsHelpOpen,
-          isEditorFocused: screenRef.current?.isTextInputFocused?.() ?? false,
-        });
+      onEscape: (isTextInputFocused: boolean) => {
+        const action = clipboardEscapeAction({isSheetOpen: isShortcutsHelpOpen, isEditorFocused: isTextInputFocused});
         if (action === 'closeSheet') {
           setIsShortcutsHelpOpen(false);
         } else if (action === 'blurEditor') {
