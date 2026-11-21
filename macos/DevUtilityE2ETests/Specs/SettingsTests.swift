@@ -94,4 +94,37 @@ final class SettingsTests: XCTestCase {
     XCTAssertTrue(Pasteboard.staysEmpty(for: 1), "Return in Settings copied a clipboard row")
     XCTAssertTrue(clipboard.rowStaysSelected(0, for: 1), "↓ in Settings moved the panel's selection")
   }
+
+  // MARK: - Shortcut clashes between tools
+
+  func test_assigningAnotherToolsShortcutMovesItAndShowsTheNote() {
+    let settings = ClipboardPanel(app: app).open().openSettings()
+    settings.recordShortcut(for: "clipboard", "s", modifiers: [.control, .option], shownAs: "⌃⌥S")
+
+    Wait.until("Snippets has no shortcut") { settings.currentShortcutText(for: "snippets") == "Not set" }
+    Wait.until("the note names Snippets") {
+      settings.conflictNote(for: "clipboard").displayedText == "Removed this shortcut from Snippets."
+    }
+
+    let clipboard = ClipboardPanel(app: app)
+    let snippets = SnippetsPanel(app: app)
+    let otherApp = OtherApp.bringToFront()
+    // Clipboard is open but no longer key, so ⌃⌥S brings it to front; only Snippets staying shut matters.
+    otherApp.typeKey("s", modifierFlags: [.control, .option])
+    XCTAssertTrue(snippets.staysHidden(for: 2), "⌃⌥S still opened Snippets")
+    XCTAssertTrue(clipboard.isVisible)
+  }
+
+  func test_clearingAShortcutLeavesTheToolWithoutOne() {
+    let settings = SnippetsPanel(app: app).open().openSettings()
+    settings.clearShortcut(for: "clipboard")
+    Wait.until("Clipboard has no shortcut") { settings.currentShortcutText(for: "clipboard") == "Not set" }
+
+    let clipboard = ClipboardPanel(app: app)
+    let otherApp = OtherApp.bringToFront()
+    otherApp.typeKey("v", modifierFlags: [.control, .option])
+    XCTAssertTrue(clipboard.staysHidden(for: 2), "the cleared shortcut still opened Clipboard")
+    MenuBar(app: app).clickIcon(for: ClipboardPanel.toolId)
+    clipboard.waitUntilVisible()
+  }
 }

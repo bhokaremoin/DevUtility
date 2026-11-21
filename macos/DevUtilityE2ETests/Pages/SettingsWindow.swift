@@ -43,4 +43,13 @@ struct SettingsWindow {
   }
 
   func resetShortcut(for toolId: String) { element("settings.shortcut.\(toolId).reset").click() }
+
+  /// The recorder clears its shortcut when Delete is pressed while it is recording.
+  func clearShortcut(for toolId: String) {
+    let recorder = recorder(for: toolId)
+    recorder.click()
+    recorder.typeKey(.delete, modifierFlags: [])
+  }
+
+  func conflictNote(for toolId: String) -> XCUIElement { element("settings.shortcut.\(toolId).conflictNote") }
 }
