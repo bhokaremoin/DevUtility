@@ -46,4 +46,46 @@ final class SettingsTests: XCTestCase {
     let relaunchedSettings = MainPanel(app: app).openSettings()
     Wait.until("the custom shortcut is still set") { relaunchedSettings.currentShortcutText == "⌃⌥K" }
   }
+
+  // MARK: - The Settings window
+
+  func test_commandCommaOpensSettingsInFrontAndKey() {
+    MainPanel(app: app).press(",", modifiers: .command)
+    let settings = SettingsWindow(app: app)
+    settings.waitUntilShown()
+    // Settings opens centered over the centered panel, so it is hittable only when it is in front.
+    XCTAssertTrue(settings.window.isHittable, "Settings opened behind the panel")
+    settings.recordShortcut("k", modifiers: [.control, .option], shownAs: "⌃⌥K")
+  }
+
+  func test_settingsMenuItemOpensSettings() {
+    MenuBar(app: app).chooseFromRightClickMenu("Settings…")
+    SettingsWindow(app: app).waitUntilShown()
+  }
+
+  func test_openingSettingsAgainKeepsOneWindow() {
+    let settings = MainPanel(app: app).openSettings()
+    MenuBar(app: app).chooseFromRightClickMenu("Settings…")
+    MainPanel(app: app).press(",", modifiers: .command)
+    XCTAssertTrue(settings.window.isHittable, "Settings is no longer in front")
+    XCTAssertEqual(settings.openWindowCount, 1)
+  }
+
+  func test_keysTypedInSettingsAreNotHandledByThePanel() {
+    Pasteboard.write("first")
+    let clipboard = ClipboardTab(app: app)
+    clipboard.waitForRowText(0, toEqual: "first")
+    Pasteboard.write("second")
+    clipboard.waitForRowText(0, toEqual: "second")
+    Pasteboard.clear()
+    XCTAssertTrue(clipboard.isRowSelected(0))
+
+    let settings = MainPanel(app: app).openSettings()
+    settings.recorder.click()
+    Keyboard.press(.downArrow)
+    Keyboard.press(.returnKey)
+
+    XCTAssertTrue(Pasteboard.staysEmpty(for: 1), "Return in Settings copied a clipboard row")
+    XCTAssertTrue(clipboard.rowStaysSelected(0, for: 1), "↓ in Settings moved the panel's selection")
+  }
 }

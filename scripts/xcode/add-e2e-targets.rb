@@ -73,6 +73,15 @@ end
 test_target.build_configuration_list[E2E_CONFIGURATION].build_settings['SWIFT_ACTIVE_COMPILATION_CONDITIONS'] =
   '$(inherited) E2E_BUILD'
 
+# Drop references to spec files that were renamed or deleted, so the target only compiles files on disk.
+test_target.source_build_phase.files.dup.each do |build_file|
+  reference = build_file.file_ref
+  next if reference.nil? || File.exist?(reference.real_path.to_s)
+
+  build_file.remove_from_project
+  reference.remove_from_project
+end
+
 test_group = project.main_group[TEST_TARGET_NAME]
 existing_paths = test_target.source_build_phase.files_references.map(&:real_path).map(&:to_s)
 Dir[File.join(File.dirname(PROJECT_PATH), TEST_TARGET_NAME, '**', '*.swift')].sort.each do |path|

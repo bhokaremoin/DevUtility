@@ -50,12 +50,11 @@ struct MainPanel {
     return SnippetsTab(app: app)
   }
 
-  var settingsButton: XCUIElement { element("header.settings") }
-
-  func openSettings() -> SettingsTab {
-    element("header.settings").click()
-    XCTAssertTrue(element("settings.shortcut.reset").waitForExistence(timeout: Wait.defaultTimeout))
-    return SettingsTab(app: app)
+  func openSettings(file: StaticString = #filePath, line: UInt = #line) -> SettingsWindow {
+    press(",", modifiers: .command)
+    let settings = SettingsWindow(app: app)
+    settings.waitUntilShown(file: file, line: line)
+    return settings
   }
 
   func openShortcutsHelp() {

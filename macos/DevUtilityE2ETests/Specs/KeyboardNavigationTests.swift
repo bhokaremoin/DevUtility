@@ -120,7 +120,7 @@ final class KeyboardNavigationTests: XCTestCase {
   func test_commandCommaOpensSettings() {
     _ = panel.openClipboard()
     panel.press(",", modifiers: .command)
-    Wait.until("the Settings tab is shown") { SettingsTab(app: self.app).isShown }
+    SettingsWindow(app: app).waitUntilShown()
   }
 
   func test_commandFFocusesSnippetSearchFromAnotherTab() {
@@ -152,7 +152,7 @@ final class KeyboardNavigationTests: XCTestCase {
 
   func test_shortcutsHelpShowsCommandCommaForSettings() {
     panel.openShortcutsHelp()
-    XCTAssertEqual(panel.shortcutsHelpAction(section: 1, row: 2), "Switch to Settings tab")
+    XCTAssertEqual(panel.shortcutsHelpAction(section: 1, row: 2), "Open Settings")
     XCTAssertEqual(panel.shortcutsHelpKeys(section: 1, row: 2), "⌘ + ,")
   }
 }

@@ -12,7 +12,7 @@ final class PageObjectSmokeTests: XCTestCase {
     app.terminate()
   }
 
-  func test_everyTabOpensFromTheHeader() {
+  func test_everyScreenOpens() {
     let panel = MainPanel(app: app)
     XCTAssertTrue(panel.openClipboard().emptyState.waitForExistence(timeout: Wait.defaultTimeout))
     XCTAssertEqual(panel.openSnippets().emptyStateTitle, "No snippets yet")

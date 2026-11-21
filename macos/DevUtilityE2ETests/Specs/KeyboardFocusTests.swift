@@ -123,8 +123,8 @@ final class KeyboardFocusTests: XCTestCase {
   func test_shortcutRecorderWorksAfterTheShortcutOpensThePanelOverAnotherApp() {
     hidePanelThenReopenItFromAnotherApp()
     Keyboard.press(",", modifiers: .maskCommand)
-    let settings = SettingsTab(app: app)
-    Wait.until("Settings is shown") { settings.isShown }
+    let settings = SettingsWindow(app: app)
+    settings.waitUntilShown()
     XCTAssertTrue(OtherApp.isFrontmost, "opening Settings with ⌘, activated DevUtility")
     Mouse.click(settings.recorder)
     Keyboard.press("k", modifiers: [.maskControl, .maskAlternate])
@@ -167,7 +167,7 @@ final class KeyboardFocusTests: XCTestCase {
 
   func test_hidingThePanelAfterAClickInsideItGivesFocusBackToTheOtherApp() {
     hidePanelThenReopenItFromAnotherApp()
-    Mouse.click(panel.settingsButton)
+    Mouse.click(ClipboardTab(app: app).emptyState)
     Wait.until("the click activated DevUtility, which this spec is about") { !OtherApp.isFrontmost }
     Keyboard.press(.escape)
     panel.waitUntilHidden()

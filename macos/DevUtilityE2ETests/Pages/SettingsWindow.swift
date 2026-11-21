@@ -1,13 +1,21 @@
 import XCTest
 
-struct SettingsTab {
+struct SettingsWindow {
   let app: XCUIApplication
 
   private func element(_ identifier: String) -> XCUIElement {
     app.descendants(matching: .any)[identifier]
   }
 
-  var isShown: Bool { element("settings.shortcut.reset").exists }
+  var window: XCUIElement { app.windows["settings.window"] }
+
+  var openWindowCount: Int { app.windows.matching(identifier: "settings.window").count }
+
+  var isShown: Bool { window.exists }
+
+  func waitUntilShown(file: StaticString = #filePath, line: UInt = #line) {
+    Wait.until("the Settings window is shown", file: file, line: line) { self.isShown }
+  }
 
   var currentShortcutText: String { element("settings.shortcut.current").displayedText }
 
