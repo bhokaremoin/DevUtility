@@ -38,8 +38,8 @@ final class KeyboardFocusTests: XCTestCase {
 
   func test_typingWorksAgainAfterSnippetsIsClosedAndReopened() {
     openFromAnotherApp(snippets)
-    pressShortcut(of: SnippetsPanel.self)
-    snippets.waitUntilHidden()
+    // Also lets the 350 ms toggle debounce pass before the shortcut closes it again.
+    XCTAssertTrue(snippets.staysVisible(for: 0.5), "Snippets closed by itself")
     reopenFromAnotherApp(snippets)
     Keyboard.type("again")
     snippets.waitForSearchText("again")
