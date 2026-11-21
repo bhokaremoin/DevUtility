@@ -6,6 +6,8 @@ struct SnippetsPanel: ToolPanelPage {
 
   var searchField: XCUIElement { element("snippets.search") }
 
+  var closeButton: XCUIElement { element("snippets.header.close") }
+
   var isShown: Bool { searchField.exists }
 
   var isSearchFocused: Bool { (searchField.value(forKey: "hasKeyboardFocus") as? Bool) == true }

@@ -71,7 +71,80 @@ final class PanelBehaviorTests: XCTestCase {
     snippets.waitUntilVisible()
   }
 
+  // MARK: - Where each panel opens, and its size
+
+  func test_clipboardOpensWithItsTopLeftAtTheMousePointer() {
+    let pointer = CGPoint(x: Screen.visibleFrame.minX + 300, y: Screen.visibleFrame.minY + 120)
+    Mouse.move(to: pointer)
+    pressShortcut("v")
+    clipboard.waitUntilVisible()
+    assertEqual(clipboard.window.frame.origin, pointer, "Clipboard's top-left")
+  }
+
+  func test_clipboardStaysInsideTheScreenNearTheBottomRightCorner() {
+    let visible = Screen.visibleFrame
+    Mouse.move(to: CGPoint(x: visible.maxX - 10, y: visible.maxY - 10))
+    pressShortcut("v")
+    clipboard.waitUntilVisible()
+    let frame = clipboard.window.frame
+    XCTAssertLessThanOrEqual(frame.maxX, visible.maxX + 1, "Clipboard runs off the right edge")
+    XCTAssertLessThanOrEqual(frame.maxY, visible.maxY + 1, "Clipboard runs off the bottom edge")
+  }
+
+  func test_clipboardIconOpensItJustBelowTheMenuBar() {
+    MenuBar(app: app).clickIcon(for: ClipboardPanel.toolId)
+    clipboard.waitUntilVisible()
+    XCTAssertEqual(clipboard.window.frame.minY, Screen.menuBarHeight, accuracy: 2)
+  }
+
+  func test_snippetsOpensCentered() {
+    Mouse.move(to: CGPoint(x: Screen.visibleFrame.minX + 50, y: Screen.visibleFrame.minY + 50))
+    pressShortcut("s")
+    snippets.waitUntilVisible()
+    let frame = snippets.window.frame
+    assertEqual(CGPoint(x: frame.midX, y: frame.midY), CGPoint(x: Screen.visibleFrame.midX, y: Screen.visibleFrame.midY), "Snippets' center")
+  }
+
+  func test_defaultSizesAre560x420And800x600() {
+    clipboard.open()
+    snippets.open()
+    XCTAssertEqual(clipboard.window.frame.size, CGSize(width: 560, height: 420))
+    XCTAssertEqual(snippets.window.frame.size, CGSize(width: 800, height: 600))
+  }
+
+  func test_clipboardResizesDownToItsMinimumAndReopensAtItsDefaultSize() {
+    clipboard.open()
+    shrinkAsFarAsPossible(clipboard.window)
+    XCTAssertEqual(clipboard.window.frame.size, CGSize(width: 420, height: 300))
+    MenuBar(app: app).clickIcon(for: ClipboardPanel.toolId)
+    clipboard.waitUntilHidden()
+    clipboard.open()
+    XCTAssertEqual(clipboard.window.frame.size, CGSize(width: 560, height: 420))
+  }
+
+  func test_snippetsResizesDownToItsMinimumAndReopensAtItsDefaultSize() {
+    snippets.open()
+    shrinkAsFarAsPossible(snippets.window)
+    XCTAssertEqual(snippets.window.frame.size, CGSize(width: 480, height: 360))
+    MenuBar(app: app).clickIcon(for: SnippetsPanel.toolId)
+    snippets.waitUntilHidden()
+    snippets.open()
+    XCTAssertEqual(snippets.window.frame.size, CGSize(width: 800, height: 600))
+  }
+
   // MARK: - Helpers
+
+  private func assertEqual(_ actual: CGPoint, _ expected: CGPoint, _ what: String, file: StaticString = #filePath, line: UInt = #line) {
+    XCTAssertEqual(actual.x, expected.x, accuracy: 2, "\(what) x", file: file, line: line)
+    XCTAssertEqual(actual.y, expected.y, accuracy: 2, "\(what) y", file: file, line: line)
+  }
+
+  /// Drags the bottom-right corner past the top-left corner, so the window stops at its minimum size.
+  private func shrinkAsFarAsPossible(_ window: XCUIElement) {
+    let bottomRightCorner = window.coordinate(withNormalizedOffset: CGVector(dx: 1, dy: 1)).withOffset(CGVector(dx: -2, dy: -2))
+    let pastTopLeft = window.coordinate(withNormalizedOffset: .zero).withOffset(CGVector(dx: -50, dy: -50))
+    bottomRightCorner.press(forDuration: 0.2, thenDragTo: pastTopLeft)
+  }
 
   private func clipboardWithTwoRows() -> ClipboardPanel {
     clipboard.open()

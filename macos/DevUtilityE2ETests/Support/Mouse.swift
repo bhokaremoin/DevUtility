@@ -26,6 +26,14 @@ enum Mouse {
     post([.mouseMoved, .rightMouseDown, .rightMouseUp], at: center(of: element), button: .right)
   }
 
+  static func click(at point: CGPoint) {
+    post([.mouseMoved, .leftMouseDown, .leftMouseUp], at: point, button: .left)
+  }
+
+  static func move(to point: CGPoint) {
+    post([.mouseMoved], at: point, button: .left)
+  }
+
   // XCUIElement.frame and CGEvent locations share the same space: global, top-left origin.
   private static func center(of element: XCUIElement) -> CGPoint {
     CGPoint(x: element.frame.midX, y: element.frame.midY)

@@ -20,6 +20,8 @@ enum OtherApp {
     return XCTWaiter().wait(for: [losesFront], timeout: seconds) == .completed
   }
 
+  static var window: XCUIElement { XCUIApplication(bundleIdentifier: bundleIdentifier).windows.firstMatch }
+
   @discardableResult
   static func bringToFront() -> XCUIApplication {
     let app = XCUIApplication(bundleIdentifier: bundleIdentifier)

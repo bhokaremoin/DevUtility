@@ -49,6 +49,7 @@
 		BB0001000000000000000007 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = CC0001000000000000000002 /* KeyboardShortcuts */; };
 		C5FBB1F6EB08E61ED9A7122E /* ShortcutRecorderViewManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = FF77C29BAF772365458D1462 /* ShortcutRecorderViewManagerBridge.m */; };
 		C872BC57BC83F010BC32AB11 /* SettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF5E064F8643A7A4E366D62 /* SettingsWindow.swift */; };
+		CA1D68FEE49D1868478B99E0 /* Screen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6661BC4DF68FC5DE3D6D7B12 /* Screen.swift */; };
 		CC4540E99CC868919117754F /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D382E70902E64DF335413EF /* SettingsWindowController.swift */; };
 		D0E437E821728A0649128AD1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */; };
 		D3C4CBA17D4AA0195E42B72E /* ToolRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E83FB36127BC1930DCBC21C /* ToolRegistry.swift */; };
@@ -109,6 +110,7 @@
 		5E83FB36127BC1930DCBC21C /* ToolRegistry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolRegistry.swift; sourceTree = "<group>"; };
 		64B262418B4A3539057BD7E4 /* SnippetsPanel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsPanel.swift; sourceTree = "<group>"; };
 		651D59305133BD3F88CB61BE /* ToolPanels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolPanels.swift; sourceTree = "<group>"; };
+		6661BC4DF68FC5DE3D6D7B12 /* Screen.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Screen.swift; sourceTree = "<group>"; };
 		777DFF98A4A572EAC44F431A /* ToolPanelModuleBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ToolPanelModuleBridge.m; sourceTree = "<group>"; };
 		77D0304AE41E6F09A9E80F94 /* SnippetsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsTests.swift; sourceTree = "<group>"; };
 		79C1DF19033DC192837DCD96 /* ClipboardPanel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardPanel.swift; sourceTree = "<group>"; };
@@ -342,6 +344,7 @@
 				156543116F4D53849AFB5136 /* XCUIElement+Text.swift */,
 				B46355A765C85B7DA9496741 /* Keyboard.swift */,
 				88A17E1DBCE96C3E11976075 /* Mouse.swift */,
+				6661BC4DF68FC5DE3D6D7B12 /* Screen.swift */,
 			);
 			name = Support;
 			path = Support;
@@ -635,6 +638,7 @@
 				9B101D0C1EA3F6C040A5C9B1 /* SnippetsPanel.swift in Sources */,
 				01BB78EE2C3054D2D7AE30EC /* ToolPanelPage.swift in Sources */,
 				E4CFADBB3D9B1C3323AD55C5 /* PanelBehaviorTests.swift in Sources */,
+				CA1D68FEE49D1868478B99E0 /* Screen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
