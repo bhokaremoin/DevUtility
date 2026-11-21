@@ -3,21 +3,21 @@ import XCTest
 enum AppLauncher {
   static let launchTimeout: TimeInterval = 20
 
+  /// A clean app: no history, snippets or custom shortcuts, and no first-launch Settings window.
   static func launchFresh() -> XCUIApplication {
-    refuseToDriveANonE2EBuild()
-    Pasteboard.clear()
-    let app = XCUIApplication()
-    app.launchArguments = ["--e2e-reset", "--e2e-skip-onboarding"]
-    app.launch()
-    waitUntilReady(app)
-    return app
+    launch(XCUIApplication(), arguments: ["--e2e-reset", "--e2e-skip-onboarding"])
   }
 
   static func relaunchKeepingData(_ app: XCUIApplication) -> XCUIApplication {
-    refuseToDriveANonE2EBuild()
     app.terminate()
+    return launch(app, arguments: ["--e2e-skip-onboarding"])
+  }
+
+  /// For specs about launch itself, such as the first-launch Settings window.
+  static func launch(_ app: XCUIApplication, arguments: [String]) -> XCUIApplication {
+    refuseToDriveANonE2EBuild()
     Pasteboard.clear()
-    app.launchArguments = ["--e2e-skip-onboarding"]
+    app.launchArguments = arguments
     app.launch()
     waitUntilReady(app)
     return app
