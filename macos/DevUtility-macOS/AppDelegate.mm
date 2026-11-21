@@ -1,15 +1,7 @@
-// AppDelegate.mm
-// DevUtility
-//
-// Description: Application delegate implementation for the DevUtility macOS target.
-// Architecture Role: Entry point for app lifecycle events. Bootstraps the React
-//   Native bridge via super, then transplants the RN root view from the default
-//   NSWindow into PanelManager's custom NSPanel.
-
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
-#import "DevUtility-Swift.h"   // Swift–ObjC bridging header for PanelManager
+#import "DevUtility-Swift.h"
 
 @implementation AppDelegate
 
@@ -29,42 +21,43 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-  self.moduleName = @"DevUtility";
-  self.initialProps = @{@"isE2EReset": @([self isE2EResetRequested])};
+  NSDictionary *initialProperties = @{@"isE2EReset": @([self isE2EResetRequested])};
   if ([self isE2EResetRequested]) {
     [GlobalShortcutModule resetShortcutsForE2E];
   }
 
-  // Let RCTAppDelegate create the React Native root view inside a default window.
+  // RCTAppDelegate starts the bridge and puts the first tool's root view in a default window.
+  // That root moves into its tool panel; the other roots come from the same bridge.
+  self.moduleName = @"ClipboardTool";
+  self.initialProps = initialProperties;
   [super applicationDidFinishLaunching:notification];
 
-  // Find the plain NSWindow that RCTAppDelegate created (not our NSPanel).
-  NSWindow *defaultWindow = nil;
-  for (NSWindow *w in [NSApp windows]) {
-    if (![w isKindOfClass:[NSPanel class]] && w.contentView != nil) {
-      defaultWindow = w;
-      break;
-    }
-  }
-
-  if (defaultWindow) {
-    // Detach the React Native root view from the default window so we can
-    // hand it to PanelManager without the window interfering with sizing.
-    NSView *rootView = defaultWindow.contentView;
-    defaultWindow.contentView = [[NSView alloc] initWithFrame:NSZeroRect];
-    [defaultWindow setDelegate:nil];
-    [defaultWindow orderOut:nil];
-    [defaultWindow close];
-
-    // Give PanelManager the root view; it will embed it in the floating NSPanel.
-    [[PanelManager shared] setupWith:rootView];
-    [[PanelManager shared] show];
-
-    NSView *settingsRootView = [self.rootViewFactory viewWithModuleName:@"Settings" initialProperties:@{}];
-    [[SettingsWindowController shared] setUpWithRootView:settingsRootView];
-  } else {
+  NSView *clipboardRootView = [self takeRootViewFromDefaultWindow];
+  if (clipboardRootView == nil) {
     NSLog(@"[DevUtility] ERROR: No default window found after super init");
+    return;
   }
+  NSView *snippetsRootView = [self.rootViewFactory viewWithModuleName:@"SnippetsTool" initialProperties:initialProperties];
+  [[ToolPanels shared] setUpWithRootViews:@{@"clipboard": clipboardRootView, @"snippets": snippetsRootView}];
+
+  NSView *settingsRootView = [self.rootViewFactory viewWithModuleName:@"Settings" initialProperties:@{}];
+  [[SettingsWindowController shared] setUpWithRootView:settingsRootView];
+}
+
+- (NSView *)takeRootViewFromDefaultWindow
+{
+  for (NSWindow *window in [NSApp windows]) {
+    if ([window isKindOfClass:[NSPanel class]] || window.contentView == nil) {
+      continue;
+    }
+    NSView *rootView = window.contentView;
+    window.contentView = [[NSView alloc] initWithFrame:NSZeroRect];
+    [window setDelegate:nil];
+    [window orderOut:nil];
+    [window close];
+    return rootView;
+  }
+  return nil;
 }
 
 // Keep the app alive even when all windows are closed — the status bar icon
@@ -74,11 +67,11 @@
   return NO;
 }
 
-// Re-show the panel when the user clicks the Dock icon while no window is visible.
+// Opening the app again (for example from Finder) while nothing is visible opens the first tool.
 - (BOOL)applicationShouldHandleReopen:(NSApplication *)sender hasVisibleWindows:(BOOL)flag
 {
   if (!flag) {
-    [[PanelManager shared] show];
+    [[ToolPanels shared] showFirstTool];
   }
   return YES;
 }

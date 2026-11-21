@@ -22,21 +22,20 @@ export const SHORTCUT_SECTIONS: ShortcutSection[] = [
   {
     title: 'System',
     rows: [
-      {action: 'Toggle panel (show / hide)', keys: ['Ctrl', 'Option', 'D']},
+      {action: 'Open / close Clipboard', keys: ['Ctrl', 'Option', 'V']},
+      {action: 'Open / close Snippets', keys: ['Ctrl', 'Option', 'S']},
     ],
   },
   {
     title: 'Navigation',
     rows: [
-      {action: 'Switch to Clipboard tab', keys: ['⌘', '1']},
-      {action: 'Switch to Snippets tab', keys: ['⌘', '2']},
       {action: 'Open Settings', keys: ['⌘', ',']},
     ],
   },
   {
     title: 'Actions',
     rows: [
-      {action: 'Focus search / jump to Snippets', keys: ['⌘', 'F']},
+      {action: 'Focus search (Snippets)', keys: ['⌘', 'F']},
       {action: 'Copy selected item (list focused)', keys: ['↵']},
       {action: 'Copy selected item (detail editor)', keys: ['⌘', '↵']},
       {action: 'Clear selection; hide panel if empty', keys: ['Esc']},

@@ -1,36 +1,30 @@
 import {useEffect, useRef} from 'react';
 import {NativeModules, NativeEventEmitter} from 'react-native';
-import {Tab} from './TopHeader';
+import {ToolId} from './toolIds';
 
 const {KeyEventModule} = NativeModules;
-const emitter = KeyEventModule
-  ? new NativeEventEmitter(KeyEventModule)
-  : null;
+const emitter = KeyEventModule ? new NativeEventEmitter(KeyEventModule) : null;
 
-/** Callbacks invoked by `useKeyboardShortcuts` when native key events fire. */
 interface Handlers {
-  /** Called when a tab-switch shortcut fires (⌘1/⌘2/⌘,). */
-  onNavigate: (tab: Tab) => void;
-  /** Called when the copy shortcut fires (Enter or ⌘Enter). */
+  /** Return outside a text input, or ⌘Return anywhere. */
   onCopyAction: () => void;
-  /** Called when Escape is pressed. */
   onEscape: () => void;
-  /** Called when the search shortcut fires (⌘F). */
-  onSearch: () => void;
-  /** Called when an arrow key is pressed for list navigation. */
+  /** ⌘F */
+  onSearch?: () => void;
   onArrowNavigation: (direction: 'up' | 'down') => void;
 }
 
+interface ToolKeyEvent {
+  toolId: ToolId;
+}
+
 /**
- * Subscribes to native keyboard events and dispatches them to the provided
- * handler callbacks. Subscriptions are created once on mount and cleaned up
- * on unmount; handler updates are picked up via a ref without re-subscribing.
- *
- * @param handlers - Object containing callbacks for each supported event type.
+ * Calls the handlers for key presses in this tool's panel. Every tool's root listens to the same
+ * native events, each tagged with the tool whose panel was in front, so events for other tools are
+ * ignored.
  */
-export function useKeyboardShortcuts(handlers: Handlers) {
-  // Keep a ref so the subscriptions (created once) always call the latest handlers
-  // without needing to be torn down and re-created on every tab switch.
+export function useKeyboardShortcuts(toolId: ToolId, handlers: Handlers) {
+  // The subscriptions are made once; the ref lets them call the latest handlers.
   const handlersRef = useRef(handlers);
   handlersRef.current = handlers;
 
@@ -38,27 +32,31 @@ export function useKeyboardShortcuts(handlers: Handlers) {
     if (!emitter) {
       return;
     }
+    const isForThisTool = (event: ToolKeyEvent) => event.toolId === toolId;
 
-    const subs = [
-      emitter.addListener('onNavigate', (body: {tab: Tab}) => {
-        handlersRef.current.onNavigate(body.tab);
+    const subscriptions = [
+      emitter.addListener('onCopyAction', (event: ToolKeyEvent) => {
+        if (isForThisTool(event)) {
+          handlersRef.current.onCopyAction();
+        }
       }),
-      emitter.addListener('onCopyAction', () => {
-        handlersRef.current.onCopyAction();
+      emitter.addListener('onEscape', (event: ToolKeyEvent) => {
+        if (isForThisTool(event)) {
+          handlersRef.current.onEscape();
+        }
       }),
-      emitter.addListener('onEscape', () => {
-        handlersRef.current.onEscape();
+      emitter.addListener('onSearch', (event: ToolKeyEvent) => {
+        if (isForThisTool(event)) {
+          handlersRef.current.onSearch?.();
+        }
       }),
-      emitter.addListener('onSearch', () => {
-        handlersRef.current.onSearch();
-      }),
-      emitter.addListener('onArrowNavigation', (body: {direction: 'up' | 'down'}) => {
-        handlersRef.current.onArrowNavigation(body.direction);
+      emitter.addListener('onArrowNavigation', (event: ToolKeyEvent & {direction: 'up' | 'down'}) => {
+        if (isForThisTool(event)) {
+          handlersRef.current.onArrowNavigation(event.direction);
+        }
       }),
     ];
 
-    return () => {
-      subs.forEach(s => s.remove());
-    };
-  }, []); // Subscribe once — handlersRef always holds the latest handlers
+    return () => subscriptions.forEach(subscription => subscription.remove());
+  }, [toolId]);
 }

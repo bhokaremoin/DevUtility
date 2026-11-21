@@ -1,15 +1,11 @@
 import {requireNativeComponent} from 'react-native';
 import type {ViewStyle} from 'react-native';
+import {ToolId} from '../toolIds';
 
-/** Props accepted by the native ShortcutRecorder view. */
 interface ShortcutRecorderProps {
-  /** Layout and sizing for the recorder widget. */
+  toolId: ToolId;
   style?: ViewStyle;
 }
 
-/**
- * Native macOS shortcut-recorder component. Renders a `KeyboardShortcuts.RecorderCocoa`
- * control that lets the user press a new key combination to replace the global toggle shortcut.
- */
-export const ShortcutRecorder =
-  requireNativeComponent<ShortcutRecorderProps>('ShortcutRecorder');
+/** The shortcut library's macOS recorder; a recorded shortcut takes effect at once. */
+export const ShortcutRecorder = requireNativeComponent<ShortcutRecorderProps>('ShortcutRecorder');

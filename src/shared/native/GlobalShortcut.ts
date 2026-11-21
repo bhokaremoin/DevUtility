@@ -1,29 +1,29 @@
 import {NativeModules} from 'react-native';
+import {ToolId} from '../toolIds';
 
-// Destructure once so all calls go through this typed proxy.
 const {GlobalShortcutModule} = NativeModules;
 
-/** The current global shortcut configuration returned by `getShortcut`. */
 export interface ShortcutInfo {
-  /** Raw AppKit key code of the shortcut key. */
+  /** AppKit key code of the shortcut's key. */
   keyCode: number;
-  /** Bitmask of modifier flags (NSEventModifierFlags raw value). */
+  /** NSEvent.ModifierFlags raw value. */
   modifiers: number;
-  /** Human-readable label, e.g. `"⌃⌥D"`. */
+  /** As macOS shows it, e.g. `⌃⌥V`. */
   description: string;
 }
 
-/** Typed JS façade for the native `GlobalShortcutModule`. */
-export const GlobalShortcut = {
-  /**
-   * Retrieves the currently registered global shortcut from the native layer.
-   * @returns A `ShortcutInfo` object, or `null` if no shortcut is set.
-   */
-  getShortcut: (): Promise<ShortcutInfo | null> =>
-    GlobalShortcutModule.getShortcut(),
+export interface ToolShortcutInfo {
+  id: ToolId;
+  displayName: string;
+  defaultShortcutLabel: string;
+}
 
-  /**
-   * Resets the global shortcut to its factory default (Ctrl+Option+D).
-   */
-  resetShortcut: (): void => GlobalShortcutModule.resetShortcut(),
+export const GlobalShortcut = {
+  /** Every tool, in the order the native registry lists them. */
+  tools: (GlobalShortcutModule?.tools ?? []) as ToolShortcutInfo[],
+
+  /** Resolves with `null` when the tool has no shortcut. */
+  getShortcut: (toolId: ToolId): Promise<ShortcutInfo | null> => GlobalShortcutModule.getShortcut(toolId),
+
+  resetShortcut: (toolId: ToolId): void => GlobalShortcutModule.resetShortcut(toolId),
 };

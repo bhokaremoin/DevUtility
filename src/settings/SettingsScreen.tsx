@@ -1,93 +1,68 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {ShortcutRecorder} from '../shared/native/ShortcutRecorder';
-import {GlobalShortcut} from '../shared/native/GlobalShortcut';
+import {GlobalShortcut, ToolShortcutInfo} from '../shared/native/GlobalShortcut';
 import {colors, spacing, typography, radii} from '../shared/theme';
-import {DEFAULT_SHORTCUT_LABEL} from '../shared/constants';
 
 export function SettingsScreen() {
+  return (
+    <View style={styles.container}>
+      <Text style={styles.heading}>Settings</Text>
+      <Text style={styles.sectionTitle}>GLOBAL SHORTCUTS</Text>
+      <View style={styles.sectionCard}>
+        <Text style={styles.description}>
+          Click a recorder and press a key combination. Each shortcut opens and closes its tool from
+          any app.
+        </Text>
+        {GlobalShortcut.tools.map(tool => (
+          <ToolShortcutRow key={tool.id} tool={tool} />
+        ))}
+      </View>
+    </View>
+  );
+}
+
+function ToolShortcutRow({tool}: {tool: ToolShortcutInfo}) {
   const [currentShortcut, setCurrentShortcut] = useState<string | null>(null);
 
   const refreshShortcut = useCallback(async () => {
     try {
-      const shortcut = await GlobalShortcut.getShortcut();
+      const shortcut = await GlobalShortcut.getShortcut(tool.id);
       setCurrentShortcut(shortcut?.description ?? null);
-    } catch {
+    } catch (error) {
+      console.warn(`Could not read the ${tool.displayName} shortcut`, error);
       setCurrentShortcut(null);
     }
-  }, []);
+  }, [tool]);
 
   useEffect(() => {
     refreshShortcut();
   }, [refreshShortcut]);
 
-  const handleReset = useCallback(() => {
-    GlobalShortcut.resetShortcut();
+  const resetShortcut = useCallback(() => {
+    GlobalShortcut.resetShortcut(tool.id);
+    // The native reset runs on the main queue after this call returns.
     setTimeout(refreshShortcut, 100);
-  }, [refreshShortcut]);
+  }, [tool, refreshShortcut]);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.heading}>Settings</Text>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>GLOBAL SHORTCUT</Text>
-        <View style={styles.sectionCard}>
-          <Text style={styles.description}>
-            Click the recorder below and press your preferred key combination to
-            toggle DevUtility from anywhere. The shortcut works even when the app
-            is not in focus.
-          </Text>
-
-          <View style={styles.recorderRow}>
-            <Text style={styles.label}>Toggle Shortcut</Text>
-            <ShortcutRecorder style={styles.recorder} />
-          </View>
-
-          <View style={styles.currentShortcutRow}>
-            <Text style={styles.currentLabel}>Current:</Text>
-            <Text
-              testID="settings.shortcut.current"
-              accessible
-              style={styles.currentValue}>
-              {currentShortcut ?? DEFAULT_SHORTCUT_LABEL}
-            </Text>
-          </View>
-
-          <TouchableOpacity
-            testID="settings.shortcut.reset"
-            style={styles.resetButton}
-            onPress={handleReset}
-            activeOpacity={0.7}>
-            <Text style={styles.resetButtonText}>
-              Reset to Default ({DEFAULT_SHORTCUT_LABEL})
-            </Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.toolRow}>
+      <View style={styles.recorderRow}>
+        <Text style={styles.label}>{tool.displayName}</Text>
+        <ShortcutRecorder toolId={tool.id} style={styles.recorder} />
       </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>BEHAVIOR</Text>
-        <View style={styles.sectionCard}>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Menu Bar Icon</Text>
-            <Text style={styles.infoValue}>Click to toggle visibility</Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Dismiss</Text>
-            <Text style={styles.infoValue}>
-              Press Esc or click outside the window
-            </Text>
-          </View>
-
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Positioning</Text>
-            <Text style={styles.infoValue}>
-              Appears centered on the active screen; drag to reposition
-            </Text>
-          </View>
-        </View>
+      <View style={styles.currentShortcutRow}>
+        <Text style={styles.currentLabel}>Current:</Text>
+        <Text testID={`settings.shortcut.${tool.id}.current`} accessible style={styles.currentValue}>
+          {currentShortcut ?? tool.defaultShortcutLabel}
+        </Text>
+        <TouchableOpacity
+          testID={`settings.shortcut.${tool.id}.reset`}
+          style={styles.resetButton}
+          onPress={resetShortcut}
+          activeOpacity={0.7}>
+          <Text style={styles.resetButtonText}>Reset to {tool.defaultShortcutLabel}</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -102,9 +77,6 @@ const styles = StyleSheet.create({
     ...typography.title,
     color: colors.text.primary,
     marginBottom: spacing.xxl,
-  },
-  section: {
-    marginBottom: spacing.xxxl,
   },
   sectionTitle: {
     ...typography.label,
@@ -125,13 +97,17 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     lineHeight: 22,
   },
+  toolRow: {
+    marginBottom: spacing.lg,
+  },
   recorderRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: colors.bg.surface,
     padding: spacing.md,
     borderRadius: radii.md,
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
   },
   label: {
     ...typography.bodyBold,
@@ -145,7 +121,6 @@ const styles = StyleSheet.create({
   currentShortcutRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.lg,
     paddingHorizontal: spacing.sm,
   },
   currentLabel: {
@@ -156,10 +131,10 @@ const styles = StyleSheet.create({
   currentValue: {
     ...typography.caption,
     color: colors.text.primary,
+    flex: 1,
   },
   resetButton: {
-    alignSelf: 'flex-start',
-    paddingVertical: spacing.sm,
+    paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,
     backgroundColor: colors.bg.surface,
     borderRadius: radii.md,
@@ -169,25 +144,5 @@ const styles = StyleSheet.create({
   resetButtonText: {
     ...typography.caption,
     color: colors.text.primary,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.md,
-    backgroundColor: colors.bg.surface,
-    borderRadius: radii.md,
-    marginBottom: spacing.xs,
-  },
-  infoLabel: {
-    ...typography.bodyBold,
-    color: colors.text.primary,
-  },
-  infoValue: {
-    ...typography.body,
-    color: colors.text.tertiary,
-    flexShrink: 1,
-    textAlign: 'right',
   },
 });

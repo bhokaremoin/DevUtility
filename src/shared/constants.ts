@@ -16,6 +16,3 @@ export const CLIPBOARD_STORAGE_KEY = '@devutility/clipboard_history';
 
 /** Maximum characters shown in a clipboard master-list row before truncation. */
 export const MAX_DISPLAY_LENGTH = 120;
-
-/** Human-readable label for the default toggle shortcut (Ctrl+Option+D). */
-export const DEFAULT_SHORTCUT_LABEL = '\u2303\u2325D';

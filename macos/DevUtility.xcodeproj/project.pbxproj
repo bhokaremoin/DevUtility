@@ -8,13 +8,19 @@
 
 /* Begin PBXBuildFile section */
 		01BB78EE2C3054D2D7AE30EC /* ToolPanelPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23A4799A8790A3C6111108E1 /* ToolPanelPage.swift */; };
+		04B34795800C53DEA6D954EA /* GlobalShortcutModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = FF185CCC9FBE1355401B1E39 /* GlobalShortcutModuleBridge.m */; };
 		09484E3D4287AF6D2FBF83FE /* ShortcutConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46DD6CF3AC6D3092421F9C8 /* ShortcutConflictResolver.swift */; };
 		1A9260C4A457BA6E410B6E22 /* OutsideClickRuleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30F426746B1CCE5C7CC58C3 /* OutsideClickRuleTests.swift */; };
 		23B6FE9745344DD28004B7C6 /* Mouse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A17E1DBCE96C3E11976075 /* Mouse.swift */; };
+		2B87E189957EC9B7882E947F /* KeyEventModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E5429CB3044A249E7C1AAC6 /* KeyEventModuleBridge.m */; };
 		2EBF070B2A6E6F8D7DB503BD /* ToolDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DEC51B83A3F3E9CD7E06FA /* ToolDefinition.swift */; };
+		2F78FC520D3513906BA4B206 /* PanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8907796D47C7CB9E1093827 /* PanelPresenter.swift */; };
+		3299C50A91F3F1680E65BDD0 /* ToolPanelModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = 777DFF98A4A572EAC44F431A /* ToolPanelModuleBridge.m */; };
+		338FFCF097EBA4B6F6C22104 /* ToolPanels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 651D59305133BD3F88CB61BE /* ToolPanels.swift */; };
 		37359FE9758096F4AC5A40A4 /* libPods-DevUtility-macOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 02F90F8E4D90D9291DD3F91A /* libPods-DevUtility-macOS.a */; };
 		4270F4F1968239CA74D4173A /* MenuBarTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ADCEF1A1CB4A15BD5550EAA /* MenuBarTests.swift */; };
-		47E60192B0ED916448DAD795 /* PanelPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ACFCD08E153EA59EB888FAB /* PanelPresenter.swift */; };
+		4ED35586A5284C5F31053FE8 /* ToolShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = F507E379CABF357B325AB5C5 /* ToolShortcuts.swift */; };
+		4F96C5A6E82BF9A056D26CA5 /* ToolPanelModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2038A9D1D730742A96AF8032 /* ToolPanelModule.swift */; };
 		5014281C3E368A10EEE419E8 /* PageObjectSmokeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C70FAAD161AE16FE8D1187C /* PageObjectSmokeTests.swift */; };
 		5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5142014C2437B4B30078DB4F /* AppDelegate.mm */; };
 		514201522437B4B40078DB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 514201512437B4B40078DB4F /* Assets.xcassets */; };
@@ -29,6 +35,7 @@
 		8295E139C25E304526173EF3 /* AppLauncher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23351A8825B9A54328E3CBB4 /* AppLauncher.swift */; };
 		8DF1DCD0D481CE83587E6472 /* ShortcutConflictResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A46DD6CF3AC6D3092421F9C8 /* ShortcutConflictResolver.swift */; };
 		961F759800AD27B0D87D5A09 /* GlobalShortcutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F2D1B387ECEFC8A63A6AF61 /* GlobalShortcutTests.swift */; };
+		9A0827DD1DD4A44A38EEA82C /* ToolPanelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63693C600976CB9A2E443F4 /* ToolPanelController.swift */; };
 		9B101D0C1EA3F6C040A5C9B1 /* SnippetsPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B262418B4A3539057BD7E4 /* SnippetsPanel.swift */; };
 		9B10C96D1D8A0727A8D4F1CC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */; };
 		9BEA26611A4C459DC8552D82 /* ShortcutConflictResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5BD863C348FE7DA1B292214 /* ShortcutConflictResolverTests.swift */; };
@@ -39,26 +46,24 @@
 		A4FEBADCC5FD7239DE350FC3 /* XCUIElement+Text.swift in Sources */ = {isa = PBXBuildFile; fileRef = 156543116F4D53849AFB5136 /* XCUIElement+Text.swift */; };
 		AD797539670ED4C279477222 /* ClipboardPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79C1DF19033DC192837DCD96 /* ClipboardPanel.swift */; };
 		AF6F24B89050162B459B9F27 /* ToolRegistryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368CD29EC7A39FD0AB9979BC /* ToolRegistryTests.swift */; };
-		BB0001000000000000000002 /* PanelManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000002 /* PanelManager.swift */; };
-		BB0001000000000000000003 /* GlobalShortcutModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000003 /* GlobalShortcutModule.swift */; };
-		BB0001000000000000000004 /* GlobalShortcutModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000004 /* GlobalShortcutModuleBridge.m */; };
-		BB0001000000000000000005 /* ShortcutRecorderViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000005 /* ShortcutRecorderViewManager.swift */; };
-		BB0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m */; };
 		BB0001000000000000000007 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = CC0001000000000000000002 /* KeyboardShortcuts */; };
-		BB0001000000000000000008 /* KeyEventModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000008 /* KeyEventModule.swift */; };
-		BB0001000000000000000009 /* KeyEventModuleBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = AA0001000000000000000009 /* KeyEventModuleBridge.m */; };
+		C5FBB1F6EB08E61ED9A7122E /* ShortcutRecorderViewManagerBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = FF77C29BAF772365458D1462 /* ShortcutRecorderViewManagerBridge.m */; };
 		C872BC57BC83F010BC32AB11 /* SettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF5E064F8643A7A4E366D62 /* SettingsWindow.swift */; };
 		CC4540E99CC868919117754F /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D382E70902E64DF335413EF /* SettingsWindowController.swift */; };
 		D0E437E821728A0649128AD1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */; };
 		D3C4CBA17D4AA0195E42B72E /* ToolRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E83FB36127BC1930DCBC21C /* ToolRegistry.swift */; };
 		DA415D8448963FCCC524FFEA /* Pasteboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3914121390036867674FB361 /* Pasteboard.swift */; };
+		E3F6C87A52ECCD5AE3468900 /* KeyEventModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9E5E5EF204C3C33B042F3B1 /* KeyEventModule.swift */; };
 		E4CFADBB3D9B1C3323AD55C5 /* PanelBehaviorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F09605E128548FB7CCB14D38 /* PanelBehaviorTests.swift */; };
 		E5050207840DDB3B8F00CA8F /* PanelFrameCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4E255207EFB9601F497CE62 /* PanelFrameCalculatorTests.swift */; };
 		E86E43389CC277C22947295F /* MenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC7CBD03203626742CD31CA6 /* MenuBar.swift */; };
 		E9410C86341E0BB7B840C6A3 /* OutsideClickRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F5F2D41B2CDEE718CD8678 /* OutsideClickRule.swift */; };
 		EA8206A2B61D7D21D3E5AFB0 /* PanelFrameCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07386466F6C65B1EB21FC1DE /* PanelFrameCalculator.swift */; };
 		EAD58DD6FAA7725988E3672C /* Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B46355A765C85B7DA9496741 /* Keyboard.swift */; };
+		F020A4601B42E0CA4C723220 /* ShortcutRecorderViewManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7CB7AFBAB3F37B036DD707 /* ShortcutRecorderViewManager.swift */; };
 		F0E8645B0357AECECA2E6683 /* ToolRegistry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E83FB36127BC1930DCBC21C /* ToolRegistry.swift */; };
+		F275631A3C86A0601DA9CF02 /* GlobalShortcutModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = F68A2572F0D10DD5B61A67CF /* GlobalShortcutModule.swift */; };
+		F8B5B54302FC353EA3576B4D /* ToolPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C86A7797F223C0DED616C02D /* ToolPanel.swift */; };
 		FDBB0A226C25DDD6CB208DFA /* Wait.swift in Sources */ = {isa = PBXBuildFile; fileRef = 290E19018D40475772FDF3BB /* Wait.swift */; };
 /* End PBXBuildFile section */
 
@@ -76,15 +81,17 @@
 		02F90F8E4D90D9291DD3F91A /* libPods-DevUtility-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DevUtility-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		07386466F6C65B1EB21FC1DE /* PanelFrameCalculator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PanelFrameCalculator.swift; sourceTree = "<group>"; };
 		0C70FAAD161AE16FE8D1187C /* PageObjectSmokeTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PageObjectSmokeTests.swift; sourceTree = "<group>"; };
+		0E5429CB3044A249E7C1AAC6 /* KeyEventModuleBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = KeyEventModuleBridge.m; sourceTree = "<group>"; };
+		0F7CB7AFBAB3F37B036DD707 /* ShortcutRecorderViewManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderViewManager.swift; sourceTree = "<group>"; };
 		0FB187A17D13AD24A9AD2FA3 /* Pods-DevUtility-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevUtility-macOS.debug.xcconfig"; path = "Target Support Files/Pods-DevUtility-macOS/Pods-DevUtility-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		10F5F2D41B2CDEE718CD8678 /* OutsideClickRule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OutsideClickRule.swift; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* DevUtility.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevUtility.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		156543116F4D53849AFB5136 /* XCUIElement+Text.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "XCUIElement+Text.swift"; sourceTree = "<group>"; };
 		1D382E70902E64DF335413EF /* SettingsWindowController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		2038A9D1D730742A96AF8032 /* ToolPanelModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolPanelModule.swift; sourceTree = "<group>"; };
 		23351A8825B9A54328E3CBB4 /* AppLauncher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppLauncher.swift; sourceTree = "<group>"; };
 		23A4799A8790A3C6111108E1 /* ToolPanelPage.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolPanelPage.swift; sourceTree = "<group>"; };
 		290E19018D40475772FDF3BB /* Wait.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Wait.swift; sourceTree = "<group>"; };
-		2ACFCD08E153EA59EB888FAB /* PanelPresenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PanelPresenter.swift; sourceTree = "<group>"; };
 		32C5DA337FCB7F34C0AB3E87 /* KeyboardFocusTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardFocusTests.swift; sourceTree = "<group>"; };
 		368CD29EC7A39FD0AB9979BC /* ToolRegistryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolRegistryTests.swift; sourceTree = "<group>"; };
 		3914121390036867674FB361 /* Pasteboard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pasteboard.swift; sourceTree = "<group>"; };
@@ -101,6 +108,8 @@
 		5ADCEF1A1CB4A15BD5550EAA /* MenuBarTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBarTests.swift; sourceTree = "<group>"; };
 		5E83FB36127BC1930DCBC21C /* ToolRegistry.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolRegistry.swift; sourceTree = "<group>"; };
 		64B262418B4A3539057BD7E4 /* SnippetsPanel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsPanel.swift; sourceTree = "<group>"; };
+		651D59305133BD3F88CB61BE /* ToolPanels.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolPanels.swift; sourceTree = "<group>"; };
+		777DFF98A4A572EAC44F431A /* ToolPanelModuleBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ToolPanelModuleBridge.m; sourceTree = "<group>"; };
 		77D0304AE41E6F09A9E80F94 /* SnippetsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SnippetsTests.swift; sourceTree = "<group>"; };
 		79C1DF19033DC192837DCD96 /* ClipboardPanel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ClipboardPanel.swift; sourceTree = "<group>"; };
 		7F2D1B387ECEFC8A63A6AF61 /* GlobalShortcutTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalShortcutTests.swift; sourceTree = "<group>"; };
@@ -111,26 +120,27 @@
 		A8F5F26DDB07D6AFCAC99741 /* Pods-DevUtility-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevUtility-macOS.release.xcconfig"; path = "Target Support Files/Pods-DevUtility-macOS/Pods-DevUtility-macOS.release.xcconfig"; sourceTree = "<group>"; };
 		A9836EED98CF4787348F4CAF /* Pods-DevUtility-macOS.e2e.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DevUtility-macOS.e2e.xcconfig"; path = "Target Support Files/Pods-DevUtility-macOS/Pods-DevUtility-macOS.e2e.xcconfig"; sourceTree = "<group>"; };
 		AA0001000000000000000001 /* DevUtility-macOS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DevUtility-macOS-Bridging-Header.h"; sourceTree = "<group>"; };
-		AA0001000000000000000002 /* PanelManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelManager.swift; sourceTree = "<group>"; };
-		AA0001000000000000000003 /* GlobalShortcutModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalShortcutModule.swift; sourceTree = "<group>"; };
-		AA0001000000000000000004 /* GlobalShortcutModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GlobalShortcutModuleBridge.m; sourceTree = "<group>"; };
-		AA0001000000000000000005 /* ShortcutRecorderViewManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutRecorderViewManager.swift; sourceTree = "<group>"; };
-		AA0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ShortcutRecorderViewManagerBridge.m; sourceTree = "<group>"; };
-		AA0001000000000000000008 /* KeyEventModule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyEventModule.swift; sourceTree = "<group>"; };
-		AA0001000000000000000009 /* KeyEventModuleBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyEventModuleBridge.m; sourceTree = "<group>"; };
 		AC7CBD03203626742CD31CA6 /* MenuBar.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MenuBar.swift; sourceTree = "<group>"; };
 		B30F426746B1CCE5C7CC58C3 /* OutsideClickRuleTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OutsideClickRuleTests.swift; sourceTree = "<group>"; };
 		B46355A765C85B7DA9496741 /* Keyboard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Keyboard.swift; sourceTree = "<group>"; };
 		B4B13E76C391B35BF5BC3421 /* KeyboardNavigationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardNavigationTests.swift; sourceTree = "<group>"; };
 		B4E255207EFB9601F497CE62 /* PanelFrameCalculatorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PanelFrameCalculatorTests.swift; sourceTree = "<group>"; };
 		BFF5E064F8643A7A4E366D62 /* SettingsWindow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsWindow.swift; sourceTree = "<group>"; };
+		C86A7797F223C0DED616C02D /* ToolPanel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolPanel.swift; sourceTree = "<group>"; };
 		CB0DF0F3B4FD34C0531334E9 /* SettingsTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SettingsTests.swift; sourceTree = "<group>"; };
+		D8907796D47C7CB9E1093827 /* PanelPresenter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PanelPresenter.swift; sourceTree = "<group>"; };
 		D971F53C728C38A0172693A4 /* ResetFlagTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ResetFlagTests.swift; sourceTree = "<group>"; };
 		E5BD863C348FE7DA1B292214 /* ShortcutConflictResolverTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ShortcutConflictResolverTests.swift; sourceTree = "<group>"; };
+		E9E5E5EF204C3C33B042F3B1 /* KeyEventModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyEventModule.swift; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F09605E128548FB7CCB14D38 /* PanelBehaviorTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PanelBehaviorTests.swift; sourceTree = "<group>"; };
 		F42A2816C19C46A5A1A53AA5 /* OtherApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OtherApp.swift; sourceTree = "<group>"; };
+		F507E379CABF357B325AB5C5 /* ToolShortcuts.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolShortcuts.swift; sourceTree = "<group>"; };
+		F63693C600976CB9A2E443F4 /* ToolPanelController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolPanelController.swift; sourceTree = "<group>"; };
+		F68A2572F0D10DD5B61A67CF /* GlobalShortcutModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = GlobalShortcutModule.swift; sourceTree = "<group>"; };
 		F6DEC51B83A3F3E9CD7E06FA /* ToolDefinition.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolDefinition.swift; sourceTree = "<group>"; };
+		FF185CCC9FBE1355401B1E39 /* GlobalShortcutModuleBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = GlobalShortcutModuleBridge.m; sourceTree = "<group>"; };
+		FF77C29BAF772365458D1462 /* ShortcutRecorderViewManagerBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = ShortcutRecorderViewManagerBridge.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -193,6 +203,10 @@
 			children = (
 				10F5F2D41B2CDEE718CD8678 /* OutsideClickRule.swift */,
 				07386466F6C65B1EB21FC1DE /* PanelFrameCalculator.swift */,
+				D8907796D47C7CB9E1093827 /* PanelPresenter.swift */,
+				C86A7797F223C0DED616C02D /* ToolPanel.swift */,
+				F63693C600976CB9A2E443F4 /* ToolPanelController.swift */,
+				651D59305133BD3F88CB61BE /* ToolPanels.swift */,
 			);
 			name = Panels;
 			path = Panels;
@@ -214,24 +228,34 @@
 				5142014B2437B4B30078DB4F /* AppDelegate.h */,
 				5142014C2437B4B30078DB4F /* AppDelegate.mm */,
 				AA0001000000000000000001 /* DevUtility-macOS-Bridging-Header.h */,
-				AA0001000000000000000002 /* PanelManager.swift */,
-				AA0001000000000000000003 /* GlobalShortcutModule.swift */,
-				AA0001000000000000000004 /* GlobalShortcutModuleBridge.m */,
-				AA0001000000000000000005 /* ShortcutRecorderViewManager.swift */,
-				AA0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m */,
-				AA0001000000000000000008 /* KeyEventModule.swift */,
-				AA0001000000000000000009 /* KeyEventModuleBridge.m */,
 				514201512437B4B40078DB4F /* Assets.xcassets */,
 				514201532437B4B40078DB4F /* Main.storyboard */,
 				514201562437B4B40078DB4F /* Info.plist */,
 				514201572437B4B40078DB4F /* main.m */,
 				514201592437B4B40078DB4F /* DevUtility.entitlements */,
-				2ACFCD08E153EA59EB888FAB /* PanelPresenter.swift */,
 				2DE95E502F219D6A3B93395E /* Panels */,
 				510C59B4CDAD3F3E5D0A6B6F /* Settings */,
 				60D5DF4D952364B4D07C23E8 /* Tools */,
+				6027513C6021E8BEA8D5E6DD /* Bridge */,
 			);
 			path = "DevUtility-macOS";
+			sourceTree = "<group>";
+		};
+		6027513C6021E8BEA8D5E6DD /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				F68A2572F0D10DD5B61A67CF /* GlobalShortcutModule.swift */,
+				FF185CCC9FBE1355401B1E39 /* GlobalShortcutModuleBridge.m */,
+				E9E5E5EF204C3C33B042F3B1 /* KeyEventModule.swift */,
+				0E5429CB3044A249E7C1AAC6 /* KeyEventModuleBridge.m */,
+				0F7CB7AFBAB3F37B036DD707 /* ShortcutRecorderViewManager.swift */,
+				FF77C29BAF772365458D1462 /* ShortcutRecorderViewManagerBridge.m */,
+				2038A9D1D730742A96AF8032 /* ToolPanelModule.swift */,
+				777DFF98A4A572EAC44F431A /* ToolPanelModuleBridge.m */,
+				F507E379CABF357B325AB5C5 /* ToolShortcuts.swift */,
+			);
+			name = Bridge;
+			path = Bridge;
 			sourceTree = "<group>";
 		};
 		60A23F8525382E53687BB453 /* Specs */ = {
@@ -627,20 +651,25 @@
 			files = (
 				514201582437B4B40078DB4F /* main.m in Sources */,
 				5142014D2437B4B30078DB4F /* AppDelegate.mm in Sources */,
-				BB0001000000000000000002 /* PanelManager.swift in Sources */,
-				BB0001000000000000000003 /* GlobalShortcutModule.swift in Sources */,
-				BB0001000000000000000004 /* GlobalShortcutModuleBridge.m in Sources */,
-				BB0001000000000000000005 /* ShortcutRecorderViewManager.swift in Sources */,
-				BB0001000000000000000006 /* ShortcutRecorderViewManagerBridge.m in Sources */,
-				BB0001000000000000000008 /* KeyEventModule.swift in Sources */,
-				BB0001000000000000000009 /* KeyEventModuleBridge.m in Sources */,
-				47E60192B0ED916448DAD795 /* PanelPresenter.swift in Sources */,
 				65AC2862225DD6D407A9A100 /* OutsideClickRule.swift in Sources */,
 				EA8206A2B61D7D21D3E5AFB0 /* PanelFrameCalculator.swift in Sources */,
 				09484E3D4287AF6D2FBF83FE /* ShortcutConflictResolver.swift in Sources */,
 				526B0EB03BA449C0EDB8442C /* ToolDefinition.swift in Sources */,
 				D3C4CBA17D4AA0195E42B72E /* ToolRegistry.swift in Sources */,
 				CC4540E99CC868919117754F /* SettingsWindowController.swift in Sources */,
+				F275631A3C86A0601DA9CF02 /* GlobalShortcutModule.swift in Sources */,
+				04B34795800C53DEA6D954EA /* GlobalShortcutModuleBridge.m in Sources */,
+				E3F6C87A52ECCD5AE3468900 /* KeyEventModule.swift in Sources */,
+				2B87E189957EC9B7882E947F /* KeyEventModuleBridge.m in Sources */,
+				F020A4601B42E0CA4C723220 /* ShortcutRecorderViewManager.swift in Sources */,
+				C5FBB1F6EB08E61ED9A7122E /* ShortcutRecorderViewManagerBridge.m in Sources */,
+				4F96C5A6E82BF9A056D26CA5 /* ToolPanelModule.swift in Sources */,
+				3299C50A91F3F1680E65BDD0 /* ToolPanelModuleBridge.m in Sources */,
+				4ED35586A5284C5F31053FE8 /* ToolShortcuts.swift in Sources */,
+				2F78FC520D3513906BA4B206 /* PanelPresenter.swift in Sources */,
+				F8B5B54302FC353EA3576B4D /* ToolPanel.swift in Sources */,
+				9A0827DD1DD4A44A38EEA82C /* ToolPanelController.swift in Sources */,
+				338FFCF097EBA4B6F6C22104 /* ToolPanels.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

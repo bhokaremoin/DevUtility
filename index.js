@@ -1,17 +1,9 @@
-import React from 'react';
 import {AppRegistry} from 'react-native';
-import App from './src/App';
-import {StorageResetGate} from './src/shared/StorageResetGate';
+import {ClipboardTool} from './src/tools/clipboard/ClipboardTool';
+import {SnippetsTool} from './src/tools/snippets/SnippetsTool';
 import {SettingsWindow} from './src/settings/SettingsWindow';
-import {name as appName} from './app.json';
 
-function Root({isE2EReset = false}) {
-  return (
-    <StorageResetGate shouldReset={isE2EReset}>
-      <App />
-    </StorageResetGate>
-  );
-}
-
-AppRegistry.registerComponent(appName, () => Root);
+// Each name matches a tool's moduleName in the native ToolRegistry (Settings is its own window).
+AppRegistry.registerComponent('ClipboardTool', () => ClipboardTool);
+AppRegistry.registerComponent('SnippetsTool', () => SnippetsTool);
 AppRegistry.registerComponent('Settings', () => SettingsWindow);
