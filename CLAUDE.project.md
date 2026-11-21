@@ -22,9 +22,11 @@ clipboard history and a snippet manager. Spec for the multi-tool restructure:
 | `npm run test:unit` | Jest unit tests |
 | `npm run typecheck` | TypeScript check |
 | `npm run lint` | ESLint |
+| `npm run test:native` | Swift unit tests for the pure native rules (`macos/DevUtilityNativeTests`, no app build, seconds) |
 | `npm run test:e2e` | Build the `E2E` configuration and run the XCUITest suite (`build/e2e/*.xcresult`) |
 | `npm run test:all` | Everything above; the definition-of-done command and what CI runs |
 | `npm run xcode:add-e2e-targets` | Re-run after adding Swift files under `macos/DevUtilityE2ETests/` so they join the target |
+| `npm run xcode:add-native-targets` | Re-run after adding, moving or deleting files under `macos/DevUtility-macOS/` or `macos/DevUtilityNativeTests/`: syncs the app target's sources and the unit test target |
 
 ## Rules
 
