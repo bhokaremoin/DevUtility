@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import {colors, radii, spacing, typography} from './theme';
-import {SHORTCUT_SECTIONS, ShortcutRow} from './shortcuts';
+import {ShortcutRow, ShortcutSection} from './shortcuts';
 
 /** Props for the `ShortcutsModal` component. */
 interface Props {
@@ -16,6 +16,8 @@ interface Props {
   visible: boolean;
   /** Called when the user presses the close (✕) button. */
   onClose: () => void;
+  /** The shortcuts of the tool that shows the sheet. */
+  sections: ShortcutSection[];
 }
 
 function KbdTag({label}: {label: string}) {
@@ -56,7 +58,7 @@ function ShortcutRowView({
   );
 }
 
-export function ShortcutsModal({visible, onClose}: Props) {
+export function ShortcutsModal({visible, onClose, sections}: Props) {
   const focusTrapRef = useRef<TextInput>(null);
 
   useEffect(() => {
@@ -92,7 +94,7 @@ export function ShortcutsModal({visible, onClose}: Props) {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}>
-          {SHORTCUT_SECTIONS.map((section, si) => (
+          {sections.map((section, si) => (
             <View key={section.title} style={si > 0 ? styles.section : styles.sectionFirst}>
               <Text style={styles.sectionLabel}>{section.title}</Text>
               {section.rows.map((row, ri) => (

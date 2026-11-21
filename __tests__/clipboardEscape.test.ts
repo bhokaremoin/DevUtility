@@ -1,3 +1,4 @@
+import {describe, expect, it} from '@jest/globals';
 import {clipboardEscapeAction} from '../src/tools/clipboard/clipboardEscape';
 
 describe('clipboardEscapeAction', () => {

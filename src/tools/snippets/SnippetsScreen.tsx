@@ -29,6 +29,7 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
     } = useSnippets();
     const [modalVisible, setModalVisible] = useState(false);
     const searchInputRef = useRef<TextInput>(null);
+    const isSearchFocused = useRef(false);
     const {
       selectedId,
       setSelectedId,
@@ -48,17 +49,11 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
             copySnippet(selectedSnippet);
           }
         },
-        handleEscape: () => {
-          if (searchQuery.trim()) {
-            setSearchQuery('');
-            return true;
-          }
-          if (selectedId) {
-            setSelectedId(null);
-            return true;
-          }
-          return false;
-        },
+        isTextInputFocused: () => isSearchFocused.current || isDetailFocused.current,
+        searchText: () => searchQuery,
+        isAddDialogOpen: () => modalVisible,
+        closeAddDialog: () => setModalVisible(false),
+        clearSearch: () => setSearchQuery(''),
         focusSearch: () => {
           searchInputRef.current?.focus();
         },
@@ -72,11 +67,11 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
       [
         selectedSnippet,
         searchQuery,
-        selectedId,
-        setSelectedId,
+        modalVisible,
         copySnippet,
         setSearchQuery,
         navigate,
+        isDetailFocused,
       ],
     );
 
@@ -110,6 +105,12 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={setSearchQuery}
+            onFocus={() => {
+              isSearchFocused.current = true;
+            }}
+            onBlur={() => {
+              isSearchFocused.current = false;
+            }}
             placeholder="Search by title, description, or tag…"
             placeholderTextColor={colors.text.placeholder}
             accessibilityRole="search"
@@ -137,7 +138,7 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
             <Text style={styles.emptySubtitle}>
               {searchQuery.trim()
                 ? 'Try a different search term'
-                : 'Tap "+ New" to save your first snippet'}
+                : 'Click "+ Add" to save your first snippet'}
             </Text>
           </View>
         ) : (

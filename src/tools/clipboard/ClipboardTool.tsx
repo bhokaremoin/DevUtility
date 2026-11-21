@@ -1,7 +1,9 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Alert, StyleSheet, View} from 'react-native';
+import {Alert, Keyboard, StyleSheet, View} from 'react-native';
 import {ClipboardScreen} from './ClipboardScreen';
 import {useClipboardHistory} from './useClipboardHistory';
+import {clipboardEscapeAction} from './clipboardEscape';
+import {CLIPBOARD_SHORTCUT_SECTIONS} from './clipboardShortcuts';
 import {HeaderButton, ToolHeader} from '../../shared/ToolHeader';
 import {ShortcutsModal} from '../../shared/ShortcutsModal';
 import {StorageResetGate} from '../../shared/StorageResetGate';
@@ -31,8 +33,15 @@ function Clipboard(): React.JSX.Element {
     () => ({
       onCopyAction: () => screenRef.current?.copySelected?.(),
       onEscape: () => {
-        const isHandledByScreen = screenRef.current?.handleEscape?.();
-        if (!isHandledByScreen) {
+        const action = clipboardEscapeAction({
+          isSheetOpen: isShortcutsHelpOpen,
+          isEditorFocused: screenRef.current?.isTextInputFocused?.() ?? false,
+        });
+        if (action === 'closeSheet') {
+          setIsShortcutsHelpOpen(false);
+        } else if (action === 'blurEditor') {
+          Keyboard.dismiss();
+        } else {
           ToolPanel.hide('clipboard');
         }
       },
@@ -44,7 +53,7 @@ function Clipboard(): React.JSX.Element {
         }
       },
     }),
-    [],
+    [isShortcutsHelpOpen],
   );
   useKeyboardShortcuts('clipboard', keyHandlers);
 
@@ -75,7 +84,11 @@ function Clipboard(): React.JSX.Element {
           onPress={() => setIsShortcutsHelpOpen(true)}
         />
       </ToolHeader>
-      <ShortcutsModal visible={isShortcutsHelpOpen} onClose={() => setIsShortcutsHelpOpen(false)} />
+      <ShortcutsModal
+        visible={isShortcutsHelpOpen}
+        onClose={() => setIsShortcutsHelpOpen(false)}
+        sections={CLIPBOARD_SHORTCUT_SECTIONS}
+      />
       <View style={styles.content}>
         <ClipboardScreen ref={screenRef} {...clipboardState} />
       </View>

@@ -1,6 +1,8 @@
 import React, {useMemo, useRef, useState} from 'react';
 import {Keyboard, StyleSheet, View} from 'react-native';
 import {SnippetsScreen} from './SnippetsScreen';
+import {snippetsEscapeAction} from './snippetsEscape';
+import {SNIPPETS_SHORTCUT_SECTIONS} from './snippetsShortcuts';
 import {HeaderButton, ToolHeader} from '../../shared/ToolHeader';
 import {ShortcutsModal} from '../../shared/ShortcutsModal';
 import {StorageResetGate} from '../../shared/StorageResetGate';
@@ -29,12 +31,26 @@ function Snippets(): React.JSX.Element {
     () => ({
       onCopyAction: () => screenRef.current?.copySelected?.(),
       onEscape: () => {
-        const isHandledByScreen = screenRef.current?.handleEscape?.();
-        if (!isHandledByScreen) {
-          ToolPanel.hide('snippets');
+        const screen = screenRef.current;
+        const action = snippetsEscapeAction({
+          isSheetOpen: isShortcutsHelpOpen,
+          isAddDialogOpen: screen?.isAddDialogOpen?.() ?? false,
+          searchText: screen?.searchText?.() ?? '',
+          isInputFocused: screen?.isTextInputFocused?.() ?? false,
+        });
+        if (action === 'closeSheet') {
+          setIsShortcutsHelpOpen(false);
+        } else if (action === 'closeAddDialog') {
+          screen?.closeAddDialog?.();
+        } else if (action === 'clearSearch') {
+          screen?.clearSearch?.();
+        } else if (action === 'blurInput') {
+          Keyboard.dismiss();
         }
       },
       onSearch: () => screenRef.current?.focusSearch?.(),
+      // Ready for input: Snippets opens with its search focused, whatever had focus before.
+      onPanelShown: () => screenRef.current?.focusSearch?.(),
       onArrowNavigation: (direction: 'up' | 'down') => {
         if (direction === 'down') {
           screenRef.current?.navigateDown?.();
@@ -43,7 +59,7 @@ function Snippets(): React.JSX.Element {
         }
       },
     }),
-    [],
+    [isShortcutsHelpOpen],
   );
   useKeyboardShortcuts('snippets', keyHandlers);
 
@@ -78,7 +94,11 @@ function Snippets(): React.JSX.Element {
           onPress={() => ToolPanel.hide('snippets')}
         />
       </ToolHeader>
-      <ShortcutsModal visible={isShortcutsHelpOpen} onClose={() => setIsShortcutsHelpOpen(false)} />
+      <ShortcutsModal
+        visible={isShortcutsHelpOpen}
+        onClose={() => setIsShortcutsHelpOpen(false)}
+        sections={SNIPPETS_SHORTCUT_SECTIONS}
+      />
       <View style={styles.content}>
         <SnippetsScreen ref={screenRef} />
       </View>

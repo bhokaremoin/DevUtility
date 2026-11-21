@@ -34,12 +34,14 @@ export interface Snippet {
 export interface ScreenHandle {
   /** Copy the currently selected list item to the clipboard. */
   copySelected?: () => void;
-  /**
-   * Handle the Escape key with cascading dismiss logic.
-   * @returns `true` if the screen consumed the event (e.g. cleared a
-   *   selection or search query); `false` to let the caller hide the panel.
-   */
-  handleEscape?: () => boolean;
+  /** Whether a text input in the screen has keyboard focus. */
+  isTextInputFocused?: () => boolean;
+  /** The current search text, for screens with a search field. */
+  searchText?: () => string;
+  /** Whether the "Add Snippet" dialog is open. */
+  isAddDialogOpen?: () => boolean;
+  closeAddDialog?: () => void;
+  clearSearch?: () => void;
   /** Move keyboard focus into the screen's search input. */
   focusSearch?: () => void;
   /** Remove focus from all inputs within the screen. */

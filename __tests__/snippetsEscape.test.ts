@@ -1,3 +1,4 @@
+import {describe, expect, it} from '@jest/globals';
 import {snippetsEscapeAction} from '../src/tools/snippets/snippetsEscape';
 
 const nothingOpen = {isSheetOpen: false, isAddDialogOpen: false, searchText: '', isInputFocused: false};

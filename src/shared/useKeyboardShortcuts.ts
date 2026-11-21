@@ -12,6 +12,8 @@ interface Handlers {
   /** ⌘F */
   onSearch?: () => void;
   onArrowNavigation: (direction: 'up' | 'down') => void;
+  /** The tool's panel has just opened. */
+  onPanelShown?: () => void;
 }
 
 interface ToolKeyEvent {
@@ -48,6 +50,11 @@ export function useKeyboardShortcuts(toolId: ToolId, handlers: Handlers) {
       emitter.addListener('onSearch', (event: ToolKeyEvent) => {
         if (isForThisTool(event)) {
           handlersRef.current.onSearch?.();
+        }
+      }),
+      emitter.addListener('onPanelShown', (event: ToolKeyEvent) => {
+        if (isForThisTool(event)) {
+          handlersRef.current.onPanelShown?.();
         }
       }),
       emitter.addListener('onArrowNavigation', (event: ToolKeyEvent & {direction: 'up' | 'down'}) => {

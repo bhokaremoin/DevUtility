@@ -1,6 +1,11 @@
 import Cocoa
 import KeyboardShortcuts
 
+extension Notification.Name {
+  /// Posted when a tool's panel opens; `object` is the tool id.
+  static let toolPanelDidOpen = Notification.Name("toolPanelDidOpen")
+}
+
 /// Owns one tool's panel, menu-bar icon and global shortcut.
 final class ToolPanelController: NSObject {
   let tool: ToolDefinition
@@ -65,6 +70,7 @@ final class ToolPanelController: NSObject {
     panel.setFrame(frame, display: false)
     presenter.show(at: frame.origin)
     dismissal.start()
+    NotificationCenter.default.post(name: .toolPanelDidOpen, object: tool.id)
   }
 
   func hide() {

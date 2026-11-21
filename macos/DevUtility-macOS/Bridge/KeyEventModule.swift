@@ -8,6 +8,7 @@ import Cocoa
 /// - `onEscape`: Esc
 /// - `onSearch`: ⌘F
 /// - `onArrowNavigation`: ↑ or ↓, body `{direction: "up" | "down"}`
+/// - `onPanelShown`: the tool's panel has just opened
 ///
 /// ⌘, opens Settings here, without a JS round trip.
 @objc(KeyEventModule)
@@ -22,12 +23,13 @@ final class KeyEventModule: RCTEventEmitter {
   }
 
   private var localMonitor: Any?
+  private var panelOpenObserver: NSObjectProtocol?
   private var hasListeners = false
 
   override static func requiresMainQueueSetup() -> Bool { true }
 
   override func supportedEvents() -> [String] {
-    ["onCopyAction", "onEscape", "onSearch", "onArrowNavigation"]
+    ["onCopyAction", "onEscape", "onSearch", "onArrowNavigation", "onPanelShown"]
   }
 
   override func startObserving() {
@@ -56,6 +58,12 @@ final class KeyEventModule: RCTEventEmitter {
 
   private func installMonitor() {
     removeMonitor()
+    panelOpenObserver = NotificationCenter.default.addObserver(
+      forName: .toolPanelDidOpen, object: nil, queue: .main
+    ) { [weak self] notification in
+      guard let self, self.hasListeners, let toolId = notification.object as? String else { return }
+      self.send("onPanelShown", toolId: toolId)
+    }
     localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
       guard let self, self.hasListeners else { return event }
       return self.handleKeyEvent(event)
@@ -63,6 +71,10 @@ final class KeyEventModule: RCTEventEmitter {
   }
 
   private func removeMonitor() {
+    if let observer = panelOpenObserver {
+      NotificationCenter.default.removeObserver(observer)
+      panelOpenObserver = nil
+    }
     guard let monitor = localMonitor else { return }
     NSEvent.removeMonitor(monitor)
     localMonitor = nil

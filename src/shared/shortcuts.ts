@@ -13,33 +13,3 @@ export interface ShortcutSection {
   /** Rows belonging to this section. */
   rows: ShortcutRow[];
 }
-
-/**
- * All keyboard shortcut sections displayed in the help modal, ordered from
- * most general (System) to most specific (Actions).
- */
-export const SHORTCUT_SECTIONS: ShortcutSection[] = [
-  {
-    title: 'System',
-    rows: [
-      {action: 'Open / close Clipboard', keys: ['Ctrl', 'Option', 'V']},
-      {action: 'Open / close Snippets', keys: ['Ctrl', 'Option', 'S']},
-    ],
-  },
-  {
-    title: 'Navigation',
-    rows: [
-      {action: 'Open Settings', keys: ['⌘', ',']},
-    ],
-  },
-  {
-    title: 'Actions',
-    rows: [
-      {action: 'Focus search (Snippets)', keys: ['⌘', 'F']},
-      {action: 'Copy selected item (list focused)', keys: ['↵']},
-      {action: 'Copy selected item (detail editor)', keys: ['⌘', '↵']},
-      {action: 'Clear selection; hide panel if empty', keys: ['Esc']},
-      {action: 'Navigate list up / down', keys: ['↑ / ↓']},
-    ],
-  },
-];
