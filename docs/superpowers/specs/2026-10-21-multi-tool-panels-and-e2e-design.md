@@ -76,6 +76,23 @@ cooperative-activation rules allow. If the panel is still not key on the next ru
 it into `ToolPanelController` rather than rewriting it. The E2E test that presses keys immediately
 after opening the panel, while another app is frontmost, decides whether the fix works.
 
+Root cause (step 3, 2026-10-24): on CI the lost keys came from the original hypothesis after all.
+Right after launch the app is inactive, `activate(options: [])` was declined, and the panel was
+never key (`active=0 keyWindow=nil`, frontmost app Calculator or Finder). The spike's text-field
+symptom did not reproduce once keys were posted at the HID level, as a real keyboard posts them:
+XCUITest's `typeKey`/`typeText` activate the app first, which hid the bug in both directions. The
+non-activating panel above fixed every typing and arrow-key spec. Once it is key, AppKit reports
+DevUtility as active and the panel as `NSApp.keyWindow` even while another app is frontmost, so
+`KeyEventModule` needs no change (a mutation that switched it to `event.window` changed no result).
+
+Accepted limit: a mouse-down inside the panel makes the window server activate DevUtility
+(`-[NSApplication _handleActivatedEvent:]`, before the app sees the click). It happens with
+`canBecomeMain` false too, and no app code can veto it. So opening the panel and pressing keys in
+it never activate the app, but clicking in it does. To limit the cost, hiding the panel hands focus
+back to the app that was frontmost when it opened, but only while DevUtility is still frontmost.
+A click on another app makes that app frontmost before the click-outside monitor hides the panel,
+so that click keeps its focus.
+
 ## Architecture
 
 ### Native (Swift), by feature
@@ -199,10 +216,11 @@ the `.xcresult` bundle (with failure screenshots).
 
 ```
 macos/DevUtilityE2ETests/
-  Support/  AppLauncher, Pasteboard, Keyboard (global shortcut sender)
+  Support/  AppLauncher, Pasteboard, Keyboard and Mouse (HID-level input), OtherApp
   Pages/    MenuBar, ClipboardPanel, SnippetsPanel, SettingsWindow
   Specs/    ClipboardHistoryTests, SnippetsTests, KeyboardNavigationTests,
-            PanelBehaviorTests, GlobalShortcutTests, SettingsTests
+            PanelBehaviorTests, GlobalShortcutTests, SettingsTests,
+            KeyboardFocusTests (keys right after opening, with another app frontmost)
 ```
 
 - React Native `testID`s map to accessibility identifiers, named `<area>.<element>[.<index>]`
