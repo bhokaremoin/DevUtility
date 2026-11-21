@@ -3,11 +3,11 @@ import XCTest
 struct SettingsWindow {
   let app: XCUIApplication
 
-  private func element(_ identifier: String) -> XCUIElement {
-    app.descendants(matching: .any)[identifier]
-  }
-
   var window: XCUIElement { app.windows["settings.window"] }
+
+  private func element(_ identifier: String) -> XCUIElement {
+    window.descendants(matching: .any)[identifier]
+  }
 
   var openWindowCount: Int { app.windows.matching(identifier: "settings.window").count }
 
@@ -17,23 +17,29 @@ struct SettingsWindow {
     Wait.until("the Settings window is shown", file: file, line: line) { self.isShown }
   }
 
-  var currentShortcutText: String { element("settings.shortcut.current").displayedText }
+  func currentShortcutText(for toolId: String) -> String {
+    element("settings.shortcut.\(toolId).current").displayedText
+  }
 
-  var recorder: XCUIElement { element("settings.shortcut.recorder") }
+  func recorder(for toolId: String) -> XCUIElement { element("settings.shortcut.\(toolId)") }
 
-  var recorderText: String { recorder.displayedText }
+  func recorderText(for toolId: String) -> String { recorder(for: toolId).displayedText }
 
   func recordShortcut(
+    for toolId: String,
     _ key: String,
     modifiers: XCUIElement.KeyModifierFlags,
     shownAs expectedLabel: String,
     file: StaticString = #filePath,
     line: UInt = #line
   ) {
+    let recorder = recorder(for: toolId)
     recorder.click()
     recorder.typeKey(key, modifierFlags: modifiers)
-    Wait.until("the recorder shows \(expectedLabel)", file: file, line: line) { self.recorderText == expectedLabel }
+    Wait.until("the \(toolId) recorder shows \(expectedLabel)", file: file, line: line) {
+      self.recorderText(for: toolId) == expectedLabel
+    }
   }
 
-  func resetShortcut() { element("settings.shortcut.reset").click() }
+  func resetShortcut(for toolId: String) { element("settings.shortcut.\(toolId).reset").click() }
 }

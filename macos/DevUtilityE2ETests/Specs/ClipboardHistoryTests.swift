@@ -2,12 +2,12 @@ import XCTest
 
 final class ClipboardHistoryTests: XCTestCase {
   private var app: XCUIApplication!
-  private var clipboard: ClipboardTab!
+  private var clipboard: ClipboardPanel!
 
   override func setUp() {
     continueAfterFailure = false
     app = AppLauncher.launchFresh()
-    clipboard = MainPanel(app: app).openClipboard()
+    clipboard = ClipboardPanel(app: app).open()
   }
 
   override func tearDown() {
@@ -100,7 +100,7 @@ final class ClipboardHistoryTests: XCTestCase {
     copyAndWaitForTopRow("persist older")
     copyAndWaitForTopRow("persist newer")
     app = AppLauncher.relaunchKeepingData(app)
-    clipboard = MainPanel(app: app).openClipboard()
+    clipboard = ClipboardPanel(app: app).open()
     clipboard.waitForRowText(0, toEqual: "persist newer")
     XCTAssertEqual(clipboard.rowText(1), "persist older")
   }
@@ -128,10 +128,10 @@ final class ClipboardHistoryTests: XCTestCase {
   }
 
   func test_copyingASnippetAddsItToHistory() {
-    let snippets = MainPanel(app: app).openSnippets()
+    let snippets = SnippetsPanel(app: app).open()
     snippets.addSnippet(title: "Greeting", description: "", tags: "", content: "hello from snippet")
     snippets.clickCopy(onRow: 0)
-    clipboard = MainPanel(app: app).openClipboard()
+    clipboard = ClipboardPanel(app: app).open()
     clipboard.waitForRowText(0, toEqual: "hello from snippet")
   }
 

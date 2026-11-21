@@ -4,28 +4,31 @@ final class ResetFlagTests: XCTestCase {
   func test_resetFlagStartsWithEmptyClipboardHistory() {
     var app = AppLauncher.launchFresh()
     Pasteboard.write("left over from a previous test")
-    MainPanel(app: app).openClipboard().waitForRowText(0, toEqual: "left over from a previous test")
+    ClipboardPanel(app: app).open().waitForRowText(0, toEqual: "left over from a previous test")
 
     app.terminate()
     app = AppLauncher.launchFresh()
     defer { app.terminate() }
 
-    let clipboard = MainPanel(app: app).openClipboard()
+    let clipboard = ClipboardPanel(app: app).open()
     Pasteboard.write("copied after the reset")
     clipboard.waitForRowText(0, toEqual: "copied after the reset")
     XCTAssertEqual(clipboard.rowCount, 1, "old history appeared after the reset launch")
   }
 
-  func test_resetFlagRestoresTheDefaultShortcut() {
+  func test_resetFlagRestoresEveryToolsDefaultShortcut() {
     var app = AppLauncher.launchFresh()
-    MainPanel(app: app).openSettings().recordShortcut("k", modifiers: [.control, .option], shownAs: "⌃⌥K")
+    let settings = ClipboardPanel(app: app).open().openSettings()
+    settings.recordShortcut(for: "clipboard", "k", modifiers: [.control, .option], shownAs: "⌃⌥K")
+    settings.recordShortcut(for: "snippets", "j", modifiers: [.control, .option], shownAs: "⌃⌥J")
 
     app.terminate()
     app = AppLauncher.launchFresh()
     defer { app.terminate() }
 
-    let settings = MainPanel(app: app).openSettings()
-    // The "Current:" label shows ⌃⌥D until the stored shortcut loads, so only the recorder proves the reset.
-    Wait.until("the recorder shows the default shortcut") { settings.recorderText == "⌃⌥D" }
+    let relaunchedSettings = ClipboardPanel(app: app).open().openSettings()
+    // The "Current:" labels show the defaults until the stored shortcuts load, so only the recorders prove the reset.
+    Wait.until("the Clipboard recorder shows its default") { relaunchedSettings.recorderText(for: "clipboard") == "⌃⌥V" }
+    Wait.until("the Snippets recorder shows its default") { relaunchedSettings.recorderText(for: "snippets") == "⌃⌥S" }
   }
 }

@@ -7,7 +7,7 @@ enum AppLauncher {
     refuseToDriveANonE2EBuild()
     Pasteboard.clear()
     let app = XCUIApplication()
-    app.launchArguments = ["--e2e-reset"]
+    app.launchArguments = ["--e2e-reset", "--e2e-skip-onboarding"]
     app.launch()
     waitUntilReady(app)
     return app
@@ -17,7 +17,7 @@ enum AppLauncher {
     refuseToDriveANonE2EBuild()
     app.terminate()
     Pasteboard.clear()
-    app.launchArguments = []
+    app.launchArguments = ["--e2e-skip-onboarding"]
     app.launch()
     waitUntilReady(app)
     return app
@@ -33,7 +33,14 @@ enum AppLauncher {
     #endif
   }
 
+  // No panel opens at launch, so the app is ready once every tool's menu-bar icon is there.
   private static func waitUntilReady(_ app: XCUIApplication) {
-    MainPanel(app: app).waitUntilVisible(timeout: launchTimeout)
+    let menuBar = MenuBar(app: app)
+    for toolId in ["clipboard", "snippets"] {
+      XCTAssertTrue(
+        menuBar.icon(for: toolId).waitForExistence(timeout: launchTimeout),
+        "the \(toolId) menu-bar icon did not appear"
+      )
+    }
   }
 }

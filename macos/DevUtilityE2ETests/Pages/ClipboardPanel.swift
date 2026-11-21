@@ -1,16 +1,13 @@
 import XCTest
 
-struct ClipboardTab {
+struct ClipboardPanel: ToolPanelPage {
+  static let toolId = "clipboard"
   let app: XCUIApplication
-
-  private func element(_ identifier: String) -> XCUIElement {
-    app.descendants(matching: .any)[identifier]
-  }
 
   var emptyState: XCUIElement { element("clipboard.emptyState") }
 
   var rowCount: Int {
-    app.descendants(matching: .any)
+    window.descendants(matching: .any)
       .matching(NSPredicate(format: "identifier MATCHES %@", "clipboard\\.row\\.[0-9]+"))
       .count
   }
@@ -64,7 +61,7 @@ struct ClipboardTab {
   func clickDetailSave() { saveButton.click() }
 
   func clearAll(confirm: Bool) {
-    element("header.clearAll").click()
+    element("clipboard.header.clearAll").click()
     let buttonTitle = confirm ? "Clear All" : "Cancel"
     // Scoped to the alert: an unscoped query also matches Touch Bar buttons, which cannot be clicked.
     let dialogButton = app.dialogs.buttons[buttonTitle]

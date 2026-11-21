@@ -1,11 +1,8 @@
 import XCTest
 
-struct SnippetsTab {
+struct SnippetsPanel: ToolPanelPage {
+  static let toolId = "snippets"
   let app: XCUIApplication
-
-  private func element(_ identifier: String) -> XCUIElement {
-    app.descendants(matching: .any)[identifier]
-  }
 
   var searchField: XCUIElement { element("snippets.search") }
 
@@ -16,7 +13,7 @@ struct SnippetsTab {
   var emptyStateTitle: String { element("snippets.emptyState.title").displayedText }
 
   var rowCount: Int {
-    app.descendants(matching: .any)
+    window.descendants(matching: .any)
       .matching(NSPredicate(format: "identifier MATCHES %@", "snippets\\.row\\.[0-9]+"))
       .count
   }
@@ -59,9 +56,9 @@ struct SnippetsTab {
   }
 
   func openAddDialog() -> AddSnippetDialog {
-    element("header.addSnippet").click()
+    element("snippets.header.add").click()
     XCTAssertTrue(element("snippets.add.title").waitForExistence(timeout: Wait.defaultTimeout))
-    return AddSnippetDialog(app: app)
+    return AddSnippetDialog(snippets: self)
   }
 
   func addSnippet(title: String, description: String, tags: String, content: String) {
@@ -100,11 +97,9 @@ struct SnippetsTab {
 }
 
 struct AddSnippetDialog {
-  let app: XCUIApplication
+  let snippets: SnippetsPanel
 
-  private func element(_ identifier: String) -> XCUIElement {
-    app.descendants(matching: .any)[identifier]
-  }
+  private func element(_ identifier: String) -> XCUIElement { snippets.element(identifier) }
 
   func fill(title: String, description: String, tags: String, content: String) {
     if !title.isEmpty { element("snippets.add.title").typeAfterFocusing(title) }

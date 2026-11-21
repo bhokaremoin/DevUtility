@@ -2,20 +2,26 @@ import XCTest
 
 final class KeyboardNavigationTests: XCTestCase {
   private var app: XCUIApplication!
-  private var panel: MainPanel!
 
   override func setUp() {
     continueAfterFailure = false
     app = AppLauncher.launchFresh()
-    panel = MainPanel(app: app)
   }
 
   override func tearDown() {
     app.terminate()
   }
 
-  private func clipboardWithThreeItems() -> ClipboardTab {
-    let clipboard = panel.openClipboard()
+  private func press(_ key: XCUIKeyboardKey, modifiers: XCUIElement.KeyModifierFlags = []) {
+    app.typeKey(key, modifierFlags: modifiers)
+  }
+
+  private func press(_ character: String, modifiers: XCUIElement.KeyModifierFlags = []) {
+    app.typeKey(character, modifierFlags: modifiers)
+  }
+
+  private func clipboardWithThreeItems() -> ClipboardPanel {
+    let clipboard = ClipboardPanel(app: app).open()
     for text in ["one", "two", "three"] {
       Pasteboard.write(text)
       clipboard.waitForRowText(0, toEqual: text)
@@ -26,36 +32,36 @@ final class KeyboardNavigationTests: XCTestCase {
   func test_arrowKeysMoveTheSelection() {
     let clipboard = clipboardWithThreeItems()
     clipboard.selectRow(0)
-    panel.press(.downArrow)
+    press(.downArrow)
     Wait.until("row 1 is selected") { clipboard.isRowSelected(1) }
-    panel.press(.upArrow)
+    press(.upArrow)
     Wait.until("row 0 is selected") { clipboard.isRowSelected(0) }
   }
 
   func test_arrowKeysInSnippetSearchMoveTheListSelection() {
-    let snippets = panel.openSnippets()
+    let snippets = SnippetsPanel(app: app).open()
     for title in ["Third", "Second", "First"] {
       snippets.addSnippet(title: title, description: "", tags: "", content: "\(title) content")
     }
     snippets.selectRow(0)
     snippets.searchField.focus()
-    panel.press(.downArrow)
+    press(.downArrow)
     Wait.until("row 1 is selected") { snippets.isRowSelected(1) }
-    panel.press(.upArrow)
+    press(.upArrow)
     Wait.until("row 0 is selected") { snippets.isRowSelected(0) }
   }
 
   func test_arrowKeysInsideTheDetailEditorMoveTheCursorNotTheSelection() {
-    let clipboard = panel.openClipboard()
+    let clipboard = ClipboardPanel(app: app).open()
     Pasteboard.write("older item")
     clipboard.waitForRowText(0, toEqual: "older item")
     Pasteboard.write("first line\nsecond line")
     Wait.until("the two-line item is at the top") { clipboard.rowCount == 2 }
     clipboard.selectRow(0)
     clipboard.detailEditor.focus()
-    panel.press(.upArrow, modifiers: .command)
-    panel.press(.downArrow)
-    panel.type("X")
+    press(.upArrow, modifiers: .command)
+    press(.downArrow)
+    app.typeText("X")
     Wait.until("the marker lands at the start of line 2") {
       clipboard.detailEditor.displayedText == "first line\nXsecond line"
     }
@@ -67,27 +73,27 @@ final class KeyboardNavigationTests: XCTestCase {
     clipboard.selectRow(1)
     Pasteboard.clear()
     // .return is the main Return key (keyCode 36); .enter is the keypad key, which the app does not handle.
-    panel.press(.return)
+    press(.return)
     Wait.until("the pasteboard holds the selected item") { Pasteboard.read() == "two" }
   }
 
   func test_enterInTheSnippetListCopiesTheSelectedSnippet() {
-    let snippets = panel.openSnippets()
+    let snippets = SnippetsPanel(app: app).open()
     snippets.addSnippet(title: "Older", description: "", tags: "", content: "older content")
     snippets.addSnippet(title: "Newer", description: "", tags: "", content: "newer content")
     snippets.selectRow(1)
     XCTAssertFalse(snippets.isSearchFocused, "the search field kept focus after clicking a row")
     Pasteboard.clear()
-    panel.press(.return)
+    press(.return)
     Wait.until("the pasteboard holds the selected snippet") { Pasteboard.read() == "older content" }
   }
 
   func test_enterInsideATextInputDoesNotCopy() {
-    let snippets = panel.openSnippets()
+    let snippets = SnippetsPanel(app: app).open()
     snippets.addSnippet(title: "Entry", description: "", tags: "", content: "entry content")
     Pasteboard.clear()
     snippets.searchField.typeAfterFocusing("Entry")
-    panel.press(.return)
+    press(.return)
     XCTAssertTrue(Pasteboard.staysEmpty(for: 2))
   }
 
@@ -96,63 +102,50 @@ final class KeyboardNavigationTests: XCTestCase {
     clipboard.selectRow(0)
     clipboard.replaceDetailText(with: "unsaved draft")
     Pasteboard.clear()
-    panel.press(.return, modifiers: .command)
+    press(.return, modifiers: .command)
     Wait.until("the pasteboard holds the stored text") { Pasteboard.read() == "three" }
   }
 
   func test_escapeInSnippetsClearsTheSearch() {
-    let snippets = panel.openSnippets()
+    let snippets = SnippetsPanel(app: app).open()
     snippets.addSnippet(title: "Alpha", description: "", tags: "", content: "a")
     snippets.search(for: "zzz")
     Wait.until("the search hides the snippet") { snippets.rowCount == 0 }
-    panel.press(.escape)
+    press(.escape)
     Wait.until("the cleared search shows the snippet again") { snippets.rowCount == 1 }
   }
 
-  func test_commandOneAndTwoSwitchBetweenClipboardAndSnippets() {
-    let clipboard = panel.openClipboard()
-    panel.press("2", modifiers: .command)
-    Wait.until("the Snippets tab is shown") { SnippetsTab(app: self.app).isShown }
-    panel.press("1", modifiers: .command)
-    Wait.until("the Clipboard tab is shown") { clipboard.emptyState.exists }
-  }
-
   func test_commandCommaOpensSettings() {
-    _ = panel.openClipboard()
-    panel.press(",", modifiers: .command)
+    _ = ClipboardPanel(app: app).open()
+    press(",", modifiers: .command)
     SettingsWindow(app: app).waitUntilShown()
   }
 
-  func test_commandFFocusesSnippetSearchFromAnotherTab() {
-    _ = panel.openClipboard()
-    panel.press("f", modifiers: .command)
-    let snippets = SnippetsTab(app: app)
-    Wait.until("the search has focus") { snippets.isSearchFocused }
-  }
-
   func test_commandFMovesFocusFromTheDetailEditorToSnippetSearch() {
-    let snippets = panel.openSnippets()
+    let snippets = SnippetsPanel(app: app).open()
     snippets.addSnippet(title: "Focus", description: "", tags: "", content: "focus content")
     snippets.selectRow(0)
     snippets.detailEditor.focus()
     XCTAssertFalse(snippets.isSearchFocused, "the search still has focus while editing")
-    panel.press("f", modifiers: .command)
+    press("f", modifiers: .command)
     Wait.until("the search has focus") { snippets.isSearchFocused }
   }
 
   func test_shortcutsHelpListsTheShortcuts() {
-    panel.openShortcutsHelp()
-    XCTAssertTrue(panel.shortcutsHelpTitle.exists)
-    let actions = panel.shortcutsHelpActions
-    XCTAssertTrue(actions.contains("Switch to Snippets tab"), "help actions: \(actions)")
+    let clipboard = ClipboardPanel(app: app).open()
+    clipboard.openShortcutsHelp()
+    XCTAssertTrue(clipboard.shortcutsHelpTitle.exists)
+    let actions = clipboard.shortcutsHelpActions
+    XCTAssertTrue(actions.contains("Open Settings"), "help actions: \(actions)")
     XCTAssertTrue(actions.contains("Copy selected item (list focused)"), "help actions: \(actions)")
-    panel.closeShortcutsHelp()
-    Wait.until("the help sheet is closed") { !self.panel.shortcutsHelpSheet.exists }
+    clipboard.closeShortcutsHelp()
+    Wait.until("the help sheet is closed") { !clipboard.shortcutsHelpSheet.exists }
   }
 
   func test_shortcutsHelpShowsCommandCommaForSettings() {
-    panel.openShortcutsHelp()
-    XCTAssertEqual(panel.shortcutsHelpAction(section: 1, row: 2), "Open Settings")
-    XCTAssertEqual(panel.shortcutsHelpKeys(section: 1, row: 2), "⌘ + ,")
+    let clipboard = ClipboardPanel(app: app).open()
+    clipboard.openShortcutsHelp()
+    XCTAssertEqual(clipboard.shortcutsHelpAction(section: 1, row: 0), "Open Settings")
+    XCTAssertEqual(clipboard.shortcutsHelpKeys(section: 1, row: 0), "⌘ + ,")
   }
 }

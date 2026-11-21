@@ -2,12 +2,12 @@ import XCTest
 
 final class SnippetsTests: XCTestCase {
   private var app: XCUIApplication!
-  private var snippets: SnippetsTab!
+  private var snippets: SnippetsPanel!
 
   override func setUp() {
     continueAfterFailure = false
     app = AppLauncher.launchFresh()
-    snippets = MainPanel(app: app).openSnippets()
+    snippets = SnippetsPanel(app: app).open()
   }
 
   override func tearDown() {
@@ -104,7 +104,7 @@ final class SnippetsTests: XCTestCase {
     snippets.replaceDetailText(with: "docker image prune -a")
     snippets.clickDetailSave()
     app = AppLauncher.relaunchKeepingData(app)
-    snippets = MainPanel(app: app).openSnippets()
+    snippets = SnippetsPanel(app: app).open()
     snippets.selectRow(0)
     Wait.until("the edited content is shown") { self.snippets.detailEditor.displayedText == "docker image prune -a" }
   }
