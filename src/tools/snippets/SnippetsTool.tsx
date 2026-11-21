@@ -70,6 +70,13 @@ function Snippets(): React.JSX.Element {
           tone="quiet"
           onPress={openShortcutsHelp}
         />
+        <HeaderButton
+          testID="snippets.header.close"
+          label="✕"
+          accessibilityLabel="Close Snippets"
+          tone="quiet"
+          onPress={() => ToolPanel.hide('snippets')}
+        />
       </ToolHeader>
       <ShortcutsModal visible={isShortcutsHelpOpen} onClose={() => setIsShortcutsHelpOpen(false)} />
       <View style={styles.content}>

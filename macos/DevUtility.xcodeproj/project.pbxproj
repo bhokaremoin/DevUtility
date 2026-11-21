@@ -28,6 +28,7 @@
 		514201582437B4B40078DB4F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 514201572437B4B40078DB4F /* main.m */; };
 		526B0EB03BA449C0EDB8442C /* ToolDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6DEC51B83A3F3E9CD7E06FA /* ToolDefinition.swift */; };
 		547B1A837CAD2B7A97DB20D0 /* PanelFrameCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07386466F6C65B1EB21FC1DE /* PanelFrameCalculator.swift */; };
+		5AC18C37536CB8E105909106 /* PanelDismissal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405B1EB18F1B208347C21D1A /* PanelDismissal.swift */; };
 		6074A04C5BA92B509F4637E0 /* ResetFlagTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D971F53C728C38A0172693A4 /* ResetFlagTests.swift */; };
 		65AC2862225DD6D407A9A100 /* OutsideClickRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10F5F2D41B2CDEE718CD8678 /* OutsideClickRule.swift */; };
 		734781D6634385B72509FA22 /* ClipboardHistoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5670662FC42AA0FC47701C53 /* ClipboardHistoryTests.swift */; };
@@ -96,6 +97,7 @@
 		32C5DA337FCB7F34C0AB3E87 /* KeyboardFocusTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = KeyboardFocusTests.swift; sourceTree = "<group>"; };
 		368CD29EC7A39FD0AB9979BC /* ToolRegistryTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ToolRegistryTests.swift; sourceTree = "<group>"; };
 		3914121390036867674FB361 /* Pasteboard.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Pasteboard.swift; sourceTree = "<group>"; };
+		405B1EB18F1B208347C21D1A /* PanelDismissal.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PanelDismissal.swift; sourceTree = "<group>"; };
 		43EB1BCE8D00C2D564D36A9F /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		514201492437B4B30078DB4F /* DevUtility.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DevUtility.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5142014B2437B4B30078DB4F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -209,6 +211,7 @@
 				C86A7797F223C0DED616C02D /* ToolPanel.swift */,
 				F63693C600976CB9A2E443F4 /* ToolPanelController.swift */,
 				651D59305133BD3F88CB61BE /* ToolPanels.swift */,
+				405B1EB18F1B208347C21D1A /* PanelDismissal.swift */,
 			);
 			name = Panels;
 			path = Panels;
@@ -674,6 +677,7 @@
 				F8B5B54302FC353EA3576B4D /* ToolPanel.swift in Sources */,
 				9A0827DD1DD4A44A38EEA82C /* ToolPanelController.swift in Sources */,
 				338FFCF097EBA4B6F6C22104 /* ToolPanels.swift in Sources */,
+				5AC18C37536CB8E105909106 /* PanelDismissal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

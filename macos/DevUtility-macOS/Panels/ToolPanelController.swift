@@ -7,7 +7,7 @@ final class ToolPanelController: NSObject {
   let panel: ToolPanel
   private let presenter: PanelPresenter
   private var statusItem: NSStatusItem!
-  private var clickOutsideMonitor: Any?
+  private var dismissal: PanelDismissal!
   private var lastToggleTime: TimeInterval = 0
 
   init(tool: ToolDefinition, rootView: NSView) {
@@ -24,6 +24,12 @@ final class ToolPanelController: NSObject {
     panel.setContentSize(tool.size)
 
     setUpStatusItem()
+    dismissal = PanelDismissal(
+      tool: tool,
+      panel: panel,
+      ownStatusItemWindow: { [weak self] in self?.statusItem.button?.window },
+      closePanel: { [weak self] in self?.hide() }
+    )
     if let shortcutName = ToolShortcuts.name(for: tool.id) {
       KeyboardShortcuts.onKeyDown(for: shortcutName) { [weak self] in self?.toggle() }
     }
@@ -58,13 +64,19 @@ final class ToolPanelController: NSObject {
       for: tool.openingPosition, size: tool.size, mouse: mouse, visibleFrame: visibleFrame)
     panel.setFrame(frame, display: false)
     presenter.show(at: frame.origin)
-    installClickOutsideMonitor()
+    dismissal.start()
   }
 
   func hide() {
     guard panel.isVisible else { return }
-    presenter.hide()
-    removeClickOutsideMonitor()
+    dismissal.stop()
+    // Another open tool panel takes the keyboard; focus goes back to another app only when none is open.
+    if let otherPanel = ToolPanels.shared.visiblePanels(excluding: tool.id).first {
+      presenter.hideKeepingFocus()
+      otherPanel.makeKeyAndOrderFront(nil)
+    } else {
+      presenter.hide()
+    }
   }
 
   // MARK: - Menu-bar icon
@@ -124,20 +136,4 @@ final class ToolPanelController: NSObject {
   @objc private func openSettings() { SettingsWindowController.shared.show(openedFromToolId: nil) }
 
   @objc private func quit() { NSApp.terminate(nil) }
-
-  // MARK: - Closing on outside clicks
-
-  private func installClickOutsideMonitor() {
-    removeClickOutsideMonitor()
-    clickOutsideMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] _ in
-      guard let self, self.panel.isVisible, !self.panel.frame.contains(NSEvent.mouseLocation) else { return }
-      self.hide()
-    }
-  }
-
-  private func removeClickOutsideMonitor() {
-    guard let monitor = clickOutsideMonitor else { return }
-    NSEvent.removeMonitor(monitor)
-    clickOutsideMonitor = nil
-  }
 }

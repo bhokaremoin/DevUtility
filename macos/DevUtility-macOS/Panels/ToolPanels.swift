@@ -21,6 +21,10 @@ import Cocoa
     controllers.first { $0.tool.id == toolId }
   }
 
+  func visiblePanels(excluding toolId: String) -> [ToolPanel] {
+    controllers.filter { $0.tool.id != toolId && $0.isVisible }.map(\.panel)
+  }
+
   @objc func showFirstTool() {
     controllers.first?.show()
   }

@@ -1,15 +1,12 @@
-// PanelPresenter.swift
-// DevUtility
-//
-// Description: Shows and hides a panel as the key window without activating the app.
-// Architecture Role: Used by PanelManager. Activation on macOS 14+ is a request the system can
-//   decline (it does for an app launched in the background), and an inactive app's ordinary
-//   window gets no keys. A non-activating panel takes key status on its own, so keys reach it
-//   whether or not DevUtility is the active app. A click inside the panel still makes the window
-//   server activate DevUtility, so hiding hands focus back to the app that was in front before.
-
 import Cocoa
 
+/// Shows and hides a tool panel as the key window without activating the app.
+///
+/// Activation on macOS 14+ is a request the system can decline (it does for an app launched in the
+/// background), and an inactive app's ordinary window gets no keys. A non-activating panel takes key
+/// status on its own, so keys reach it whether or not DevUtility is the active app. A click inside
+/// the panel still makes the window server activate DevUtility, so hiding hands focus back to the
+/// app that was in front before.
 final class PanelPresenter {
   private let panel: NSPanel
   private var appInFrontBeforeShow: NSRunningApplication?
@@ -36,6 +33,11 @@ final class PanelPresenter {
   func hide() {
     panel.orderOut(nil)
     returnFocusIfThePanelTookIt()
+  }
+
+  /// Hides the panel without handing focus back, for when another DevUtility panel takes the keyboard.
+  func hideKeepingFocus() {
+    panel.orderOut(nil)
   }
 
   private func returnFocusIfThePanelTookIt() {
