@@ -127,4 +127,15 @@ final class SettingsTests: XCTestCase {
     MenuBar(app: app).clickIcon(for: ClipboardPanel.toolId)
     clipboard.waitUntilVisible()
   }
+
+  func test_resettingToADefaultAnotherToolTookMovesItBack() {
+    let settings = ClipboardPanel(app: app).open().openSettings()
+    settings.recordShortcut(for: "snippets", "v", modifiers: [.control, .option], shownAs: "⌃⌥V")
+    Wait.until("Clipboard lost ⌃⌥V") { settings.currentShortcutText(for: "clipboard") == "Not set" }
+
+    settings.resetShortcut(for: "clipboard")
+    Wait.until("Clipboard has ⌃⌥V again") { settings.currentShortcutText(for: "clipboard") == "⌃⌥V" }
+    Wait.until("Snippets lost ⌃⌥V") { settings.currentShortcutText(for: "snippets") == "Not set" }
+    XCTAssertEqual(settings.conflictNote(for: "clipboard").displayedText, "Removed this shortcut from Snippets.")
+  }
 }
