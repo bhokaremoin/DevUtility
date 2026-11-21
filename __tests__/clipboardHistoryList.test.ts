@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals';
-import {addCapturedText} from '../src/hooks/clipboardHistoryList';
-import {ClipboardItem} from '../src/types';
+import {addCapturedText} from '../src/tools/clipboard/clipboardHistoryList';
+import {ClipboardItem} from '../src/shared/types';
 
 let nextId = 0;
 const createItem = (text: string): ClipboardItem => ({id: String(nextId++), text, timestamp: 0});

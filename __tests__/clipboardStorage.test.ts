@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, it} from '@jest/globals';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {loadClipboardHistory, saveClipboardHistory} from '../src/services/clipboardStorage';
-import {CLIPBOARD_STORAGE_KEY} from '../src/constants';
+import {loadClipboardHistory, saveClipboardHistory} from '../src/tools/clipboard/clipboardStorage';
+import {CLIPBOARD_STORAGE_KEY} from '../src/shared/constants';
 
 beforeEach(() => AsyncStorage.clear());
 

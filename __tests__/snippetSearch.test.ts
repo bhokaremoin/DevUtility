@@ -1,6 +1,6 @@
 import {describe, expect, it} from '@jest/globals';
-import {filterSnippets} from '../src/hooks/snippetSearch';
-import {Snippet} from '../src/types';
+import {filterSnippets} from '../src/tools/snippets/snippetSearch';
+import {Snippet} from '../src/shared/types';
 
 function makeSnippet(overrides: Partial<Snippet>): Snippet {
   return {id: 'id', title: '', description: '', content: '', tags: [], createdAt: 0, ...overrides};

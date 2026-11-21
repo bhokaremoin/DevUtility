@@ -1,7 +1,7 @@
 import {beforeEach, describe, expect, it} from '@jest/globals';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {addSnippet, deleteSnippet, loadSnippets, updateSnippet} from '../src/services/snippetStorage';
-import {SNIPPETS_STORAGE_KEY} from '../src/constants';
+import {addSnippet, deleteSnippet, loadSnippets, updateSnippet} from '../src/tools/snippets/snippetStorage';
+import {SNIPPETS_STORAGE_KEY} from '../src/shared/constants';
 
 beforeEach(() => AsyncStorage.clear());
 

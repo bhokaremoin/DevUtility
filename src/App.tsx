@@ -1,28 +1,14 @@
-/**
- * @file App.tsx
- * @description Root application component for DevUtility.
- *
- * Architecture Role: Top-level coordinator that wires together screens, the
- * shared clipboard state, and the global keyboard shortcut dispatcher.
- *
- * Responsibilities:
- * - Renders `TopHeader` and the active screen (ClipCopy / Snippets / Settings).
- * - Holds `clipboardState` from `useClipboardHistory` and passes it down to
- *   `ClipCopyScreen` via spread props.
- * - Maintains `clipboardRef` and `snippetRef` as `ScreenHandle` refs so
- *   keyboard events can call screen-level actions imperatively.
- * - Passes a `handlers` object to `useKeyboardShortcuts` — a stable object
- *   (via `useMemo`) that reads `getActiveRef()` at call time, so screen refs
- *   are always fresh without re-subscribing to native events on every render.
- */
-
 import React, {useCallback, useMemo, useRef, useState} from 'react';
 import {Alert, Keyboard, NativeModules, StyleSheet, View} from 'react-native';
-import {ClipCopyScreen, SnippetManagerScreen, SettingsScreen} from './screens';
-import {TopHeader, ShortcutsModal, Tab} from './components';
-import {useClipboardHistory, useKeyboardShortcuts} from './hooks';
-import {ScreenHandle} from './types';
-import {colors} from './theme';
+import {ClipboardScreen} from './tools/clipboard/ClipboardScreen';
+import {SnippetsScreen} from './tools/snippets/SnippetsScreen';
+import {SettingsScreen} from './settings/SettingsScreen';
+import {TopHeader, Tab} from './shared/TopHeader';
+import {ShortcutsModal} from './shared/ShortcutsModal';
+import {useClipboardHistory} from './tools/clipboard/useClipboardHistory';
+import {useKeyboardShortcuts} from './shared/useKeyboardShortcuts';
+import {ScreenHandle} from './shared/types';
+import {colors} from './shared/theme';
 
 const {KeyEventModule} = NativeModules;
 
@@ -104,10 +90,10 @@ function App(): React.JSX.Element {
         />
         <View style={styles.content}>
           {activeTab === 'clipboard' && (
-            <ClipCopyScreen ref={clipboardRef} {...clipboardState} />
+            <ClipboardScreen ref={clipboardRef} {...clipboardState} />
           )}
           {activeTab === 'snippets' && (
-            <SnippetManagerScreen ref={snippetRef} />
+            <SnippetsScreen ref={snippetRef} />
           )}
           {activeTab === 'settings' && <SettingsScreen />}
         </View>

@@ -1,7 +1,7 @@
 import React from 'react';
 import {AppRegistry} from 'react-native';
 import App from './src/App';
-import {StorageResetGate} from './src/testSupport/StorageResetGate';
+import {StorageResetGate} from './src/shared/StorageResetGate';
 import {name as appName} from './app.json';
 
 function Root({isE2EReset = false}) {

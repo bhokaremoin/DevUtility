@@ -1,5 +1,5 @@
 import {describe, expect, it} from '@jest/globals';
-import {formatContentStats, parseTags, truncateText} from '../src/utils';
+import {formatContentStats, parseTags, truncateText} from '../src/shared/utils';
 
 describe('truncateText', () => {
   it('returns text unchanged when within the limit', () => {
