@@ -48,6 +48,8 @@ struct ClipboardPanel: ToolPanelPage {
 
   var detailEditor: XCUIElement { element("clipboard.detail.editor") }
 
+  var isDetailEditorFocused: Bool { (detailEditor.value(forKey: "hasKeyboardFocus") as? Bool) == true }
+
   func replaceDetailText(with text: String) {
     detailEditor.focus()
     detailEditor.typeKey("a", modifierFlags: .command)

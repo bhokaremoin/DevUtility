@@ -73,6 +73,8 @@ struct SnippetsPanel: ToolPanelPage {
 
   var detailEditor: XCUIElement { element("snippets.detail.editor") }
 
+  var isAddDialogOpen: Bool { element("snippets.add.title").exists }
+
   func replaceDetailText(with text: String) {
     detailEditor.focus()
     detailEditor.typeKey("a", modifierFlags: .command)

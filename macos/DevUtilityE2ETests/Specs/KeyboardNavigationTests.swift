@@ -135,17 +135,92 @@ final class KeyboardNavigationTests: XCTestCase {
     let clipboard = ClipboardPanel(app: app).open()
     clipboard.openShortcutsHelp()
     XCTAssertTrue(clipboard.shortcutsHelpTitle.exists)
-    let actions = clipboard.shortcutsHelpActions
-    XCTAssertTrue(actions.contains("Open Settings"), "help actions: \(actions)")
-    XCTAssertTrue(actions.contains("Copy selected item (list focused)"), "help actions: \(actions)")
     clipboard.closeShortcutsHelp()
     Wait.until("the help sheet is closed") { !clipboard.shortcutsHelpSheet.exists }
   }
 
-  func test_shortcutsHelpShowsCommandCommaForSettings() {
+  func test_eachHelpSheetListsOnlyItsToolsShortcuts() {
     let clipboard = ClipboardPanel(app: app).open()
     clipboard.openShortcutsHelp()
-    XCTAssertEqual(clipboard.shortcutsHelpAction(section: 1, row: 0), "Open Settings")
-    XCTAssertEqual(clipboard.shortcutsHelpKeys(section: 1, row: 0), "⌘ + ,")
+    XCTAssertEqual(clipboard.shortcutsHelpRows.map(\.action), [
+      "Open / close Clipboard", "Move selection", "Copy selected", "Copy stored text", "Stop editing / close", "Open Settings",
+    ])
+    XCTAssertEqual(clipboard.shortcutsHelpRows.first { $0.action == "Open Settings" }?.keys, "⌘ + ,")
+    clipboard.closeShortcutsHelp()
+
+    let snippets = SnippetsPanel(app: app).open()
+    snippets.openShortcutsHelp()
+    XCTAssertEqual(snippets.shortcutsHelpRows.map(\.action), [
+      "Open / close Snippets", "Move selection", "Focus search", "Copy selected", "Copy stored text",
+      "Clear search / stop editing", "Open Settings",
+    ])
+  }
+
+  // MARK: - Esc
+
+  func test_escapeClosesAnOpenHelpSheetFirstInClipboard() {
+    let clipboard = ClipboardPanel(app: app).open()
+    clipboard.openShortcutsHelp()
+    press(.escape)
+    Wait.until("the help sheet is closed") { !clipboard.shortcutsHelpSheet.exists }
+    XCTAssertTrue(clipboard.staysVisible(for: 1), "Esc closed Clipboard along with its help sheet")
+  }
+
+  func test_escapeClosesAnOpenHelpSheetFirstInSnippets() {
+    let snippets = SnippetsPanel(app: app).open()
+    snippets.search(for: "keep")
+    snippets.openShortcutsHelp()
+    press(.escape)
+    Wait.until("the help sheet is closed") { !snippets.shortcutsHelpSheet.exists }
+    XCTAssertEqual(snippets.searchText, "keep", "the first Esc also cleared the search")
+  }
+
+  func test_escapeClosesTheAddDialog() {
+    let snippets = SnippetsPanel(app: app).open()
+    _ = snippets.openAddDialog()
+    press(.escape)
+    Wait.until("the add dialog is closed") { !snippets.isAddDialogOpen }
+    XCTAssertTrue(snippets.isVisible)
+  }
+
+  func test_escapeInClipboardStopsEditingThenClosesThePanel() {
+    let clipboard = clipboardWithThreeItems()
+    clipboard.selectRow(0)
+    clipboard.detailEditor.focus()
+    Wait.until("the editor has focus") { clipboard.isDetailEditorFocused }
+    press(.escape)
+    Wait.until("the editor lost focus") { !clipboard.isDetailEditorFocused }
+    XCTAssertTrue(clipboard.staysVisible(for: 1), "the first Esc closed Clipboard while editing")
+    press(.escape)
+    clipboard.waitUntilHidden()
+  }
+
+  func test_escapeNeverClosesSnippets() {
+    let snippets = SnippetsPanel(app: app).open()
+    for _ in 1...3 {
+      press(.escape)
+    }
+    XCTAssertTrue(snippets.staysVisible(for: 1), "Esc closed Snippets")
+  }
+
+  // MARK: - Keys that belong to one tool
+
+  func test_commandFInClipboardDoesNothing() {
+    let clipboard = ClipboardPanel(app: app).open()
+    press("f", modifiers: .command)
+    XCTAssertTrue(SnippetsPanel(app: app).staysHidden(for: 1), "⌘F in Clipboard opened Snippets")
+    XCTAssertTrue(clipboard.isVisible)
+  }
+
+  func test_snippetsOpensWithItsSearchFocusedEvenAfterEditingElsewhere() {
+    let snippets = SnippetsPanel(app: app).open()
+    snippets.addSnippet(title: "Focus", description: "", tags: "", content: "focus content")
+    snippets.selectRow(0)
+    snippets.detailEditor.focus()
+    Wait.until("the search lost focus") { !snippets.isSearchFocused }
+    snippets.closeButton.click()
+    snippets.waitUntilHidden()
+    snippets.open()
+    Wait.until("the search has focus again") { snippets.isSearchFocused }
   }
 }

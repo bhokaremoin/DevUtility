@@ -90,11 +90,14 @@ extension ToolPanelPage {
       .map(\.displayedText)
   }
 
-  func shortcutsHelpAction(section: Int, row: Int) -> String {
-    element("shortcuts.action.\(section).\(row)").displayedText
-  }
-
-  func shortcutsHelpKeys(section: Int, row: Int) -> String {
-    element("shortcuts.keys.\(section).\(row)").displayedText
+  /// Every row of the help sheet as (action, keys), in display order.
+  var shortcutsHelpRows: [(action: String, keys: String)] {
+    window.descendants(matching: .any)
+      .matching(NSPredicate(format: "identifier BEGINSWITH %@", "shortcuts.action."))
+      .allElementsBoundByIndex
+      .map { actionElement in
+        let position = actionElement.identifier.dropFirst("shortcuts.action.".count)
+        return (actionElement.displayedText, element("shortcuts.keys.\(position)").displayedText)
+      }
   }
 }
