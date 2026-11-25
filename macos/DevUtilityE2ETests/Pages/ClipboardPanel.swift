@@ -13,10 +13,7 @@ struct ClipboardPanel: ToolPanelPage {
   }
 
   func rowCountStays(_ count: Int, for seconds: TimeInterval) -> Bool {
-    let predicate = NSPredicate { _, _ in self.rowCount != count }
-    let rowCountChanged = XCTNSPredicateExpectation(predicate: predicate, object: nil)
-    rowCountChanged.isInverted = true
-    return XCTWaiter().wait(for: [rowCountChanged], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { self.rowCount == count }
   }
 
   func row(_ index: Int) -> XCUIElement { element("clipboard.row.\(index)") }
@@ -36,10 +33,7 @@ struct ClipboardPanel: ToolPanelPage {
   func isRowSelected(_ index: Int) -> Bool { row(index).isSelected }
 
   func rowStaysSelected(_ index: Int, for seconds: TimeInterval) -> Bool {
-    let predicate = NSPredicate { _, _ in !self.isRowSelected(index) }
-    let selectionLost = XCTNSPredicateExpectation(predicate: predicate, object: nil)
-    selectionLost.isInverted = true
-    return XCTWaiter().wait(for: [selectionLost], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { self.isRowSelected(index) }
   }
 
   func clickCopy(onRow index: Int) { element("clipboard.row.\(index).copy").click() }

@@ -12,12 +12,7 @@ enum OtherApp {
   }
 
   static func staysFrontmost(for seconds: TimeInterval) -> Bool {
-    let losesFront = XCTNSPredicateExpectation(
-      predicate: NSPredicate { _, _ in !isFrontmost },
-      object: nil
-    )
-    losesFront.isInverted = true
-    return XCTWaiter().wait(for: [losesFront], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { isFrontmost }
   }
 
   static var window: XCUIElement { XCUIApplication(bundleIdentifier: bundleIdentifier).windows.firstMatch }

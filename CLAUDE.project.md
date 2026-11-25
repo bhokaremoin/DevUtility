@@ -40,8 +40,10 @@ plus a Settings window. Spec: `docs/superpowers/specs/2026-10-21-multi-tool-pane
   pure logic), then the code.
 - E2E tests use page objects in `macos/DevUtilityE2ETests/Pages/`; identifiers
   (`<area>.<element>[.<index>]`) appear only there.
-- Never `sleep` in tests; wait for a condition. To prove something does *not* happen, use an
-  inverted expectation over a window (`ClipboardPanel.staysVisible`, `ClipboardPanel.rowCountStays`).
+- Never `sleep` in tests; wait for a condition. To prove something does *not* happen, check that
+  it holds over a window with `Wait.holds(for:)` (`ClipboardPanel.staysVisible`, `rowCountStays`).
+  It samples every 100 ms; an inverted `XCTNSPredicateExpectation` looks only about once a second,
+  so over a short window it passes without ever checking.
 - A spec that only characterizes existing behavior must be shown able to fail: break the product
   code on a throwaway branch, run CI on it (`gh workflow run Test --ref <branch>`), then delete it.
 

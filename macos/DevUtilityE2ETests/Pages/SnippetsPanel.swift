@@ -21,10 +21,7 @@ struct SnippetsPanel: ToolPanelPage {
   }
 
   func rowCountStays(_ count: Int, for seconds: TimeInterval) -> Bool {
-    let predicate = NSPredicate { _, _ in self.rowCount != count }
-    let rowCountChanged = XCTNSPredicateExpectation(predicate: predicate, object: nil)
-    rowCountChanged.isInverted = true
-    return XCTWaiter().wait(for: [rowCountChanged], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { self.rowCount == count }
   }
 
   func isRowVisible(_ index: Int) -> Bool {
@@ -39,9 +36,7 @@ struct SnippetsPanel: ToolPanelPage {
   func isRowSelected(_ index: Int) -> Bool { element("snippets.row.\(index)").isSelected }
 
   func rowStaysSelected(_ index: Int, for seconds: TimeInterval) -> Bool {
-    let selectionLost = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !self.isRowSelected(index) }, object: nil)
-    selectionLost.isInverted = true
-    return XCTWaiter().wait(for: [selectionLost], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { self.isRowSelected(index) }
   }
 
   func clickCopy(onRow index: Int) { element("snippets.row.\(index).copy").click() }

@@ -195,6 +195,14 @@ final class KeyboardNavigationTests: XCTestCase {
     clipboard.waitUntilHidden()
   }
 
+  func test_escapeInSnippetsTakesFocusOffAnEmptySearch() {
+    let snippets = SnippetsPanel(app: app).open()
+    Wait.until("the search has focus") { snippets.isSearchFocused }
+    press(.escape)
+    Wait.until("the search lost focus") { !snippets.isSearchFocused }
+    XCTAssertTrue(snippets.staysVisible(for: 1), "Esc closed Snippets")
+  }
+
   func test_escapeNeverClosesSnippets() {
     let snippets = SnippetsPanel(app: app).open()
     for _ in 1...3 {

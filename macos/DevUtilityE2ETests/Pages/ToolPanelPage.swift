@@ -38,15 +38,11 @@ extension ToolPanelPage {
   }
 
   func staysVisible(for seconds: TimeInterval) -> Bool {
-    let hides = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in !self.isVisible }, object: nil)
-    hides.isInverted = true
-    return XCTWaiter().wait(for: [hides], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { self.isVisible }
   }
 
   func staysHidden(for seconds: TimeInterval) -> Bool {
-    let shows = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in self.isVisible }, object: nil)
-    shows.isInverted = true
-    return XCTWaiter().wait(for: [shows], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { !self.isVisible }
   }
 
   func press(_ character: String, modifiers: XCUIElement.KeyModifierFlags = []) {

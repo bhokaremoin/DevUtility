@@ -15,9 +15,7 @@ struct SettingsWindow {
   var isShown: Bool { window.exists }
 
   func staysHidden(for seconds: TimeInterval) -> Bool {
-    let shows = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in self.isShown }, object: nil)
-    shows.isInverted = true
-    return XCTWaiter().wait(for: [shows], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { !self.isShown }
   }
 
   func waitUntilShown(file: StaticString = #filePath, line: UInt = #line) {

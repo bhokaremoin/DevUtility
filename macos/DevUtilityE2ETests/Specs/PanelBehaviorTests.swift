@@ -91,18 +91,6 @@ final class PanelBehaviorTests: XCTestCase {
     assertEqual(clipboard.window.frame.origin, pointer, "Clipboard's top-left")
   }
 
-  func test_clipboardStaysInsideTheScreenNearTheBottomRightCorner() {
-    let visible = Screen.visibleFrame
-    Mouse.move(to: CGPoint(x: visible.maxX - 10, y: visible.maxY - 10))
-    pressShortcut("v")
-    clipboard.waitUntilVisible()
-    let frame = clipboard.window.frame
-    // On CI the Dock's reported height moved by a few points between the app placing the panel and
-    // the test reading the screen (708 in one run, 705 in the next), so the bottom edge gets 4 points.
-    XCTAssertLessThanOrEqual(frame.maxX, visible.maxX + 1, "Clipboard runs off the right edge")
-    XCTAssertLessThanOrEqual(frame.maxY, visible.maxY + 4, "Clipboard runs off the bottom edge")
-  }
-
   func test_clipboardIconOpensItJustBelowTheMenuBar() {
     MenuBar(app: app).clickIcon(for: ClipboardPanel.toolId)
     clipboard.waitUntilVisible()

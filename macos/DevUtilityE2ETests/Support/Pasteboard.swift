@@ -17,9 +17,6 @@ enum Pasteboard {
   }
 
   static func staysEmpty(for seconds: TimeInterval) -> Bool {
-    let predicate = NSPredicate { _, _ in read() != nil }
-    let pasteboardFilled = XCTNSPredicateExpectation(predicate: predicate, object: nil)
-    pasteboardFilled.isInverted = true
-    return XCTWaiter().wait(for: [pasteboardFilled], timeout: seconds) == .completed
+    Wait.holds(for: seconds) { read() == nil }
   }
 }
