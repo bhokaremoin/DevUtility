@@ -1,4 +1,5 @@
 import Cocoa
+import KeyboardShortcuts
 
 /// Settings is a non-activating panel, like the tool panels: it takes the keyboard without
 /// asking macOS to activate DevUtility, which macOS may decline for a menu-bar app (see
@@ -58,5 +59,16 @@ private final class SettingsPanel: NSPanel {
 
   func windowWillClose(_ notification: Notification) {
     openedFromToolId = nil
+  }
+
+  // A registered global shortcut swallows its keys before any window sees them, so a recorder
+  // could never record a shortcut another tool already uses. The tools' shortcuts are switched
+  // off while Settings has the keyboard and back on when it lets go.
+  func windowDidBecomeKey(_ notification: Notification) {
+    KeyboardShortcuts.disable(ToolShortcuts.allNames)
+  }
+
+  func windowDidResignKey(_ notification: Notification) {
+    KeyboardShortcuts.enable(ToolShortcuts.allNames)
   }
 }
