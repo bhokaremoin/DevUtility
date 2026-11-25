@@ -1,7 +1,7 @@
 # Multi-tool panels and end-to-end testing: design
 
 Date: 2026-10-21 (revised 2026-10-22 after spec review)
-Status: approved (review delegated by the developer to a reviewer agent; findings applied)
+Status: implemented (steps 1-4; step 4 on 2026-11-25, see "Implementation notes (step 4)")
 
 ## Goal
 
@@ -219,7 +219,8 @@ macos/DevUtilityE2ETests/
   Support/  AppLauncher, Pasteboard, Keyboard and Mouse (HID-level input), OtherApp
   Pages/    MenuBar, ClipboardPanel, SnippetsPanel, SettingsWindow
   Specs/    ClipboardHistoryTests, SnippetsTests, KeyboardNavigationTests,
-            PanelBehaviorTests, GlobalShortcutTests, SettingsTests,
+            PanelBehaviorTests, GlobalShortcutTests, SettingsTests, MenuBarTests,
+            LaunchTests (first-launch Settings, capture before opening), ResetFlagTests,
             KeyboardFocusTests (keys right after opening, with another app frontmost)
 ```
 
@@ -363,6 +364,26 @@ Each step is its own branch and pull request, reviewed with `h-pr-review` before
 4. **Multi-tool restructure**, test first, per the architecture above. Also updates the README
    (shortcuts, features) and the shortcuts help data. New and changed code drops the existing
    change-log-style file headers and docstrings that restate the code.
+
+## Implementation notes (step 4)
+
+Decisions made while building, beyond the sections above (plan:
+`docs/superpowers/plans/2026-11-21-multi-tool-restructure.md`, "Rulings"):
+
+- The Settings window is a non-activating `NSPanel` (titled, closable) at `.floating + 1`, so it
+  takes the keyboard without asking macOS to activate the app, like the tool panels.
+- A shortcut on a panel that is open but behind another window brings it to front; only an open
+  panel in front closes. The 350 ms toggle debounce is per tool.
+- Closing a panel while the other tool's panel is open gives the keyboard to that panel instead of
+  handing focus back to another app.
+- A registered global shortcut swallows its keys before any window sees them, so the tools'
+  shortcuts are switched off while Settings is the key window; otherwise a recorder could never
+  take a shortcut another tool uses. Reset goes through the same clash rule as recording.
+- Esc decisions read text-input focus from the panel's first responder, sent with the key event;
+  JS focus events can miss a blur.
+- The first root (`ClipboardTool`) still comes from `RCTAppDelegate` and is moved into its panel;
+  the others come from `rootViewFactory`. All roots share one JS context, so the E2E storage reset
+  runs once for all of them.
 
 ## Out of scope
 

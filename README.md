@@ -1,14 +1,15 @@
 # DevUtility
 
-A lightweight macOS utility app that lives in your menu bar. Instant access to your clipboard history and code snippets — without leaving your keyboard.
+A lightweight macOS utility app that lives in your menu bar. Two separate tools, each one shortcut away: your clipboard history and your code snippets — without leaving your keyboard.
 
-## Features
+## Tools
 
-- **Clipboard History** — Browse and re-copy recent clipboard entries
-- **Snippet Manager** — Save, search, and copy reusable code snippets
-- **Keyboard Shortcuts** — Navigate and copy entirely without a mouse
-- **Global Shortcut** — Toggle the app from anywhere with a configurable hotkey (default: `Ctrl+Option+D`)
-- **Menu Bar** — Stays out of your way until you need it
+| Tool | Menu-bar icon | Shortcut | Opens | Closes |
+|---|---|---|---|---|
+| **Clipboard** — browse and re-copy your last 15 copies | 📋 | `⌃⌥V` | at the mouse pointer | on any click outside it, `Esc`, its icon or shortcut |
+| **Snippets** — save, search and copy reusable snippets | `</>` | `⌃⌥S` | centered, search ready to type into | its `✕`, its icon or shortcut (stays open while you work elsewhere) |
+
+Both can be open at once; keys go to the one in front. Clipboard records copies from the moment DevUtility starts. Shortcuts can be changed per tool in Settings (`⌘,`, or right-click a menu-bar icon); giving one tool another tool's shortcut moves it.
 
 ## Install
 
@@ -22,13 +23,15 @@ brew install --cask bhokaremoin/tap/devutility
 
 | Shortcut | Action |
 |---|---|
-| `Ctrl+Option+D` | Toggle app (global) |
-| `↑` / `↓` | Navigate items |
-| `⌘C` | Copy selected item |
+| `⌃⌥V` / `⌃⌥S` | Open or close Clipboard / Snippets (from any app) |
+| `↑` / `↓` | Move the selection |
+| `↵` | Copy the selected item (outside a text field) |
+| `⌘↵` | Copy the selected item's stored text |
 | `⌘F` | Focus search (Snippets) |
-| `Esc` | Deselect / close panel |
+| `Esc` | Clipboard: stop editing, then close. Snippets: clear the search, then stop editing (never closes) |
+| `⌘,` | Open Settings |
 
-The global shortcut can be changed in the Settings tab.
+Each tool's `?` button lists its own shortcuts.
 
 ## Requirements
 

@@ -1,8 +1,14 @@
 # Project context
 
-DevUtility is a macOS menu-bar app (React Native for macOS 0.76 + Swift native modules) with a
-clipboard history and a snippet manager. Spec for the multi-tool restructure:
-`docs/superpowers/specs/2026-10-21-multi-tool-panels-and-e2e-design.md`.
+DevUtility is a macOS menu-bar app (React Native for macOS 0.76 + Swift native modules) with two
+tools, Clipboard and Snippets, each with its own menu-bar icon, floating panel and global shortcut,
+plus a Settings window. Spec: `docs/superpowers/specs/2026-10-21-multi-tool-panels-and-e2e-design.md`.
+
+- Native code is by feature: `Tools/` (the registry that declares each tool), `Panels/` (one
+  `ToolPanelController` per tool, opening and closing rules), `Settings/`, `Bridge/` (React Native
+  modules). JS is by tool: `src/tools/<tool>/`, `src/settings/`, `src/shared/`.
+- Adding a tool: one `ToolRegistry` entry, a shortcut name in `Bridge/ToolShortcuts.swift`, its JS
+  root registered in `index.js` under the registry's `moduleName`, and an icon.
 
 ## Setup
 
@@ -35,7 +41,7 @@ clipboard history and a snippet manager. Spec for the multi-tool restructure:
 - E2E tests use page objects in `macos/DevUtilityE2ETests/Pages/`; identifiers
   (`<area>.<element>[.<index>]`) appear only there.
 - Never `sleep` in tests; wait for a condition. To prove something does *not* happen, use an
-  inverted expectation over a window (`MainPanel.staysVisible`, `ClipboardTab.rowCountStays`).
+  inverted expectation over a window (`ClipboardPanel.staysVisible`, `ClipboardPanel.rowCountStays`).
 - A spec that only characterizes existing behavior must be shown able to fail: break the product
   code on a throwaway branch, run CI on it (`gh workflow run Test --ref <branch>`), then delete it.
 
@@ -49,7 +55,8 @@ clipboard history and a snippet manager. Spec for the multi-tool restructure:
   `fmt` pod shipped with React Native 0.76 (consteval errors). Lift the pin after upgrading React
   Native to a release whose `fmt` builds with the runner's default Xcode.
 - The `E2E` build has its own bundle ID (`org.reactjs.native.DevUtility.e2e`) and data, and is the
-  only build that honors `--e2e-reset`. Its data lives in
+  only build that honors `--e2e-reset` and `--e2e-skip-onboarding` (no first-launch Settings window;
+  `AppLauncher` passes it unless a spec is about launch). Its data lives in
   `~/Library/Application Support/org.reactjs.native.DevUtility.e2e` (the app is not sandboxed).
 - `npm run test:e2e` quits an installed DevUtility (same global shortcut) and reopens it afterwards.
 - A React Native `testID` becomes the accessibility identifier, but a plain `View`/`Text` is only
@@ -61,7 +68,17 @@ clipboard history and a snippet manager. Spec for the multi-tool restructure:
   `Support/Mouse.swift`, which post HID-level events like a real keyboard and mouse. Check the
   frontmost app with `OtherApp.isFrontmost` (NSWorkspace); `XCUIApplication.state` reports
   foreground for any running app.
-- A mouse-down inside the panel makes macOS activate DevUtility even though the panel is
-  non-activating (accepted limit, see the spec's Focus bug section). Reach a screen by keyboard
-  when a spec must keep the app inactive.
+- A mouse-down inside a tool panel makes macOS activate DevUtility even though the panel is
+  non-activating (accepted limit, see the spec's Focus bug section). Open tools by their shortcut
+  (HID keys) when a spec must keep the app inactive.
+- Floating panels are not listed in `app.windows`; page objects find a panel by its identifier
+  (`<toolId>.window`, `settings.window`) among all elements. Look elements up inside the tool's
+  window: both panels can be open and share identifiers such as `shortcuts.sheet`.
+- Clipboard closes on any click outside it, including a click on the Snippets icon or panel. A
+  spec that needs both panels open opens Snippets first and Clipboard last.
+- XCUITest's `rightClick()` on a status item times out waiting for a menu notification; use
+  `Mouse.rightClick`, and find the icon menu's items by identifier (`statusMenu.*`), because the
+  app menu has its own Settings… and Quit items.
+- A registered global shortcut swallows its keys before any window sees them, so Settings switches
+  the tools' shortcuts off while it is the key window (`SettingsWindowController`).
 - Type definitions: `react-native` is mapped to `react-native-macos` in `tsconfig.json`.
