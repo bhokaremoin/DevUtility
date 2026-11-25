@@ -1,5 +1,5 @@
 import React, {useCallback, useMemo, useRef, useState} from 'react';
-import {Alert, Keyboard, StyleSheet, View} from 'react-native';
+import {Alert, StyleSheet, View} from 'react-native';
 import {ClipboardScreen} from './ClipboardScreen';
 import {useClipboardHistory} from './useClipboardHistory';
 import {clipboardEscapeAction} from './clipboardEscape';
@@ -37,7 +37,7 @@ function Clipboard(): React.JSX.Element {
         if (action === 'closeSheet') {
           setIsShortcutsHelpOpen(false);
         } else if (action === 'blurEditor') {
-          Keyboard.dismiss();
+          ToolPanel.endEditing('clipboard');
         } else {
           ToolPanel.hide('clipboard');
         }

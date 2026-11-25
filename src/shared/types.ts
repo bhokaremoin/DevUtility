@@ -42,8 +42,6 @@ export interface ScreenHandle {
   clearSearch?: () => void;
   /** Move keyboard focus into the screen's search input. */
   focusSearch?: () => void;
-  /** Remove focus from all inputs within the screen. */
-  blurAll?: () => void;
   /** Open the "Add Snippet" modal programmatically. */
   openAddModal?: () => void;
   /** Move the list selection one item upward. */

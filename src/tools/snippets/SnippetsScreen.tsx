@@ -55,9 +55,6 @@ export const SnippetsScreen = forwardRef<ScreenHandle>(
         focusSearch: () => {
           searchInputRef.current?.focus();
         },
-        blurAll: () => {
-          searchInputRef.current?.blur();
-        },
         openAddModal: () => setModalVisible(true),
         navigateUp: () => navigate(-1),
         navigateDown: () => navigate(1),

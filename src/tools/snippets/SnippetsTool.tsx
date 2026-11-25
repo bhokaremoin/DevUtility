@@ -1,5 +1,5 @@
 import React, {useMemo, useRef, useState} from 'react';
-import {Keyboard, StyleSheet, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {SnippetsScreen} from './SnippetsScreen';
 import {snippetsEscapeAction} from './snippetsEscape';
 import {SNIPPETS_SHORTCUT_SECTIONS} from './snippetsShortcuts';
@@ -45,7 +45,7 @@ function Snippets(): React.JSX.Element {
         } else if (action === 'clearSearch') {
           screen?.clearSearch?.();
         } else if (action === 'blurInput') {
-          Keyboard.dismiss();
+          ToolPanel.endEditing('snippets');
         }
       },
       onSearch: () => screenRef.current?.focusSearch?.(),
@@ -64,8 +64,7 @@ function Snippets(): React.JSX.Element {
   useKeyboardShortcuts('snippets', keyHandlers);
 
   const openShortcutsHelp = () => {
-    Keyboard.dismiss();
-    screenRef.current?.blurAll?.();
+    ToolPanel.endEditing('snippets');
     setIsShortcutsHelpOpen(true);
   };
 
