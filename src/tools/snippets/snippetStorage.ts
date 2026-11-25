@@ -15,7 +15,8 @@ export async function loadSnippets(): Promise<Snippet[]> {
       return JSON.parse(raw) as Snippet[];
     }
     return [];
-  } catch {
+  } catch (error) {
+    console.warn('Could not load the snippets; starting empty', error);
     return [];
   }
 }

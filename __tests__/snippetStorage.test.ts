@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it} from '@jest/globals';
+import {beforeEach, describe, expect, it, jest} from '@jest/globals';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {addSnippet, deleteSnippet, loadSnippets, updateSnippet} from '../src/tools/snippets/snippetStorage';
 import {SNIPPETS_STORAGE_KEY} from '../src/shared/constants';
@@ -27,8 +27,11 @@ describe('snippet storage', () => {
     expect(updated).toEqual({...snippet, content: 'new content'});
   });
 
-  it('returns an empty list when stored data is corrupt', async () => {
+  it('returns an empty list and logs a warning when stored data is corrupt', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     await AsyncStorage.setItem(SNIPPETS_STORAGE_KEY, 'corrupt');
     await expect(loadSnippets()).resolves.toEqual([]);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Could not load the snippets'), expect.anything());
+    warn.mockRestore();
   });
 });

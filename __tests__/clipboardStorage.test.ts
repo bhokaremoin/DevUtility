@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it} from '@jest/globals';
+import {beforeEach, describe, expect, it, jest} from '@jest/globals';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {loadClipboardHistory, saveClipboardHistory} from '../src/tools/clipboard/clipboardStorage';
 import {CLIPBOARD_STORAGE_KEY} from '../src/shared/constants';
@@ -16,8 +16,11 @@ describe('clipboard storage', () => {
     await expect(loadClipboardHistory()).resolves.toEqual([]);
   });
 
-  it('returns an empty list when stored data is corrupt', async () => {
+  it('returns an empty list and logs a warning when stored data is corrupt', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     await AsyncStorage.setItem(CLIPBOARD_STORAGE_KEY, '{not json');
     await expect(loadClipboardHistory()).resolves.toEqual([]);
+    expect(warn).toHaveBeenCalledWith(expect.stringContaining('Could not load the clipboard history'), expect.anything());
+    warn.mockRestore();
   });
 });

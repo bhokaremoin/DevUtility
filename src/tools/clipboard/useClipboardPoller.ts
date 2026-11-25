@@ -28,8 +28,9 @@ export function useClipboardPoller(
           lastClipRef.current = content;
           onNewTextRef.current(content);
         }
-      } catch {
-        // Clipboard access can fail silently — nothing to surface here.
+      } catch (error) {
+        // A failed read is retried on the next poll, so it is only logged.
+        console.warn('Could not read the clipboard', error);
       }
     }, CLIPBOARD_POLL_INTERVAL_MS);
     return () => clearInterval(interval);

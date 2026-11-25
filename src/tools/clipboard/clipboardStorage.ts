@@ -14,7 +14,8 @@ export async function loadClipboardHistory(): Promise<ClipboardItem[]> {
       return JSON.parse(raw) as ClipboardItem[];
     }
     return [];
-  } catch {
+  } catch (error) {
+    console.warn('Could not load the clipboard history; starting empty', error);
     return [];
   }
 }

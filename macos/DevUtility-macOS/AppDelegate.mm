@@ -7,14 +7,35 @@
 
 // MARK: - E2E
 
-// Only the E2E build honors --e2e-reset, so a stray flag can never wipe a user's data.
-- (BOOL)isE2EResetRequested
+// Only the E2E build honors the --e2e-* flags, so a stray flag can never wipe a user's data.
+- (BOOL)isE2EFlagSet:(NSString *)flag
 {
 #if E2E_BUILD
-  return [[[NSProcessInfo processInfo] arguments] containsObject:@"--e2e-reset"];
+  return [[[NSProcessInfo processInfo] arguments] containsObject:flag];
 #else
   return NO;
 #endif
+}
+
+- (BOOL)isE2EResetRequested
+{
+  return [self isE2EFlagSet:@"--e2e-reset"];
+}
+
+// MARK: - Onboarding
+
+static NSString *const HasShownMultiToolOnboardingKey = @"hasShownMultiToolOnboarding";
+
+// The first launch after the update to separate tools opens Settings once, so the new per-tool
+// shortcuts are seen; later launches open nothing.
+- (void)showMultiToolOnboardingIfNeeded
+{
+  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+  if ([self isE2EFlagSet:@"--e2e-skip-onboarding"] || [defaults boolForKey:HasShownMultiToolOnboardingKey]) {
+    return;
+  }
+  [[SettingsWindowController shared] showWithOpenedFromToolId:nil];
+  [defaults setBool:YES forKey:HasShownMultiToolOnboardingKey];
 }
 
 // MARK: - Lifecycle
@@ -24,6 +45,7 @@
   NSDictionary *initialProperties = @{@"isE2EReset": @([self isE2EResetRequested])};
   if ([self isE2EResetRequested]) {
     [GlobalShortcutModule resetShortcutsForE2E];
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:HasShownMultiToolOnboardingKey];
   }
 
   // RCTAppDelegate starts the bridge and puts the first tool's root view in a default window.
@@ -42,6 +64,8 @@
 
   NSView *settingsRootView = [self.rootViewFactory viewWithModuleName:@"Settings" initialProperties:@{}];
   [[SettingsWindowController shared] setUpWithRootView:settingsRootView];
+
+  [self showMultiToolOnboardingIfNeeded];
 }
 
 - (NSView *)takeRootViewFromDefaultWindow
